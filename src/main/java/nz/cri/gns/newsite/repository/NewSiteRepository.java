@@ -1,5 +1,10 @@
 package nz.cri.gns.newsite.repository;
 
+/**
+ *
+ * @author sitikond
+ */
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import nz.cri.gns.newsite.model.SiteModel;

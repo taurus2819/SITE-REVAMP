@@ -1,5 +1,10 @@
 package nz.cri.gns.newsite.exception;
 
+/**
+ *
+ * @author sitikond
+ */
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
