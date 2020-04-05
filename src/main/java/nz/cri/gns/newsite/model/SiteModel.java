@@ -5,8 +5,11 @@ package nz.cri.gns.newsite.model;
  * @author sitikond
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -18,6 +21,7 @@ public class SiteModel {
     @Column(name = "site_id")
     @NotNull
     @Id    
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer siteId;  //51955
     
     @Column(name = "site_name")
@@ -43,8 +47,9 @@ public class SiteModel {
     @Column(name = "orig_system_id")
     private Integer origSystemId; 	//38
     
-    @Column(name = "orig_coord")
-    private String origCoord;	//"2316763|5479842"
+//    @JsonIgnore
+//    @Column(name = "orig_coord")
+//    private String origCoord;	//"2316763|5479842"
 
     @Column(name = "height")
     private Double height;		//44
@@ -64,19 +69,19 @@ public class SiteModel {
     @Column(name = "comment")
     private String comment;			//"blah blah"
     
-    @Column(name = "shape")
-    @NotNull
-    private String shape;
+//    @JsonIgnore
+//    @Column(name = "shape")
+//    @NotNull
+//    private String shape;
 
     public SiteModel() {
 
     }
 
-    public SiteModel(Integer siteId, String siteName, double lat, double lon, Integer methodId, Double accuracy,
-            String directions, Integer origSystemId, String origCoord, Double height, Integer heightMethodId,
-            Double heightAccuracy, String countryCode, Integer flag, String comment, String shape) {
-        super();
-        this.siteId = siteId;
+    public SiteModel(String siteName, double lat, double lon, Integer methodId, Double accuracy,
+            String directions, Integer origSystemId, Double height, Integer heightMethodId,
+            Double heightAccuracy, String countryCode, Integer flag, String comment) {
+        super();        
         this.siteName = siteName;
         this.lat = lat;
         this.lon = lon;
@@ -84,14 +89,14 @@ public class SiteModel {
         this.accuracy = accuracy;
         this.directions = directions;
         this.origSystemId = origSystemId;
-        this.origCoord = origCoord;
+//        this.origCoord = origCoord;
         this.height = height;
         this.heightMethodId = heightMethodId;
         this.heightAccuracy = heightAccuracy;
         this.countryCode = countryCode;
         this.flag = flag;
         this.comment = comment;
-        this.shape = shape;
+//        this.shape = shape;
     }
 
     public Integer getSiteId() {
@@ -158,13 +163,13 @@ public class SiteModel {
         this.origSystemId = origSystemId;
     }
 
-    public String getOrigCoord() {
-        return origCoord;
-    }
-
-    public void setOrigCoord(String origCoord) {
-        this.origCoord = origCoord;
-    }
+//    public String getOrigCoord() {
+//        return origCoord;
+//    }
+//
+//    public void setOrigCoord(String origCoord) {
+//        this.origCoord = origCoord;
+//    }
 
     public Double getHeight() {
         return height;
@@ -214,12 +219,12 @@ public class SiteModel {
         this.comment = comment;
     }
 
-    public String getShape() {
-        return shape;
-    }
-
-    public void setShape(String shape) {
-        this.shape = shape;
-    }
+//    public String getShape() {
+//        return shape;
+//    }
+//
+//    public void setShape(String shape) {
+//        this.shape = shape;
+//    }
 
 }
