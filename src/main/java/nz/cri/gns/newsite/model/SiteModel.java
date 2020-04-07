@@ -21,7 +21,7 @@ public class SiteModel {
     @Column(name = "site_id")
     @NotNull
     @Id    
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE)
     private Integer siteId;  //51955
     
     @Column(name = "site_name")
