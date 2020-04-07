@@ -4,13 +4,13 @@ package nz.cri.gns.newsite.model;
  *
  * @author sitikond
  */
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -18,62 +18,61 @@ import javax.validation.constraints.NotNull;
 @Table(name = "site_proposed", schema = "sc")
 public class SiteModel {
 
-    @Column(name = "site_id")
+    @Column(name = "site_id", updatable = false)
     @NotNull
-    @Id    
-    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+    @Id
+    @SequenceGenerator(name = "site_proposed_site_id_seq", sequenceName = "site_proposed_site_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "site_proposed_site_id_seq")
     private Integer siteId;  //51955
-    
+
     @Column(name = "site_name")
     private String siteName;  //GNS Physical Location Site, Dunedin
-    
+
     @Column(name = "latitude")
     @NotNull
     private double lat;		//-45.864369921
-    
+
     @Column(name = "longitude")
     @NotNull
     private double lon;		//170.513135754
-    
+
     @Column(name = "method_id")
     private Integer methodId;	//3
-    
+
     @Column(name = "accuracy")
     private Double accuracy;		//10
-    
+
     @Column(name = "directions")
     private String directions;	//764 Cumberland Street, Dunedin
-    
+
     @Column(name = "orig_system_id")
     private Integer origSystemId; 	//38
-    
+
 //    @JsonIgnore
 //    @Column(name = "orig_coord")
 //    private String origCoord;	//"2316763|5479842"
-
     @Column(name = "height")
     private Double height;		//44
-    
+
     @Column(name = "h_method_id")
     private Integer heightMethodId;		//3
-    
+
     @Column(name = "h_accuracy")
     private Double heightAccuracy;	//10
-    
+
     @Column(name = "country_code")
     private String countryCode;		//NZ
-    
+
     @Column(name = "flag")
     private Integer flag;				//null
-    
+
     @Column(name = "comment")
     private String comment;			//"blah blah"
-    
+
 //    @JsonIgnore
 //    @Column(name = "shape")
 //    @NotNull
 //    private String shape;
-
     public SiteModel() {
 
     }
@@ -81,7 +80,7 @@ public class SiteModel {
     public SiteModel(String siteName, double lat, double lon, Integer methodId, Double accuracy,
             String directions, Integer origSystemId, Double height, Integer heightMethodId,
             Double heightAccuracy, String countryCode, Integer flag, String comment) {
-        super();        
+        super();
         this.siteName = siteName;
         this.lat = lat;
         this.lon = lon;
@@ -170,7 +169,6 @@ public class SiteModel {
 //    public void setOrigCoord(String origCoord) {
 //        this.origCoord = origCoord;
 //    }
-
     public Double getHeight() {
         return height;
     }
@@ -226,5 +224,4 @@ public class SiteModel {
 //    public void setShape(String shape) {
 //        this.shape = shape;
 //    }
-
 }
