@@ -14,6 +14,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.core.style.ToStringCreator;
+
 @Entity
 @Table(name = "site_proposed", schema = "sc")
 public class SiteModel {
@@ -21,8 +23,8 @@ public class SiteModel {
     @Column(name = "site_id", updatable = false)
     @NotNull
     @Id
-    @SequenceGenerator(name = "site_proposed_site_id_seq", sequenceName = "site_proposed_site_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "site_proposed_site_id_seq")
+    @SequenceGenerator(name = "sc.site_proposed_site_id_seq", sequenceName = "sc.site_proposed_site_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sc.site_proposed_site_id_seq")
     private Integer siteId;  //51955
 
     @Column(name = "site_name")
@@ -99,12 +101,8 @@ public class SiteModel {
     }
 
     public Integer getSiteId() {
-        return siteId;
-    }
-
-    public void setSiteId(Integer siteId) {
-        this.siteId = siteId;
-    }
+        return this.siteId;
+    }    
 
     public String getSiteName() {
         return siteName;
@@ -224,4 +222,14 @@ public class SiteModel {
 //    public void setShape(String shape) {
 //        this.shape = shape;
 //    }
+    
+    @Override
+    public String toString(){
+        return new ToStringCreator(this)
+                .append("id", this.getSiteId())
+                .append("site_name", this.getSiteName())
+                .append("lat", this.getLat())
+                .append("lon", this.getLon())
+                .toString();
+    }
 }
