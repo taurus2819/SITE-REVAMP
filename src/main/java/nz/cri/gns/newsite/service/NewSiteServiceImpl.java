@@ -38,6 +38,7 @@ public class NewSiteServiceImpl implements NewSiteService{
 	@Override
 	public SiteModel update(SiteModel s) {
 		retrieveWithNullCheck(s.getSiteId());
+                logger.info("Update = " + s.toString());
 		return newSiteRepository.save(s);
 	}
 
