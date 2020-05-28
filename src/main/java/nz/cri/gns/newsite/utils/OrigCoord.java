@@ -112,7 +112,7 @@ public class OrigCoord {
                   if (parts.length!=2) {
                       return null;
                   }
-                  js += "\"latitude\":" + parts[0] + ", \"longitude\":" + parts[1];
+                  js += "\"latitude\":\"" + parts[0] + "\", \"longitude\":\"" + parts[1] + "\"";
                   break;
               case "gridref":
                   if (parts.length!=3) {

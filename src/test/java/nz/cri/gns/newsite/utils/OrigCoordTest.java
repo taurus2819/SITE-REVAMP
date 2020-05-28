@@ -26,7 +26,7 @@ public class OrigCoordTest {
         assert (OrigCoord.getJsonString(38, "2696700|5953800").equals("{\"epsg\":27200, \"format\":\"EN\", \"easting\":2696700, \"northing\":5953800}"));
         assert (OrigCoord.getJsonString(16, "D50|9610|1630").equals("{\"epsg\":27200, \"format\":\"gridref\", \"gridReference\":\"D50/961163\"}"));        
         assert (OrigCoord.getJsonString(16, "C40|8612|5642").equals("{\"epsg\":27200, \"format\":\"gridref\", \"gridReference\":\"C40/86125642\"}"));        
-        assert (OrigCoord.getJsonString(28, "-39.08102037777|174.52428614166").equals("{\"epsg\":4167, \"format\":\"DD\", \"latitude\":-39.08102037777, \"longitude\":174.52428614166}"));        
+        assert (OrigCoord.getJsonString(28, "-39.08102037777|174.52428614166").equals("{\"epsg\":4167, \"format\":\"DD\", \"latitude\":\"-39.08102037777\", \"longitude\":\"174.52428614166\"}"));        
     }
     
 }
