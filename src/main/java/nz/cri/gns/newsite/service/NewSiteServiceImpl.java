@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import nz.cri.gns.newsite.exception.ResourceMissingException;
 import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.repository.NewSiteRepository;
+import org.springframework.data.jpa.repository.Query;
 
 @Service
 @Scope("singleton")
@@ -38,7 +39,7 @@ public class NewSiteServiceImpl implements NewSiteService{
 	@Override
 	public SiteModel update(SiteModel s) {
 		retrieveWithNullCheck(s.getSiteId());
-                logger.info("Update = " + s.toString());
+                logger.info("Update** = " + s.toString());
 		return newSiteRepository.save(s);
 	}
 
@@ -63,9 +64,10 @@ public class NewSiteServiceImpl implements NewSiteService{
 	}
 
 	@Override
-	public List<SiteModel> findAll() {
+//        @Query(value = "select * from sc.site_proposed where sc.site_proposed.orig_system_id = 16 limit 20")
+	public List<SiteModel> findByOrigSystemId(int oid) {
 		List<SiteModel> sites = new ArrayList<>();
-		newSiteRepository.findAll().forEach(sites::add);
+		newSiteRepository.findAllByOrigSystemId(oid).forEach(sites::add);
                 return sites;        
 	}
 

@@ -5,9 +5,14 @@
  */
 package nz.cri.gns.newsite.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.Gson;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import jdk.nashorn.internal.parser.JSONParser;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
@@ -102,6 +107,7 @@ public class OrigCoord {
         return Collections.unmodifiableMap(result);
     }
     
+    //data from oracle
     public static String getJsonString(int system_id, String origCoord ) {
         if (ORIG_COORD_LIST.containsKey(system_id)) {
           OrigCoordDetail ocd = ORIG_COORD_LIST.get(system_id);
@@ -131,6 +137,45 @@ public class OrigCoord {
                       return null;
                   }
                   js += "\"easting\":" + parts[0] + ", \"northing\":" + parts[1];
+                  break;             
+          }
+          js += "}";
+          return js;
+        } else {
+            return null;
+        }
+    }    
+    
+    //data received from postgres
+    public static String getEpsgInfoJsonString(int system_id, JsonNode origCoord ) {
+        Gson gson = new Gson();
+        if (ORIG_COORD_LIST.containsKey(system_id)) {
+          OrigCoordDetail ocd = ORIG_COORD_LIST.get(system_id);
+          String js = "{\"epsg\":" + ocd.epsg  + ", \"format\":\"" + ocd.format + "\", " ;
+          switch (ocd.format) {
+              case "DD":
+                  if (origCoord.size() != 2) {
+                      return null;
+                  }
+                  js += "\"latitude\":" + origCoord.get(0) + ", \"longitude\":" + origCoord.get(1);
+                  break;
+              case "gridref":
+                  if (origCoord.size() != 3) {
+                      return null;
+                  }
+                  js += "\"gridReference\":\"" + origCoord.get(0).asText() + "/";
+                  if (origCoord.get(1).asText().endsWith("0") && origCoord.get(2).asText().endsWith("0")) {
+                     js += origCoord.get(1).asText().substring(0,3) + origCoord.get(2).asText().substring(0,3);
+                  } else {
+                     js += origCoord.get(1).asText()+ origCoord.get(2).asText();
+                  }
+                  js += "\"";
+                  break;
+              case "EN":
+                  if (origCoord.size()!= 2) {
+                      return null;
+                  }
+                  js += "\"easting\":" + origCoord.get(0) + ", \"northing\":" + origCoord.get(1);
                   break;             
           }
           js += "}";

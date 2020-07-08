@@ -14,7 +14,7 @@ public interface NewSiteService {
 	SiteModel update(SiteModel s);
 	void delete(int id);
 	SiteModel find(int id);
-	List<SiteModel> findAll();
+	List<SiteModel> findByOrigSystemId(int oid);
 	List<SiteModel> listAllSites();
 //	List<SiteModel> findAll(Integer origSystemID);
 	

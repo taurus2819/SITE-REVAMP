@@ -5,6 +5,8 @@ package nz.cri.gns.newsite.model;
  * @author sitikond
  */
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +18,7 @@ import javax.validation.constraints.NotNull;
 import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -23,6 +26,9 @@ import org.springframework.core.style.ToStringCreator;
 
 @Entity
 @Table(name = "site_proposed", schema = "sc")
+@TypeDefs({
+    @TypeDef(name = "json", typeClass = JsonBinaryType.class)
+})
 public class SiteModel {
 
     @Column(name = "site_id", updatable = false)
@@ -55,8 +61,9 @@ public class SiteModel {
     @Column(name = "orig_system_id")
     private Integer origSystemId; 	//38
 
-    @Column(name = "orig_coord")
-    private String origCoord;	//"["A29","007","500"]"
+    @Type(type = "json")
+    @Column(name = "orig_coord", columnDefinition = "json")
+    private JsonNode origCoord;	//"["A29","007","500"]"
     
     @Column(name = "height")
     private Double height;		//44
@@ -77,16 +84,16 @@ public class SiteModel {
     private String comment;			//"blah blah"
 
 //    @JsonIgnore
-    @Column(name = "shape")
-    private String shape;
+//    @Column(name = "shape")
+//    private String shape;
     
     public SiteModel() {
 
     }
 
     public SiteModel(String siteName, double lat, double lon, Integer methodId, Double accuracy,
-            String directions, Integer origSystemId, String origCoord, Double height, Integer heightMethodId,
-            Double heightAccuracy, String countryCode, Integer flag, String comment, String shape) {
+            String directions, Integer origSystemId, JsonNode origCoord, Double height, Integer heightMethodId,
+            Double heightAccuracy, String countryCode, Integer flag, String comment /*, String shape*/) {
         super();
         this.siteName = siteName;
         this.lat = lat;
@@ -102,7 +109,7 @@ public class SiteModel {
         this.countryCode = countryCode;
         this.flag = flag;
         this.comment = comment;
-        this.shape = shape;
+//        this.shape = shape;
     }
 
     public Integer getSiteId() {
@@ -165,11 +172,11 @@ public class SiteModel {
         this.origSystemId = origSystemId;
     }
 
-    public String getOrigCoord() {
+    public JsonNode getOrigCoord() {
         return origCoord;
     }
 
-    public void setOrigCoord(String origCoord) {
+    public void setOrigCoord(JsonNode origCoord) {
         this.origCoord = origCoord;
 //        if(origCoord.startsWith("{")){
 //            //treat this as a JSONObject
@@ -229,29 +236,28 @@ public class SiteModel {
         this.comment = comment;
     }
 
-    public String getShape() {
-        return shape;
-    }
-
-    public void setShape(String shape) {
-        this.shape = shape;
-    }
+//    public String getShape() {
+//        return shape;
+//    }
+//
+//    public void setShape(String shape) {
+//        this.shape = shape;
+//    }
     
     @Override
     public String toString(){
-        JSONArray arr = new JSONArray(this.getOrigCoord());
-        System.out.println("JsonArr length= " + arr.length());
-        for(int i = 0; i < arr.length(); i++){
-            System.out.println("OrigCoord[" + i + "] = " + arr.get(i));
-        }
+//        JsonNode jsonnode = this.getOrigCoord();
+//        System.out.println("JsonNode length= " + jsonnode.size());
+//         System.out.println("JsonNode length= " + jsonnode.getNodeType());
+//         System.out.println("JsonNode length= " + jsonnode.get(1));
         return new ToStringCreator(this)
                 .append("id", this.getSiteId())
                 .append("site_name", this.getSiteName())
                 .append("lat", this.getLat())
                 .append("lon", this.getLon())
                 .append("OrigSysId", this.getOrigSystemId())
-                .append("OrigCoord[0]", this.getOrigCoord())
-                .append("Shape", this.getShape())
+                .append("OrigCoord", this.getOrigCoord())
+//                .append("Shape", this.getShape())
                 .toString();
     }
 }
