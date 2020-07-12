@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.service.NewSiteService;
+import nz.cri.gns.newsite.utils.ConversionToWgs84;
 import nz.cri.gns.newsite.utils.OrigCoord;
 import org.json.JSONObject;
 
@@ -45,9 +46,14 @@ public class NewSiteController {
             if(site.getLat() == 0.0 && site.getLon() == 0.0){
                 String epsgFormatInfo = OrigCoord.getEpsgInfoJsonString(site.getOrigSystemId(), site.getOrigCoord());
                 JSONObject obj = new JSONObject(epsgFormatInfo);
-                    if(obj.getString("format").equals("DD") || obj.getString("format").equals("EN")){
+                if(obj.getString("format").equals("EN")){
                     site.setLat(Double.parseDouble(obj.getString("latitude")));
                     site.setLon(Double.parseDouble(obj.getString("longitude")));
+                    site = updateSite(site, site.getSiteId());
+                }else if (obj.getString("format").equals("DD")){
+                    ConversionToWgs84 llToWgs84 = new ConversionToWgs84(obj.getDouble("latitude"), obj.getDouble("longitude"));
+                    site.setLat(llToWgs84.getConvertedLat());
+                    site.setLon(llToWgs84.getConvertedLon());
                     site = updateSite(site, site.getSiteId());
                 }
             }                
