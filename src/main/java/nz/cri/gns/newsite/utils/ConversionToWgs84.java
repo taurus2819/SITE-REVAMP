@@ -5,10 +5,6 @@
  */
 package nz.cri.gns.newsite.utils;
 
-import nz.cri.gns.util.map.Datum;
-import nz.cri.gns.util.map.DatumFactory;
-import nz.cri.gns.util.map.WGS84;
-
 /**
  *
  * @author sitikond
@@ -34,13 +30,6 @@ public class ConversionToWgs84 {
         }
         
         private void doConversionLlToWgs84(){
-            Datum.LatLong ll = new Datum.LatLong(lat, lon);
-            WGS84 wgs84 = (WGS84)DatumFactory.createDatum("WGS84");
-            Datum.Coordinate wgsll = wgs84.convertFromNZGD49(ll);
-//            setConvertedLat(wgsll.getEastWest());
-            this.convertedLat = wgsll.getEastWest();
-//            setConvertedLon(wgsll.getNorthSouth());
-            this.convertedLon = wgsll.getNorthSouth();
         }
     
 }

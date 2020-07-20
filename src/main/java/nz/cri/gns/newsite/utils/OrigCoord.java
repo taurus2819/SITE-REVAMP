@@ -11,8 +11,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import jdk.nashorn.internal.parser.JSONParser;
+import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
+import org.gbif.common.parsers.core.OccurrenceParseResult;
+import org.gbif.common.parsers.core.ParseResult;
+import org.gbif.common.parsers.geospatial.CoordinateParseUtils;
+import org.gbif.common.parsers.geospatial.LatLng;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.locationtech.proj4j.CRSFactory;
+import org.locationtech.proj4j.CoordinateReferenceSystem;
+import org.locationtech.proj4j.CoordinateTransform;
+import org.locationtech.proj4j.CoordinateTransformFactory;
+import org.locationtech.proj4j.ProjCoordinate;
 
 /**
  *
@@ -183,5 +193,25 @@ public class OrigCoord {
         } else {
             return null;
         }
-    }    
+    }
+    
+    public static LatLng parseLatLng(String latitude, String longitude) {
+      OccurrenceParseResult<LatLng> ll = CoordinateParseUtils.parseLatLng(latitude,longitude);
+      if (ll.getConfidence() != ParseResult.CONFIDENCE.DEFINITE && ll.getConfidence() != ParseResult.CONFIDENCE.PROBABLE) {
+          throw new InvalidLatLonFormat("Invalid lat/lon format" + ll.getConfidence().toString());
+      }
+      return ll.getPayload();
+    }
+    
+    public static ProjCoordinate toWGS84(int epsg, ProjCoordinate inputPt) {
+       CRSFactory crsf = new CRSFactory();
+       CoordinateTransformFactory ctf = new CoordinateTransformFactory();
+       CoordinateReferenceSystem epsg4326 = crsf.createFromName("EPSG:4326");
+       CoordinateReferenceSystem crs = crsf.createFromName(String.format("EPSG:%04d", epsg));
+       CoordinateTransform toEPSG4326 = ctf.createTransform(crs,epsg4326);           
+       ProjCoordinate outputPt = new ProjCoordinate();
+       toEPSG4326.transform(inputPt, outputPt);
+       return outputPt;
+       
+    }
 }
