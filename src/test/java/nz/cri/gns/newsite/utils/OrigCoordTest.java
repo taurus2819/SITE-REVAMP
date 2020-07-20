@@ -32,9 +32,9 @@ public class OrigCoordTest {
     }
 
     private void assertDMS(String lat, String lon, double eLat, double eLon) {
-        LatLng ll = OrigCoord.parseLatLng(lat, lon);
-        assertEquals(eLat, ll.getLat(), 0.000001);
-        assertEquals(eLon, ll.getLng(), 0.000001);
+        ProjCoordinate ll = OrigCoord.parseLatLng(lat, lon);
+        assertEquals(eLat, ll.y, 0.000001);
+        assertEquals(eLon, ll.x, 0.000001);
     }
 
     @Test
@@ -68,13 +68,13 @@ public class OrigCoordTest {
         inputPt.y = 6752871.3;
         ProjCoordinate outputPt;
         outputPt = OrigCoord.toWGS84(27200, inputPt);
-        assert (Math.abs(outputPt.x - 177.65067414) < 0.00001);
-        assert (Math.abs(outputPt.y + 34.32524702) < 0.00001);
+        assertEquals(outputPt.x,177.65067414,0.00001);
+        assertEquals(outputPt.y, -34.32524702,0.00001);
         inputPt.x = 172.03277;
         inputPt.y = -41.82246;
         outputPt = OrigCoord.toWGS84(4272, inputPt);
-        assert (Math.abs(outputPt.x - 172.03292203) < 0.00001);
-        assert (Math.abs(outputPt.y + 41.82072457) < 0.00001);
+        assertEquals(outputPt.x,172.03292203,0.00005);
+        assertEquals(outputPt.y, -41.82072457,0.00005);
     }
 
 }

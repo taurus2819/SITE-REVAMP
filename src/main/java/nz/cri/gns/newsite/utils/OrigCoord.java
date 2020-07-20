@@ -195,12 +195,13 @@ public class OrigCoord {
         }
     }
     
-    public static LatLng parseLatLng(String latitude, String longitude) {
+    public static ProjCoordinate parseLatLng(String latitude, String longitude) {
       OccurrenceParseResult<LatLng> ll = CoordinateParseUtils.parseLatLng(latitude,longitude);
       if (ll.getConfidence() != ParseResult.CONFIDENCE.DEFINITE && ll.getConfidence() != ParseResult.CONFIDENCE.PROBABLE) {
           throw new InvalidLatLonFormat("Invalid lat/lon format" + ll.getConfidence().toString());
       }
-      return ll.getPayload();
+      ProjCoordinate latlng = new ProjCoordinate(ll.getPayload().getLng(),ll.getPayload().getLat());
+      return latlng;
     }
     
     public static ProjCoordinate toWGS84(int epsg, ProjCoordinate inputPt) {
@@ -213,5 +214,9 @@ public class OrigCoord {
        toEPSG4326.transform(inputPt, outputPt);
        return outputPt;
        
+    }
+    
+    public static JsonNode createOrigFormatJson(int epsg, String format, String gridRef, String latitude, String longitude, double easting, double northing) {
+      return null; //TODO    
     }
 }
