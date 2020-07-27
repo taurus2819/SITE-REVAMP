@@ -72,17 +72,17 @@ public class OrigCoordTest {
             fail(ex.getMessage());
             return;
         }
-        assertEquals(outputPt.getX(), 177.65067414, 0.00001);
-        assertEquals(outputPt.getY(), -34.32524702, 0.00001);
-        inputPt.setLocation(172.03277, -41.82246);
+        assertEquals(outputPt.getY(), 177.6507469, 0.00001);
+        assertEquals(outputPt.getX(), -34.3252653, 0.00001);
+        inputPt.setLocation( -41.82246,172.03277);
         try {
             outputPt = OrigCoord.toWGS84(4272, inputPt);
         } catch (Exception ex) {
             fail(ex.getMessage());
             return;
         }
-        assertEquals(outputPt.getX(), 172.03292203, 0.00005);
-        assertEquals(outputPt.getY(), -41.82072457, 0.00005);
+        assertEquals(outputPt.getY(), 172.0328969, 0.00005);
+        assertEquals(outputPt.getX(), -41.82075326, 0.00005);
     }
 
 }
