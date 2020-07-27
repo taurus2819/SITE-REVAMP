@@ -5,10 +5,10 @@
  */
 package nz.cri.gns.newsite.utils;
 
-import org.gbif.common.parsers.geospatial.LatLng;
+import java.awt.geom.Point2D;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import org.junit.jupiter.api.Test;
-import org.locationtech.proj4j.ProjCoordinate;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -32,9 +32,9 @@ public class OrigCoordTest {
     }
 
     private void assertDMS(String lat, String lon, double eLat, double eLon) {
-        ProjCoordinate ll = OrigCoord.parseLatLng(lat, lon);
-        assertEquals(eLat, ll.y, 0.000001);
-        assertEquals(eLon, ll.x, 0.000001);
+        Point2D ll = OrigCoord.parseLatLng(lat, lon);
+        assertEquals(eLat, ll.getY(), 0.000001);
+        assertEquals(eLon, ll.getX(), 0.000001);
     }
 
     @Test
@@ -63,18 +63,26 @@ public class OrigCoordTest {
 
     @Test
     public void testToWGS() {
-        ProjCoordinate inputPt = new ProjCoordinate();
-        inputPt.x = 2939247.5;
-        inputPt.y = 6752871.3;
-        ProjCoordinate outputPt;
-        outputPt = OrigCoord.toWGS84(27200, inputPt);
-        assertEquals(outputPt.x,177.65067414,0.00001);
-        assertEquals(outputPt.y, -34.32524702,0.00001);
-        inputPt.x = 172.03277;
-        inputPt.y = -41.82246;
-        outputPt = OrigCoord.toWGS84(4272, inputPt);
-        assertEquals(outputPt.x,172.03292203,0.00005);
-        assertEquals(outputPt.y, -41.82072457,0.00005);
+        Point2D inputPt = new Point2D.Double();
+        inputPt.setLocation(2939247.5, 6752871.3);
+        Point2D outputPt;
+        try {
+            outputPt = OrigCoord.toWGS84(27200, inputPt);
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+            return;
+        }
+        assertEquals(outputPt.getX(), 177.65067414, 0.00001);
+        assertEquals(outputPt.getY(), -34.32524702, 0.00001);
+        inputPt.setLocation(172.03277, -41.82246);
+        try {
+            outputPt = OrigCoord.toWGS84(4272, inputPt);
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+            return;
+        }
+        assertEquals(outputPt.getX(), 172.03292203, 0.00005);
+        assertEquals(outputPt.getY(), -41.82072457, 0.00005);
     }
 
 }

@@ -6,10 +6,13 @@
 package nz.cri.gns.newsite.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.awt.geom.Point2D;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 import nz.cri.gns.newsite.utils.OrigCoord;
-import org.locationtech.proj4j.ProjCoordinate;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -160,22 +163,23 @@ public class SiteModelInput {
         this.format = format;
     }
     
-    public SiteModel toSiteModel() throws InvalidLatLonFormat,InvalidOrigCoordinate{
+    public SiteModel toSiteModel() throws InvalidLatLonFormat,InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException{
         siteModel.setOrigCoord(OrigCoord.createOrigFormatJson(epsg,format,gridref,latitude,longitude, easting, northing));
-        ProjCoordinate inputPt = new ProjCoordinate();
-        ProjCoordinate latlng;
+        Point2D inputPt = new Point2D.Double();
+        Point2D latlng;
         if (format.equals("EN")) {
-            inputPt.x = easting;
-            inputPt.y = northing;
+            inputPt.setLocation(easting,northing);
             latlng = OrigCoord.toWGS84(epsg, inputPt);
         } else if (format.startsWith("D")) {
             latlng = OrigCoord.parseLatLng(latitude, longitude);
-        } else {
+        } else if (format.equals("gridRef")) {
             // deal with grid ref
             latlng = null;
+        } else {
+            throw new InvalidOrigCoordinate("Not a valid format");
         }
-        siteModel.setLat(latlng.y);
-        siteModel.setLon(latlng.x);
+        siteModel.setLat(latlng.getY());
+        siteModel.setLon(latlng.getX());
         return siteModel;
     }
 }

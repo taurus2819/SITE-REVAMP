@@ -7,6 +7,7 @@ package nz.cri.gns.newsite.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
+import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,13 +17,16 @@ import org.gbif.common.parsers.core.OccurrenceParseResult;
 import org.gbif.common.parsers.core.ParseResult;
 import org.gbif.common.parsers.geospatial.CoordinateParseUtils;
 import org.gbif.common.parsers.geospatial.LatLng;
+import org.geotools.geometry.DirectPosition2D;
+import org.geotools.referencing.CRS;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.locationtech.proj4j.CRSFactory;
-import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.locationtech.proj4j.CoordinateTransform;
-import org.locationtech.proj4j.CoordinateTransformFactory;
-import org.locationtech.proj4j.ProjCoordinate;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -195,24 +199,22 @@ public class OrigCoord {
         }
     }
     
-    public static ProjCoordinate parseLatLng(String latitude, String longitude) {
+    public static Point2D parseLatLng(String latitude, String longitude) {
       OccurrenceParseResult<LatLng> ll = CoordinateParseUtils.parseLatLng(latitude,longitude);
       if (ll.getConfidence() != ParseResult.CONFIDENCE.DEFINITE && ll.getConfidence() != ParseResult.CONFIDENCE.PROBABLE) {
           throw new InvalidLatLonFormat("Invalid lat/lon format" + ll.getConfidence().toString());
       }
-      ProjCoordinate latlng = new ProjCoordinate(ll.getPayload().getLng(),ll.getPayload().getLat());
+      Point2D latlng = new Point2D.Double(ll.getPayload().getLng(),ll.getPayload().getLat());
       return latlng;
     }
     
-    public static ProjCoordinate toWGS84(int epsg, ProjCoordinate inputPt) {
-       CRSFactory crsf = new CRSFactory();
-       CoordinateTransformFactory ctf = new CoordinateTransformFactory();
-       CoordinateReferenceSystem epsg4326 = crsf.createFromName("EPSG:4326");
-       CoordinateReferenceSystem crs = crsf.createFromName(String.format("EPSG:%04d", epsg));
-       CoordinateTransform toEPSG4326 = ctf.createTransform(crs,epsg4326);           
-       ProjCoordinate outputPt = new ProjCoordinate();
-       toEPSG4326.transform(inputPt, outputPt);
-       return outputPt;
+    public static Point2D toWGS84(int epsg, Point2D inputPt) throws FactoryException, MismatchedDimensionException, TransformException {
+       CoordinateReferenceSystem epsg4326 = CRS.decode("EPSG:4326");
+       CoordinateReferenceSystem crs = CRS.decode(String.format("EPSG:%04d", epsg));
+       MathTransform transform = CRS.findMathTransform(epsg4326, crs, true);
+       DirectPosition2D outputPt = new DirectPosition2D();
+       transform.transform(new DirectPosition2D(inputPt), outputPt);
+       return outputPt.toPoint2D();
        
     }
     
