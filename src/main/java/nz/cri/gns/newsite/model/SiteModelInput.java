@@ -174,7 +174,8 @@ public class SiteModelInput {
             latlng = OrigCoord.parseLatLng(latitude, longitude);
         } else if (format.equals("gridRef")) {
             // deal with grid ref
-            latlng = null;
+            inputPt = OrigCoord.parseGridRef(epsg,gridref);
+            latlng = OrigCoord.toWGS84(epsg, inputPt);
         } else {
             throw new InvalidOrigCoordinate("Not a valid format");
         }

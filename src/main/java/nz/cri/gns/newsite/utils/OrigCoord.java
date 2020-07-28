@@ -11,7 +11,6 @@ import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import jdk.nashorn.internal.parser.JSONParser;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import org.gbif.common.parsers.core.OccurrenceParseResult;
 import org.gbif.common.parsers.core.ParseResult;
@@ -19,9 +18,6 @@ import org.gbif.common.parsers.geospatial.CoordinateParseUtils;
 import org.gbif.common.parsers.geospatial.LatLng;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.referencing.CRS;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -29,10 +25,15 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- *
+ * Class for handling of original coordinate formats
  * @author scaddenp
  */
 public class OrigCoord {
+
+    public static Point2D parseGridRef(int epsg, String gridref) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     public static class OrigCoordDetail {
         int epsg;
         String format;      
@@ -121,7 +122,12 @@ public class OrigCoord {
         return Collections.unmodifiableMap(result);
     }
     
-    //data from oracle
+    /**
+     * Convert a systemid and origcoord from the old site database in the new orig coordinate format
+     * @param system_id The id from SC.ORIG_COORD used the original coordinate. It is an index to a projection.
+     * @param origCoord Origincal coordinate in the string format of the original SC.SITE table
+     * @return 
+     */
     public static String getJsonString(int system_id, String origCoord ) {
         if (ORIG_COORD_LIST.containsKey(system_id)) {
           OrigCoordDetail ocd = ORIG_COORD_LIST.get(system_id);
