@@ -18,6 +18,7 @@ import org.gbif.common.parsers.geospatial.CoordinateParseUtils;
 import org.gbif.common.parsers.geospatial.LatLng;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.referencing.CRS;
+import static org.geotools.referencing.CRS.AxisOrder.EAST_NORTH;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -217,11 +218,17 @@ public class OrigCoord {
     public static Point2D toWGS84(int epsg, Point2D inputPt) throws FactoryException, MismatchedDimensionException, TransformException {
        CoordinateReferenceSystem epsg4326 = CRS.decode("EPSG:4326");
        CoordinateReferenceSystem crs = CRS.decode(String.format("EPSG:%04d", epsg));
-       MathTransform transform = CRS.findMathTransform(epsg4326, crs, true).inverse();
-       DirectPosition2D outputPt = new DirectPosition2D();
-       transform.transform(new DirectPosition2D(inputPt), outputPt);
+       MathTransform transform = CRS.findMathTransform(crs,epsg4326, true);
+       DirectPosition2D outputDp = new DirectPosition2D();
+       DirectPosition2D inputDp;
+       if (CRS.getAxisOrder(crs)== EAST_NORTH) {
+           inputDp = new DirectPosition2D(crs, inputPt.getX(),inputPt.getY());
+       } else {
+           inputDp = new DirectPosition2D(crs, inputPt.getY(),inputPt.getX());           
+       }
+       transform.transform(inputDp, outputDp);
        
-       return outputPt.toPoint2D();
+       return outputDp.toPoint2D();
        
     }
     
