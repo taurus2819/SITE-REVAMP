@@ -178,8 +178,8 @@ public class SiteModelInput {
         } else {
             throw new InvalidOrigCoordinate("Not a valid format");
         }
-        siteModel.setLat(latlng.getY());
-        siteModel.setLon(latlng.getX());
+        siteModel.setLat(latlng.getX());
+        siteModel.setLon(latlng.getY());
         return siteModel;
     }
 }
