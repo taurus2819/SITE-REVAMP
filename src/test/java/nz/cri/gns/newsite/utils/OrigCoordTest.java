@@ -72,15 +72,40 @@ public class OrigCoordTest {
             fail(ex.getMessage());
             return;
         }
-        assertEquals(outputPt.getY(), 177.6507469, 0.00001);
-        assertEquals(outputPt.getX(), -34.3252653, 0.00001);
-        inputPt.setLocation( -41.82246,172.03277);
+//        System.out.println("outputPt.getX() = " + outputPt.getX());
+//        System.out.println("outputPt.getY() = " + outputPt.getY());
+//        assertEquals(outputPt.getX(), -34.3252653, 0.00001);
+//        assertEquals(outputPt.getY(), 177.650747, 0.00001);
+////        assertEquals(outputPt.getY(), -34.32524702, 0.00001);
+//        inputPt.setLocation(172.03277, -41.82246);
+//        assertEquals(outputPt.getY(), 177.6507469, 0.00001);
+//        assertEquals(outputPt.getX(), -34.3252653, 0.00001);
+//        inputPt.setLocation( -41.82246,172.03277);
+//        try {
+//            outputPt = OrigCoord.toWGS84(4272, inputPt);
+//        } catch (Exception ex) {
+//            fail(ex.getMessage());
+//            return;
+//        }
+//        System.out.println("outputPt.getX() = " + outputPt.getX());
+//        System.out.println("outputPt.getY() = " + outputPt.getY());
+//        assertEquals(outputPt.getX(), 7.9688091254776054, 0.00005);
+//        assertEquals(outputPt.getY(), 138.17751493675618, 0.00005);
+        
+        //NZTM full coordinates "epsg":2193,  "format":"EN",  "easting":"1528677.3 ",  "northing":"5413457.7"
+        //When POSTed to site API Then stored latlong is 172.14641437,-41.42727092
+        inputPt.setLocation(1528677.3, 5413457.7);
         try {
-            outputPt = OrigCoord.toWGS84(4272, inputPt);
+            outputPt = OrigCoord.toWGS84(2193, inputPt);
         } catch (Exception ex) {
-            fail(ex.getMessage());
+            fail("Reason: " + ex.getMessage());
             return;
         }
+        System.out.println("outputPt.getX()2 = " + outputPt.getX());
+        System.out.println("outputPt.getY()2 = " + outputPt.getY());
+//        assertEquals(outputPt.getX(), 7.9688091254776054, 0.00005);
+//        assertEquals(outputPt.getY(), 138.17751493675618, 0.00005);
+ 
         assertEquals(outputPt.getY(), 172.0328969, 0.00005);
         assertEquals(outputPt.getX(), -41.82075326, 0.00005);
     }
