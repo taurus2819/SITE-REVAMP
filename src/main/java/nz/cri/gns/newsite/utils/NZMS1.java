@@ -6,6 +6,7 @@
 package nz.cri.gns.newsite.utils;
 
 import java.awt.geom.Point2D;
+import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 
 /**
  *
@@ -377,8 +378,63 @@ public class NZMS1 {
         "140080",
         "185080"};
 
-    public static Point2D getFullCoordinates(String mapsheet, double truncEast, double truncNorth) {
-
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        
+    public static Point2D getFullCoordinates(String mapsheet, int truncEast, int truncNorth) {
+        char island = mapsheet.charAt(0);
+        int sheet;
+        Point2D outputPt = new Point2D.Double();
+        try {
+            sheet = Integer.parseInt(mapsheet.substring(1));
+        } catch (Exception e) {
+            throw new InvalidOrigCoordinate("mapsheet format incorrect for this projection");
+        }
+        String grid;
+        switch (island) {
+            case 'N':
+                grid = swcnn[sheet - 1];
+                break;
+            case 'S':
+                grid = swcns[sheet - 1];
+                break;
+            default:
+                throw new InvalidOrigCoordinate("mapsheet must by N or S for this projection");
+        }
+        int wbnd = 100 * Integer.parseInt(grid.substring(1, 3));
+        int e1 = Integer.parseInt(grid.substring(0, 1));
+        int zef = 0;
+        if (wbnd<5200) {
+            if (truncEast < wbnd || truncEast > (wbnd + 4500)) {
+                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+            }
+        } else if (truncEast < wbnd && truncEast > (wbnd - 5500)) {
+                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+        }
+        if (truncEast < wbnd) {
+                zef = 100000;
+        }
+        double east = zef + e1*100000 + truncEast*10 * 1.0d;
+        int sbnd = 100 * Integer.parseInt(grid.substring(4));
+        int n1 = Integer.parseInt(grid.substring(3, 4));
+        int znf = 0;
+        if (sbnd>7000) {
+            if (truncNorth < sbnd && truncNorth > (sbnd - 7000)) {
+                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+            }
+            if (truncNorth<sbnd) {
+                znf = 100000;
+            }
+        } else {
+            if (truncNorth < sbnd || truncNorth > (sbnd + 3000)) {
+                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+            }
+            if (sbnd == 7000 && truncNorth == 0) {
+                znf = 100000;
+            }
+        }
+        double north = znf + n1*100000 + truncNorth*10 * 1.0d;                
+        if (island=='N' && (sheet==1 || sheet == 3)) {
+            north = north - 100000;
+        }
+        outputPt.setLocation(east, north);
+        return outputPt;
     }
 }
