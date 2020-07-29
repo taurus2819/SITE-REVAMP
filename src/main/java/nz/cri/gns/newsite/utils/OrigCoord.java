@@ -88,6 +88,9 @@ public class OrigCoord {
             case 2193:                        
                 outputPt = Topo50.getFullCoordinates(sheetCode, east, north);
                 break;
+            case 27200:                        
+                outputPt = NZMS260.getFullCoordinates(sheetCode, east, north);
+                break;
             default:
                 throw new InvalidOrigCoordinate("gridref epsg is not supported yet");
         }

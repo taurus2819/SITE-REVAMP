@@ -13,7 +13,7 @@ import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
  *
  * @author scaddenp
  */
-public class Topo50 {
+public class Topo50 extends MapSheet{
 
     static final String NZTMSL = "ABCDEFGHJKLMNPQRSTUVWXYZ";
     /**

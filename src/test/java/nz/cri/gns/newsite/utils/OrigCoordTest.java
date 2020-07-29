@@ -51,6 +51,12 @@ public class OrigCoordTest {
         outputPt = OrigCoord.parseGridRef(2193,"CC13/01518053");
         assertEquals(outputPt.getX(), 1301510, 0.001);
         assertEquals(outputPt.getY(), 4980530, 0.001);
+        outputPt = OrigCoord.parseGridRef(27200,"U20/967978");
+        assertEquals(outputPt.getX(), 2796700, 0.001);
+        assertEquals(outputPt.getY(), 6197800, 0.001);
+        outputPt = OrigCoord.parseGridRef(27200,"D49/23252591");
+        assertEquals(outputPt.getX(), 2123250, 0.001);
+        assertEquals(outputPt.getY(), 5325910, 0.001);
     }
     
     @Test

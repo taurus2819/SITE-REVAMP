@@ -9,7 +9,11 @@ import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
  * into full references
  * @author scaddenp
  */
-public class NZMS1 {
+public class NZMS1 extends MapSheet{
+
+    public NZMS1() {
+    }
+    
 /*
     The swcn arrars hold the leading values in easting (first 3) and northing of the south west corner of the mapsheet
     */
