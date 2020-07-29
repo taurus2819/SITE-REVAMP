@@ -29,34 +29,6 @@ public class NZMS260 {
         return (validMapSheets.indexOf(mapSheet) >= 0);
     }
 
-    private static boolean isTruncCoordOnSheet(String mapsheet, int truncEast, int truncNorth) {
-
-        int letter = mapsheet.toUpperCase().charAt(0) - 'A';
-        long sheetEBound = 1970000 + 40000 * letter;
-        long truncEBound = (sheetEBound / 10) % 10000;
-        if (truncEBound <= 6000) {
-            if (truncEast < truncEBound || truncEast > (truncEBound + 4000)) {
-                return false;
-            }
-        } else {
-            if (truncEast < truncEBound && truncEast > (truncEBound - 6000)) {
-                return false;
-            }
-        }
-        int number = Integer.parseInt(mapsheet.substring(1));
-        long sheetNBound = 6790000 - 30000 * number;
-        long truncNBound = (sheetNBound / 10) % 10000;
-        if (truncNBound <= 7000) {
-            if (truncNorth < truncNBound || truncNorth > (truncNBound + 3000)) {
-                return false;
-            }
-        } else {
-            if (truncNorth < truncNBound && truncNorth > (truncNBound - 7000)) {
-                return false;
-            }
-        }
-        return true;
-    }
     /**
      * Adds the given truncated measurement to the start northing/easting given.
      * eg 2090000 + 93400 = 2093400<br> eg 2090000 + 02000 = 2102000<br>
@@ -78,14 +50,34 @@ public class NZMS260 {
      * @return a Point2D x,y containing the full easting and northings
      */
     public static Point2D getFullCoordinates(String mapsheet, int truncEast, int truncNorth) {
-        if (!isValidMapSheet(mapsheet) || !isTruncCoordOnSheet(mapsheet,truncEast,truncNorth)) {
-            throw new InvalidOrigCoordinate("Coordinate not in correct geographic area");
+        if (!isValidMapSheet(mapsheet)) {
+            throw new InvalidOrigCoordinate("Not a valid mapsheet number");
         }
         int letter = mapsheet.toUpperCase().charAt(0) - 'A';
         long sheetEBound = 1970000 + 40000 * letter;
+        long truncEBound = (sheetEBound / 10) % 10000;
+        if (truncEBound <= 6000) {
+            if (truncEast < truncEBound || truncEast > (truncEBound + 4000)) {
+                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+            }
+        } else {
+            if (truncEast < truncEBound && truncEast > (truncEBound - 6000)) {
+                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+            }
+        }
         long easting = addToStart(sheetEBound, truncEast*10);
-        int number = Integer.parseInt(mapsheet.substring(1, mapsheet.length()));
+        int number = Integer.parseInt(mapsheet.substring(1));
         long sheetNBound = 6790000 - 30000 * number;
+        long truncNBound = (sheetNBound / 10) % 10000;
+        if (truncNBound <= 7000) {
+            if (truncNorth < truncNBound || truncNorth > (truncNBound + 3000)) {
+                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+            }
+        } else {
+            if (truncNorth < truncNBound && truncNorth > (truncNBound - 7000)) {
+                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+            }
+        }
         long northing = addToStart(sheetNBound, truncNorth*10);
         return new Point2D.Double(easting*1.0d,northing*1.0d);
     }
