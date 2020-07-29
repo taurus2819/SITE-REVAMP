@@ -80,10 +80,16 @@ public class OrigCoord {
         } catch ( Exception e) {
             throw new InvalidOrigCoordinate("Non-numeric grid ref");            
         }
-        if (epsg == 27292 || epsg == 27291) {
-            outputPt = NZMS1.getFullCoordinates(sheetCode, east, north);            
-        } else {
-            throw new InvalidOrigCoordinate("gridref epsg is not supported yet");                        
+        switch (epsg) {
+            case 27292:
+            case 27291:
+                outputPt = NZMS1.getFullCoordinates(sheetCode, east, north);
+                break;
+            case 2193:                        
+                outputPt = Topo50.getFullCoordinates(sheetCode, east, north);
+                break;
+            default:
+                throw new InvalidOrigCoordinate("gridref epsg is not supported yet");
         }
         return outputPt;
     }

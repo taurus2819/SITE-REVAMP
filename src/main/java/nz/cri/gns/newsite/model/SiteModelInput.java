@@ -15,7 +15,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- *
+ * This class is facade on the SiteModel used for convenience of client for POST and PUT
  * @author scaddenp
  */
 public class SiteModelInput {
@@ -162,7 +162,17 @@ public class SiteModelInput {
     public void setFormat(String format) {
         this.format = format;
     }
-    
+/**
+ * Perform all necessary transformations on the SiteModelInput object to emit a valid SiteModel
+ * This involves creating the OrigCoord structure, and converting input coordinates into
+ * WGS84 lat/long for the SiteModel.
+ * @return
+ * @throws InvalidLatLonFormat
+ * @throws InvalidOrigCoordinate
+ * @throws FactoryException
+ * @throws MismatchedDimensionException
+ * @throws TransformException 
+ */    
     public SiteModel toSiteModel() throws InvalidLatLonFormat,InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException{
         siteModel.setOrigCoord(OrigCoord.createOrigFormatJson(epsg,format,gridref,latitude,longitude, easting, northing));
         Point2D inputPt = new Point2D.Double();

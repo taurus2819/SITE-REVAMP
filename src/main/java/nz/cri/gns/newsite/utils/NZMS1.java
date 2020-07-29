@@ -1,19 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package nz.cri.gns.newsite.utils;
 
 import java.awt.geom.Point2D;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 
 /**
- *
+ * Utility class for converting NZMS1 (North and South Island national Yard grids, EPSG 27291 and 27292)
+ * into full references
  * @author scaddenp
  */
 public class NZMS1 {
-
+/*
+    The swcn arrars hold the leading values in easting (first 3) and northing of the south west corner of the mapsheet
+    */
     static final String[] swcnn = {
         "085940",
         "030940",
@@ -378,6 +377,13 @@ public class NZMS1 {
         "140080",
         "185080"};
 
+    /**
+     * Function to convert NZMS1 truncated coordinates derived from a grid reference into full coordinates
+     * @param mapsheet The mapsheet reference. eg N34 or S101 (S is south island, N is north island)
+     * @param truncEast the 4-figure truncated easting value (3 figure truncated eastings should be multiplied by 10 before passing to this routine)
+     * @param truncNorth the 4-figure truncated northing value (3 figure truncated northings should be multiplied by 10 before passing to this routine)
+     * @return a Point2D x,y containing the full easting and northings
+     */
     public static Point2D getFullCoordinates(String mapsheet, int truncEast, int truncNorth) {
         char island = mapsheet.charAt(0);
         int sheet;
