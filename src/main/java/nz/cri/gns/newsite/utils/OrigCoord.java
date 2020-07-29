@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
+import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 import org.gbif.common.parsers.core.OccurrenceParseResult;
 import org.gbif.common.parsers.core.ParseResult;
 import org.gbif.common.parsers.geospatial.CoordinateParseUtils;
@@ -31,8 +32,53 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class OrigCoord {
 
-    public static Point2D parseGridRef(int epsg, String gridref) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public static Point2D parseGridRef(int epsg, String gridref) throws InvalidOrigCoordinate{
+        // poor mans parser
+        String sheetCode="";
+        String ref="";
+        int j=0;
+        Point2D outputPt;
+        gridref = gridref.trim();
+        for (int i=0; i<3; i++) {
+            if (Character.isDigit(gridref.charAt(i))) {                
+                j = i;
+                break;
+            }
+        }
+        if (j==0) {
+            throw new InvalidOrigCoordinate("No map sheet on grid reference");
+        }
+        for (int k=j; k<j+4; k++) {
+            if (!Character.isDigit(gridref.charAt(k))) {
+               sheetCode = gridref.substring(0,k);
+               ref = gridref.substring(k+1);
+               break;
+            }
+        }
+        if (ref.isEmpty()) {
+            throw new InvalidOrigCoordinate("No delimited between mapsheet and ref in gridref");
+        }
+        j = ref.length();
+        int east, north;
+        try {
+        if (j==6) {
+            east = Integer.parseInt(ref.substring(0,3))*10;
+            north = Integer.parseInt(ref.substring(3))*10;
+        } else if (j==8) {
+            east = Integer.parseInt(ref.substring(0,4));
+            north = Integer.parseInt(ref.substring(4));            
+        } else {
+            throw new InvalidOrigCoordinate("No delimited between mapsheet and ref in gridref");            
+        }
+        } catch ( Exception e) {
+            throw new InvalidOrigCoordinate("Non-numeric grid ref");            
+        }
+        if (epsg == 27292 || epsg == 27291) {
+            outputPt = NZMS1.getFullCoordinates(sheetCode, east, north);            
+        } else {
+            throw new InvalidOrigCoordinate("gridref epsg is not supported yet");                        
+        }
+        return outputPt;
     }
     
     public static class OrigCoordDetail {

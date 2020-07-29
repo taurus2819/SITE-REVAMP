@@ -38,6 +38,19 @@ public class OrigCoordTest {
     }
 
     @Test
+    public void testParseGridref() {
+        Point2D outputPt = OrigCoord.parseGridRef(27291,"N108/57899883");
+        assertEquals(outputPt.getX(), 157890, 0.001);
+        assertEquals(outputPt.getY(), 398830, 0.001);
+        outputPt = OrigCoord.parseGridRef(27291,"N1 151494");
+        assertEquals(outputPt.getX(), 15100, 0.001);
+        assertEquals(outputPt.getY(), 949400, 0.001);
+        outputPt = OrigCoord.parseGridRef(27292,"S33/334640");
+        assertEquals(outputPt.getX(), 633400, 0.001);
+        assertEquals(outputPt.getY(), 764000, 0.001);
+    }
+    
+    @Test
     public void testParseLatLng() {
         assertDMS("2°49'N", "131°47'E", 2.816667d, 131.783333d);
 
