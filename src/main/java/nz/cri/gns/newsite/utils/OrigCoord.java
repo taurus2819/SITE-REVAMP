@@ -32,6 +32,13 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class OrigCoord {
 
+    /**
+     * Parse a general grid reference into full easting northing values in the given epsg.
+     * @param epsg gridref projection to work with. Currently supported are NZ260 (27200), NZTopo50 (2193) and NZ national yard (27291 and 27292)
+     * @param gridref a gridrefernce eg N112/349211 or CE45 34567812 or D20/817456. It can be 6 or 8 figure easting. Needs a single character, non-numeric delimiter between map sheet and grid ref
+     * @return A point2D containing the full easting (x) and northing (y).
+     * @throws InvalidOrigCoordinate 
+     */
     public static Point2D parseGridRef(int epsg, String gridref) throws InvalidOrigCoordinate{
         // poor mans parser
         String sheetCode="";
@@ -251,7 +258,12 @@ public class OrigCoord {
             return null;
         }
     }
-    
+    /**
+     * Parse a character lat/long coordinate in a variety of DMS or DM formats into decimal degrees
+     * @param latitude Character representation of latitude (eg 34 21' 45.23"S)
+     * @param longitude Character representation of longitude ( W 175 46.4345 )
+     * @return A point2D with decimal latitude (y) and longitude (x)
+     */
     public static Point2D parseLatLng(String latitude, String longitude) {
       OccurrenceParseResult<LatLng> ll = CoordinateParseUtils.parseLatLng(latitude,longitude);
       if (ll.getConfidence() != ParseResult.CONFIDENCE.DEFINITE && ll.getConfidence() != ParseResult.CONFIDENCE.PROBABLE) {
@@ -261,6 +273,15 @@ public class OrigCoord {
       return latlng;
     }
     
+    /**
+     * Convert a coordinate in whatever coordinate reference system into a lat/long in WGS84
+     * @param epsg The EPSG Code for the projection
+     * @param inputPt easting (X) / Northing (Y) or longitude (X), Latitude (Y)
+     * @return Point2D with latitude (Y) and longitude (X) in WGS84 datum
+     * @throws FactoryException
+     * @throws MismatchedDimensionException
+     * @throws TransformException 
+     */
     public static Point2D toWGS84(int epsg, Point2D inputPt) throws FactoryException, MismatchedDimensionException, TransformException {
        CoordinateReferenceSystem epsg4326 = CRS.decode("EPSG:4326");
        CoordinateReferenceSystem crs = CRS.decode(String.format("EPSG:%04d", epsg));
