@@ -22,6 +22,12 @@ public class NZMS1Test {
         Point2D outputPt = NZMS1.getFullCoordinates("N108", 5789, 9883);
         assertEquals(outputPt.getX(), 157890, 0.001);
         assertEquals(outputPt.getY(), 398830, 0.001);
+        outputPt = NZMS1.getFullCoordinates("N1", 1510, 4940);
+        assertEquals(outputPt.getX(), 15100, 0.001);
+        assertEquals(outputPt.getY(), 949400, 0.001);
+        outputPt = NZMS1.getFullCoordinates("S33", 3340, 6400);
+        assertEquals(outputPt.getX(), 633400, 0.001);
+        assertEquals(outputPt.getY(), 764000, 0.001);
     }
     
 }

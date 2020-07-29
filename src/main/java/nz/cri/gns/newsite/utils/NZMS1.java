@@ -412,6 +412,9 @@ public class NZMS1 {
                 zef = 100000;
         }
         double east = zef + e1*100000 + truncEast*10 * 1.0d;
+        if (island=='N' && (sheet==1 || sheet == 3)) {
+            east = east - 100000;
+        }
         int sbnd = 100 * Integer.parseInt(grid.substring(4));
         int n1 = Integer.parseInt(grid.substring(3, 4));
         int znf = 0;
@@ -431,9 +434,6 @@ public class NZMS1 {
             }
         }
         double north = znf + n1*100000 + truncNorth*10 * 1.0d;                
-        if (island=='N' && (sheet==1 || sheet == 3)) {
-            north = north - 100000;
-        }
         outputPt.setLocation(east, north);
         return outputPt;
     }
