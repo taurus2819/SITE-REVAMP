@@ -9,7 +9,7 @@ import java.awt.geom.Point2D;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 
 /**
- *
+ * Utility class for converting NZMS260 (New Zealand Map Grid, NZMG, EPSG 27200) gridrefs into full Easting northing
  * @author scaddenp
  */
 public class NZMS260 extends MapSheet{

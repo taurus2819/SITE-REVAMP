@@ -6,7 +6,8 @@
 package nz.cri.gns.newsite.exception;
 
 /**
- *
+ * Exception to trigger when error are found in the original coordinate components of
+ * an input record.
  * @author scaddenp
  */
 public class InvalidOrigCoordinate  extends  RuntimeException{

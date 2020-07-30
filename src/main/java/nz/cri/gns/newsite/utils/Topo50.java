@@ -9,7 +9,7 @@ import java.awt.geom.Point2D;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 
 /**
- * Utility class for converting NZTopo50 gridrefs into full Easting northing
+ * Utility class for converting NZTopo50 (NZ Transverse Mercator, NZTM, EPSG 2193)  gridrefs into full Easting northing
  *
  * @author scaddenp
  */
