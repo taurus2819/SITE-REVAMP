@@ -94,13 +94,9 @@ public class OrigCoordTest {
             fail(ex.getMessage());
             return;
         }
-        assertEquals(outputPt.getX(), -34.3252653, 0.00001);
-        assertEquals(outputPt.getY(), 177.650747, 0.00001);
-//        assertEquals(outputPt.getY(), -34.32524702, 0.00001);
-        inputPt.setLocation(172.03277, -41.82246);
-        assertEquals(outputPt.getY(), 177.6507469, 0.00001);
-        assertEquals(outputPt.getX(), -34.3252653, 0.00001);
-        inputPt.setLocation( -41.82246,172.03277);
+        assertEquals(outputPt.getX(), -34.32524701, 0.00001);
+        assertEquals(outputPt.getY(), 177.65067414, 0.00001);
+        inputPt.setLocation( 172.03277,-41.82246);
         try {
             outputPt = OrigCoord.toWGS84(4272, inputPt);
         } catch (Exception ex) {
@@ -109,8 +105,8 @@ public class OrigCoordTest {
         }
         System.out.println("outputPt.getX() = " + outputPt.getX());
         System.out.println("outputPt.getY() = " + outputPt.getY());
-        assertEquals(outputPt.getX(), 7.9688091254776054, 0.00005);
-        assertEquals(outputPt.getY(), 138.17751493675618, 0.00005);
+        assertEquals(outputPt.getX(), -41.82072455, 0.00005);
+        assertEquals(outputPt.getY(), 172.03292203, 0.00005);
         
         //NZTM full coordinates "epsg":2193,  "format":"EN",  "easting":"1528677.3 ",  "northing":"5413457.7"
         //When POSTed to site API Then stored latlong is 172.14641437,-41.42727092

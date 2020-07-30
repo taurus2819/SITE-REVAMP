@@ -292,6 +292,7 @@ public class OrigCoord {
      * @throws TransformException 
      */
     public static Point2D toWGS84(int epsg, Point2D inputPt) throws FactoryException, MismatchedDimensionException, TransformException {
+        
        CoordinateReferenceSystem epsg4326 = CRS.decode("EPSG:4326");
        CoordinateReferenceSystem crs = CRS.decode(String.format("EPSG:%04d", epsg));
        MathTransform transform = CRS.findMathTransform(crs,epsg4326, true);
