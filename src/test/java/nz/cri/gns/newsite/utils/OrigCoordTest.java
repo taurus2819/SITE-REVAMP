@@ -1,10 +1,13 @@
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package nz.cri.gns.newsite.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.geom.Point2D;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -124,6 +127,21 @@ public class OrigCoordTest {
  
         assertEquals(outputPt.getY(), 172.14641437, 0.00005);
         assertEquals(outputPt.getX(), -41.42727085, 0.00005);
+    }
+    
+    @Test
+    public void testConvertToJson() throws JsonProcessingException {
+        /*
+        Scenario: GD49 latlong in DMS Given OrigCoords of: "origCoords":{"epsg":4272,"format":"DMS","longitude":"176 34' 23.01E","latitude":"41 02' 42.51S" } When POSTed to site API  Then stored latlong is 176.57326761,-41.04340655
+        Scenario: WGS84 latlong in DD Given OrigCoords of: "origCoords":{"epsg":4326,"format":"DD","longitude":"172.44","latitude":"-45.5675" } When POSTed to site API  Then stored latlong is 172.44,-45.5675
+        Scenario: NZTM full coordinates Given OrigCoords of: "origCoords":{"epsg":2193,"format":"EN","easting":"1528677.3","northing":"5413457.7" } When POSTed to site API  Then stored latlong is 172.14641437,-41.42727092
+        Scenario: NZMG grid reference Given OrigCoords of: "origCoords":{"epsg":27200,"format":"gridref","gridReference":"U20/962872" } When POSTed to site API  Then stored latlong is 176.32694848,-39.47196732  
+        */  
+//        equals("{\"epsg\":27200, \"format\":\"EN\", \"easting\":2696700, \"northing\":5953800}"));
+        JsonNode jsonNode = OrigCoord.createOrigFormatJson(4326, "DD", "", "-45.5675", "172.44", 0, 0);
+//        assert(OrigCoord.createOrigFormatJson(4326, "DD", "", "-45.5675", "172.44", 0, 0).equals(new ObjectMapper.readtree("{\"epsg\":4326,\"format\":\"DD\",\"longitude\":\"172.44\",\"latitude\":\"-45.5675\" }")));
+//        assert(jsonNode.get("epsg").equals(4326));
+        System.out.println("JSON NODE =  " + jsonNode);
     }
 
 }

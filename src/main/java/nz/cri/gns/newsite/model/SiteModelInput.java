@@ -5,6 +5,7 @@
  */
 package nz.cri.gns.newsite.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.awt.geom.Point2D;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
@@ -173,7 +174,7 @@ public class SiteModelInput {
  * @throws MismatchedDimensionException
  * @throws TransformException 
  */    
-    public SiteModel toSiteModel() throws InvalidLatLonFormat,InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException{
+    public SiteModel toSiteModel() throws InvalidLatLonFormat,InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException{
         siteModel.setOrigCoord(OrigCoord.createOrigFormatJson(epsg,format,gridref,latitude,longitude, easting, northing));
         Point2D inputPt = new Point2D.Double();
         Point2D latlng;
