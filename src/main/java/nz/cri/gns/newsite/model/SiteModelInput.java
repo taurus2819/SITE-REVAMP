@@ -32,6 +32,29 @@ public class SiteModelInput {
     public SiteModelInput() {
         this.siteModel = new SiteModel();
     }
+
+    public SiteModelInput(String siteName, Integer methodId, Double accuracy, String Directions, 
+               Double height, Integer heightMethodId, Double heightAccuracy, String countyCode, String comment,
+               int epsg, String gridref, Double easting, Double northing, String latitude, String longitude, String format) {
+        this.siteModel = new SiteModel();
+        this.siteModel.setSiteName(siteName);
+        this.siteModel.setMethodId(methodId);
+        this.siteModel.setAccuracy(accuracy);
+        this.siteModel.setDirections(Directions);
+        this.siteModel.setHeight(height);
+        this.siteModel.setHeightMethodId(heightMethodId);
+        this.siteModel.setHeightAccuracy(heightAccuracy);
+        this.siteModel.setCountryCode(countyCode);
+        this.siteModel.setComment(comment);
+        this.epsg = epsg;
+        this.gridref = gridref;
+        this.easting = easting;
+        this.northing = northing;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.format = format;
+    }
+    
     
     public String getSiteName() {
         return siteModel.getSiteName();
@@ -178,12 +201,13 @@ public class SiteModelInput {
         siteModel.setOrigCoord(OrigCoord.createOrigFormatJson(epsg,format,gridref,latitude,longitude, easting, northing));
         Point2D inputPt = new Point2D.Double();
         Point2D latlng;
+        format = format.toUpperCase();
         if (format.equals("EN")) {
             inputPt.setLocation(easting,northing);
             latlng = OrigCoord.toWGS84(epsg, inputPt);
         } else if (format.startsWith("D")) {
             latlng = OrigCoord.parseLatLng(latitude, longitude);
-        } else if (format.equals("gridRef")) {
+        } else if (format.equals("GRIDREF")) {
             // deal with grid ref
             inputPt = OrigCoord.parseGridRef(epsg,gridref);
             latlng = OrigCoord.toWGS84(epsg, inputPt);
