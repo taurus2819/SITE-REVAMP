@@ -136,12 +136,13 @@ public class OrigCoordTest {
         Scenario: WGS84 latlong in DD Given OrigCoords of: "origCoords":{"epsg":4326,"format":"DD","longitude":"172.44","latitude":"-45.5675" } When POSTed to site API  Then stored latlong is 172.44,-45.5675
         Scenario: NZTM full coordinates Given OrigCoords of: "origCoords":{"epsg":2193,"format":"EN","easting":"1528677.3","northing":"5413457.7" } When POSTed to site API  Then stored latlong is 172.14641437,-41.42727092
         Scenario: NZMG grid reference Given OrigCoords of: "origCoords":{"epsg":27200,"format":"gridref","gridReference":"U20/962872" } When POSTed to site API  Then stored latlong is 176.32694848,-39.47196732  
-        */  
-//        equals("{\"epsg\":27200, \"format\":\"EN\", \"easting\":2696700, \"northing\":5953800}"));
-        JsonNode jsonNode = OrigCoord.createOrigFormatJson(4326, "DD", "", "-45.5675", "172.44", null, null);
-//        assert(OrigCoord.createOrigFormatJson(4326, "DD", "", "-45.5675", "172.44", 0, 0).equals(new ObjectMapper.readtree("{\"epsg\":4326,\"format\":\"DD\",\"longitude\":\"172.44\",\"latitude\":\"-45.5675\" }")));
-//        assert(jsonNode.get("epsg").equals(4326));
-        System.out.println("JSON NODE =  " + jsonNode);
+        */         
+        ObjectMapper mapper = new ObjectMapper();
+//        JsonNode jsonNode = OrigCoord.createOrigFormatJson(27200, "gridRef", "U20/962872", "", "", null, null);
+//        System.out.println("JSON NODE =  " + jsonNode);
+        assert(OrigCoord.createOrigFormatJson(4326, "DD", "", "-45.5675", "172.44", null, null).equals(mapper.readTree("{\"epsg\":4326,\"format\":\"DD\",\"longitude\":\"172.44\",\"latitude\":\"-45.5675\"}")));
+        assert(OrigCoord.createOrigFormatJson(2193, "EN", "", "", "", 1528677.3, 5413457.7).equals(mapper.readTree("{\"epsg\":2193,\"format\":\"EN\",\"easting\":1528677.3,\"northing\":5413457.7}")));
+        assert(OrigCoord.createOrigFormatJson(27200, "gridRef", "U20/962872", "", "", null, null).equals(mapper.readTree("{\"epsg\":27200,\"format\":\"gridRef\",\"gridReference\":\"U20/962872\"}")));
     }
 
 }

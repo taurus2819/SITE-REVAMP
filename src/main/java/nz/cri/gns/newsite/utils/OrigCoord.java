@@ -322,8 +322,7 @@ public class OrigCoord {
         ObjectMapper mapper = new ObjectMapper();
         String formatTest = format.toUpperCase();
         if (formatTest.equals("EN")) {
-//            String jsonString = "{\"epsg\":2193,\"format\":\"EN\",\"easting\":\"1528677.3\",\"northing\":\"5413457.7\" }";
-            String jsonString = "{\"epsg\":" + epsg + ",\"format\":\"EN\",\"easting\":\"" + easting + "\",\"northing\":\"" + northing + "\" }";            
+            String jsonString = "{\"epsg\":" + epsg + ",\"format\":\"EN\",\"easting\":" + easting + ",\"northing\":" + northing + " }"; 
             origCoord = mapper.readTree(jsonString);
         } else if (formatTest.startsWith("DD")) {
             String jsonString = "{\"epsg\":" + epsg + ",\"format\":\"DD\",\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\" }";            
@@ -338,7 +337,6 @@ public class OrigCoord {
         } else {
             throw new InvalidOrigCoordinate("Not a valid format");
         }
-        System.out.println("OrigCoord = " + origCoord);
-        return origCoord; //TODO    
+        return origCoord;    
     }
 }
