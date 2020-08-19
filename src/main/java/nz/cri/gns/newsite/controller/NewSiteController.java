@@ -7,9 +7,12 @@ package nz.cri.gns.newsite.controller;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
+import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
+import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +27,14 @@ import nz.cri.gns.newsite.service.NewSiteService;
 import nz.cri.gns.newsite.utils.ConversionToWgs84;
 import nz.cri.gns.newsite.utils.OrigCoord;
 import org.json.JSONObject;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
+@RequestMapping("/api/v1")
 public class NewSiteController {
 
     @Autowired
@@ -42,10 +51,10 @@ public class NewSiteController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/site")
-    public SiteModel addSite(@RequestBody SiteModelInput siteInput, HttpServletResponse response) {
-        try {
-            SiteModel site = siteInput.toSiteModel();
-            site = newSiteService.insert(site);
+    public SiteModel addSite(@RequestBody SiteModelInput siteInput, HttpServletResponse response) throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
+//    try {
+        SiteModel site = siteInput.toSiteModel();
+        site = newSiteService.insert(site);
 /*            if (site.getLat() == 0.0 && site.getLon() == 0.0) {
                 String epsgFormatInfo = OrigCoord.getEpsgInfoJsonString(site.getOrigSystemId(), site.getOrigCoord());
                 JSONObject obj = new JSONObject(epsgFormatInfo);
@@ -59,15 +68,16 @@ public class NewSiteController {
                     site.setLon(llToWgs84.getConvertedLon());
                     site = updateSite(site, site.getSiteId());
                 }
-            }*/
-           response.setStatus(HttpServletResponse.SC_CREATED);
-           return site;
-        } catch (Exception e) {
-            // set status
-            return null;
-        }
+            }
+*/
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        return site;
+//        } catch (Exception e) {
+//            throw new InvalidOrigCoordinate("Not a valid format#$%");
+//        }
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = RequestMethod.PUT, value = "/site/{id}")
     public SiteModel updateSite(@RequestBody SiteModel site, @PathVariable int id) {
         final SiteModel siteById = newSiteService.find(id);

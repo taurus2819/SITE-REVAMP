@@ -5,11 +5,15 @@
  */
 package nz.cri.gns.newsite.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 /**
  * Exception to trigger when error are found in the original coordinate components of
  * an input record.
  * @author scaddenp
  */
+@ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
 public class InvalidOrigCoordinate  extends  RuntimeException{
 
     public InvalidOrigCoordinate(String message) {
