@@ -4,7 +4,6 @@ package nz.cri.gns.newsite.model;
  *
  * @author sitikond
  */
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import javax.persistence.Column;
@@ -15,12 +14,9 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import org.springframework.core.style.ToStringCreator;
 
@@ -61,9 +57,15 @@ public class SiteModel {
     @Column(name = "orig_system_id")
     private Integer origSystemId; 	//38
 
+    /*
+    Scenario: GD49 latlong in DMS Given OrigCoords of: "origCoords":{"epsg":4272,"format":"DMS","longitude":"176 34' 23.01E","latitude":"41 02' 42.51S" } 
+    Scenario: WGS84 latlong in DD Given OrigCoords of: "origCoords":{"epsg":4326,"format":"DD","longitude":"172.44","latitude":"-45.5675" }
+    Scenario: NZTM full coordinates Given OrigCoords of: "origCoords":{"epsg":2193,"format":"EN","easting":"1528677.3","northing":"5413457.7" } 
+    Scenario: NZMG grid reference Given OrigCoords of: "origCoords":{"epsg":27200,"format":"gridref","gridReference":"U20/962872" } 
+    */
     @Type(type = "json")
     @Column(name = "orig_coord", columnDefinition = "json")
-    private JsonNode origCoord;	//"["A29","007","500"]"
+    private JsonNode origCoord;	
     
     @Column(name = "height")
     private Double height;		//44
