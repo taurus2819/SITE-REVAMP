@@ -8,9 +8,12 @@ package nz.cri.gns.newsite.controller;
 //import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
+import nz.cri.gns.newsite.audits.AuditLog;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 
@@ -70,6 +73,14 @@ public class NewSiteController {
                 }
             }
 */
+        int newlyCreatedSiteId = site.getSiteId();
+        JSONObject logTimestampMsg;
+        logTimestampMsg = new JSONObject();
+        logTimestampMsg.put("timestamp", new Date());
+        logTimestampMsg.put("info",site.getAuditLogInfoMsg());
+        ObjectMapper mapper = new ObjectMapper();
+        AuditLog newAuditLog = new AuditLog(newlyCreatedSiteId, mapper.readTree(logTimestampMsg.toString())); //, site);
+        site.addAuditLog(newAuditLog);
         response.setStatus(HttpServletResponse.SC_CREATED);
         return site;
 //        } catch (Exception e) {

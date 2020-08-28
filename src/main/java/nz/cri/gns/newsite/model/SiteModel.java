@@ -6,14 +6,23 @@ package nz.cri.gns.newsite.model;
  */
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
+import nz.cri.gns.newsite.audits.AuditLog;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
@@ -25,7 +34,9 @@ import org.springframework.core.style.ToStringCreator;
 @TypeDefs({
     @TypeDef(name = "json", typeClass = JsonBinaryType.class)
 })
-public class SiteModel {
+public class SiteModel implements Serializable{
+    
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "site_id", updatable = false)
     @NotNull
@@ -89,13 +100,20 @@ public class SiteModel {
 //    @Column(name = "shape")
 //    private String shape;
     
+    @OneToMany(cascade = CascadeType.ALL, targetEntity=AuditLog.class, orphanRemoval = true)      //mappedBy = "sitemodel",
+    @JoinColumn(name = "site_id")
+    private List<AuditLog> auditLogs = new ArrayList<>();
+   
+    @Transient
+    private String auditLogInfoMsg;
+    
     public SiteModel() {
 
     }
 
     public SiteModel(String siteName, double lat, double lon, Integer methodId, Double accuracy,
             String directions, Integer origSystemId, JsonNode origCoord, Double height, Integer heightMethodId,
-            Double heightAccuracy, String countryCode, Integer flag, String comment /*, String shape*/) {
+            Double heightAccuracy, String countryCode, Integer flag, String comment, String auditlogInfoMsg ){  //   /*, String shape*/, String auditlogInfoMsg) {
         super();
         this.siteName = siteName;
         this.lat = lat;
@@ -112,6 +130,7 @@ public class SiteModel {
         this.flag = flag;
         this.comment = comment;
 //        this.shape = shape;
+        this.auditLogInfoMsg = auditlogInfoMsg;
     }
 
     public Integer getSiteId() {
@@ -180,14 +199,6 @@ public class SiteModel {
 
     public void setOrigCoord(JsonNode origCoord) {
         this.origCoord = origCoord;
-//        if(origCoord.startsWith("{")){
-//            //treat this as a JSONObject
-//            String json = "...";
-//            JSONObject obj = new JSONObject(json);
-//        }else if(origCoord.startsWith("[")){        
-//            JSONArray arr = new JSONArray(origCoord);
-//            this.origCoord = arr.toString();
-//        }        
     }
     
     public Double getHeight() {
@@ -245,6 +256,31 @@ public class SiteModel {
 //    public void setShape(String shape) {
 //        this.shape = shape;
 //    }
+
+    public String getAuditLogInfoMsg() {
+        return "This a test for auditlog"; //auditLogInfoMsg;
+    }
+
+    public void setAuditLogInfoMsg(String auditLogInfoMsg) {
+        this.auditLogInfoMsg = auditLogInfoMsg;
+    }
+    
+    public List<AuditLog> getAuditLogs() {
+        return auditLogs;
+    }
+
+    public void setAuditLogs(List<AuditLog> auditLogs) {
+        this.auditLogs = auditLogs;
+    }
+    
+    public boolean addAuditLog(AuditLog auditLogInfo){
+//        auditLogInfo.setSiteModel(this);
+        return getAuditLogs().add(auditLogInfo);
+    }
+    
+    public void removeAuditLogs(){
+        
+    }
     
     @Override
     public String toString(){
