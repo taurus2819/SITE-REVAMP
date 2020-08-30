@@ -26,9 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.model.SiteModelInput;
+import nz.cri.gns.newsite.service.AuditLogService;
 import nz.cri.gns.newsite.service.NewSiteService;
 import nz.cri.gns.newsite.utils.ConversionToWgs84;
 import nz.cri.gns.newsite.utils.OrigCoord;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
@@ -42,6 +44,9 @@ public class NewSiteController {
 
     @Autowired
     NewSiteService newSiteService;
+    
+    @Autowired
+    AuditLogService auditLogService;
 
     @RequestMapping("/sites/origsysid/{oid}")
     public List<SiteModel> getAllSites(@PathVariable int oid) {
@@ -74,13 +79,9 @@ public class NewSiteController {
             }
 */
         int newlyCreatedSiteId = site.getSiteId();
-        JSONObject logTimestampMsg;
-        logTimestampMsg = new JSONObject();
-        logTimestampMsg.put("timestamp", new Date());
-        logTimestampMsg.put("info",site.getAuditLogInfoMsg());
-        ObjectMapper mapper = new ObjectMapper();
-        AuditLog newAuditLog = new AuditLog(newlyCreatedSiteId, mapper.readTree(logTimestampMsg.toString())); //, site);
+        AuditLog newAuditLog = auditLogCreator(site, newlyCreatedSiteId);
         site.addAuditLog(newAuditLog);
+        auditLogService.insert(newAuditLog);
         response.setStatus(HttpServletResponse.SC_CREATED);
         return site;
 //        } catch (Exception e) {
@@ -88,9 +89,19 @@ public class NewSiteController {
 //        }
     }
 
+    private AuditLog auditLogCreator(SiteModel site, int newlyCreatedSiteId) throws JsonProcessingException, JSONException {
+        JSONObject logTimestampMsg;
+        logTimestampMsg = new JSONObject();
+        logTimestampMsg.put("timestamp", new Date());
+        logTimestampMsg.put("info",site.getAuditLogInfoMsg());
+        ObjectMapper mapper = new ObjectMapper();
+        AuditLog newAuditLog = new AuditLog(newlyCreatedSiteId, mapper.readTree(logTimestampMsg.toString())); //, site);
+        return newAuditLog;
+    }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = RequestMethod.PUT, value = "/site/{id}")
-    public SiteModel updateSite(@RequestBody SiteModel site, @PathVariable int id) {
+    public SiteModel updateSite(@RequestBody SiteModel site, @PathVariable int id) throws JsonProcessingException {
         final SiteModel siteById = newSiteService.find(id);
         siteById.setSiteName(site.getSiteName());
         siteById.setLat(site.getLat());
@@ -105,7 +116,10 @@ public class NewSiteController {
         siteById.setHeightAccuracy(site.getHeightAccuracy());
         siteById.setCountryCode(site.getCountryCode());
         siteById.setFlag(site.getFlag());
-        siteById.setComment(site.getComment());
+        siteById.setComment(site.getComment());        
+        AuditLog newAuditLog = auditLogCreator(siteById, id);
+        siteById.addAuditLog(newAuditLog);
+        auditLogService.insert(newAuditLog);
         newSiteService.update(siteById);
         return siteById;
     }

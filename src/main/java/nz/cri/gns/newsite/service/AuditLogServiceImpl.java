@@ -29,7 +29,7 @@ public class AuditLogServiceImpl implements AuditLogService{
     @Override
     public AuditLog insert(AuditLog a) {
         AuditLog auditlog = auditLogRespository.save(a);
-        logger.info("new Auditlo = " + auditlog.toString());
+//        logger.info("new Auditlo = " + auditlog.toString());
         return auditlog;
     }
 

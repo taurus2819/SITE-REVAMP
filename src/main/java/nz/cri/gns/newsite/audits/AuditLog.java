@@ -5,6 +5,7 @@
  */
 package nz.cri.gns.newsite.audits;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.io.Serializable;
@@ -38,6 +39,7 @@ public class AuditLog implements Serializable{
     
     private static final long serialVersionUID = 1L;
     
+    @JsonIgnore
     @Column(name = "audit_log_id", updatable = false)
     @NotNull
     @Id
@@ -52,9 +54,13 @@ public class AuditLog implements Serializable{
     @Column(name = "log_info", columnDefinition = "json")
     private JsonNode logInfo;	    //example value  {"timestamp": "20200810", "loginfo":"Site updatd to new coords"}
     
+    @JsonIgnore
     @ManyToOne(optional=false, fetch = FetchType.LAZY)
     @JoinColumn(name = "site_id", insertable=false, updatable=false)
     private SiteModel siteModel;
+
+    public AuditLog() {
+    }   
     
     public AuditLog(Integer siteId, JsonNode logInfo){ //, SiteModel siteModel) {
         super();

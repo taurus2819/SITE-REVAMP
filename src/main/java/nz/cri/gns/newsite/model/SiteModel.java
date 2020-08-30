@@ -4,6 +4,7 @@ package nz.cri.gns.newsite.model;
  *
  * @author sitikond
  */
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.io.Serializable;
@@ -104,6 +105,7 @@ public class SiteModel implements Serializable{
     @JoinColumn(name = "site_id")
     private List<AuditLog> auditLogs = new ArrayList<>();
    
+    @JsonIgnore
     @Transient
     private String auditLogInfoMsg;
     
