@@ -21,7 +21,7 @@ public class SiteModelInputTest {
     public void testToSiteModel() throws Exception {
         SiteModelInput smi = new SiteModelInput("test",3,null,"somewhere", 
                null, null, 3.5, "NZ", "testing",
-               27200, "U20/967978", null, null, null, null,"GridRef");
+               27200, "U20/967978", null, null, null, null,"GridRef", "Unit test");
         SiteModel sm = smi.toSiteModel();
         assertEquals(sm.getLat(), -39.37637937, 0.0001);
         assertEquals(sm.getLon(), 176.32814751, 0.0001);

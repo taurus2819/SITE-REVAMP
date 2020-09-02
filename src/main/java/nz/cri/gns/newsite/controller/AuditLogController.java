@@ -25,7 +25,7 @@ public class AuditLogController {
     @Autowired
     AuditLogService auditLogService;
     
-    @RequestMapping("/sites/auditlogs/{siteid}")
+    @RequestMapping("/sites/{siteid}/auditlogs")
     public List<AuditLog> getAllAuditLogs(@PathVariable int siteid) {
         return auditLogService.findAuditLogsBySiteId(siteid);
     }

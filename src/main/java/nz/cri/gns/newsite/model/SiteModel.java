@@ -107,7 +107,7 @@ public class SiteModel implements Serializable{
    
     @JsonIgnore
     @Transient
-    private String auditLogInfoMsg;
+    private String auditMsg;
     
     public SiteModel() {
 
@@ -115,7 +115,7 @@ public class SiteModel implements Serializable{
 
     public SiteModel(String siteName, double lat, double lon, Integer methodId, Double accuracy,
             String directions, Integer origSystemId, JsonNode origCoord, Double height, Integer heightMethodId,
-            Double heightAccuracy, String countryCode, Integer flag, String comment, String auditlogInfoMsg ){  //   /*, String shape*/, String auditlogInfoMsg) {
+            Double heightAccuracy, String countryCode, Integer flag, String comment, String auditMsg ){  //   /*, String shape*/, String auditlogInfoMsg) {
         super();
         this.siteName = siteName;
         this.lat = lat;
@@ -132,7 +132,7 @@ public class SiteModel implements Serializable{
         this.flag = flag;
         this.comment = comment;
 //        this.shape = shape;
-        this.auditLogInfoMsg = auditlogInfoMsg;
+        this.auditMsg = auditMsg;
     }
 
     public Integer getSiteId() {
@@ -259,12 +259,12 @@ public class SiteModel implements Serializable{
 //        this.shape = shape;
 //    }
 
-    public String getAuditLogInfoMsg() {
-        return "This a test for auditlog"; //auditLogInfoMsg;
+    public String getAuditMsg() {
+        return auditMsg;
     }
 
-    public void setAuditLogInfoMsg(String auditLogInfoMsg) {
-        this.auditLogInfoMsg = auditLogInfoMsg;
+    public void setAuditMsg(String auditMsg) {
+        this.auditMsg = auditMsg;
     }
     
     public List<AuditLog> getAuditLogs() {

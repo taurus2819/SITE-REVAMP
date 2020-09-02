@@ -28,6 +28,7 @@ public class SiteModelInput {
     private String latitude;
     private String longitude;
     private String format;
+    private String auditMsg;
 
     public SiteModelInput() {
         this.siteModel = new SiteModel();
@@ -35,7 +36,7 @@ public class SiteModelInput {
 
     public SiteModelInput(String siteName, Integer methodId, Double accuracy, String Directions, 
                Double height, Integer heightMethodId, Double heightAccuracy, String countyCode, String comment,
-               int epsg, String gridref, Double easting, Double northing, String latitude, String longitude, String format) {
+               int epsg, String gridref, Double easting, Double northing, String latitude, String longitude, String format, String auditMsg) {
         this.siteModel = new SiteModel();
         this.siteModel.setSiteName(siteName);
         this.siteModel.setMethodId(methodId);
@@ -53,6 +54,7 @@ public class SiteModelInput {
         this.latitude = latitude;
         this.longitude = longitude;
         this.format = format;
+        this.auditMsg = auditMsg;
     }
     
     
@@ -122,7 +124,6 @@ public class SiteModelInput {
         this.siteModel.setCountryCode(countryCode);
     }
 
-
     public String getComment() {
         return siteModel.getComment();
     }
@@ -186,6 +187,15 @@ public class SiteModelInput {
     public void setFormat(String format) {
         this.format = format;
     }
+
+    public String getAuditMsg() {
+        return auditMsg;
+    }
+
+    public void setAuditMsg(String auditMsg) {
+        this.auditMsg = auditMsg;
+    }
+    
 /**
  * Perform all necessary transformations on the SiteModelInput object to emit a valid SiteModel
  * This involves creating the OrigCoord structure, and converting input coordinates into
@@ -216,6 +226,7 @@ public class SiteModelInput {
         }
         siteModel.setLat(latlng.getX());
         siteModel.setLon(latlng.getY());
+        siteModel.setAuditMsg(getAuditMsg());
         return siteModel;
     }
 }

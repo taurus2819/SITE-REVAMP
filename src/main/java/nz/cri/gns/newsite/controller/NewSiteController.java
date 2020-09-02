@@ -93,7 +93,7 @@ public class NewSiteController {
         JSONObject logTimestampMsg;
         logTimestampMsg = new JSONObject();
         logTimestampMsg.put("timestamp", new Date());
-        logTimestampMsg.put("info",site.getAuditLogInfoMsg());
+        logTimestampMsg.put("info",site.getAuditMsg());
         ObjectMapper mapper = new ObjectMapper();
         AuditLog newAuditLog = new AuditLog(newlyCreatedSiteId, mapper.readTree(logTimestampMsg.toString())); //, site);
         return newAuditLog;
@@ -101,22 +101,25 @@ public class NewSiteController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = RequestMethod.PUT, value = "/site/{id}")
-    public SiteModel updateSite(@RequestBody SiteModel site, @PathVariable int id) throws JsonProcessingException {
-        final SiteModel siteById = newSiteService.find(id);
-        siteById.setSiteName(site.getSiteName());
-        siteById.setLat(site.getLat());
-        siteById.setLon(site.getLon());
-        siteById.setMethodId(site.getMethodId());
-        siteById.setAccuracy(site.getAccuracy());
-        siteById.setDirections(site.getDirections());
-        siteById.setOrigSystemId(site.getOrigSystemId());
-        siteById.setOrigCoord(site.getOrigCoord());
-        siteById.setHeight(site.getHeight());
-        siteById.setHeightMethodId(site.getHeightMethodId());
-        siteById.setHeightAccuracy(site.getHeightAccuracy());
-        siteById.setCountryCode(site.getCountryCode());
-        siteById.setFlag(site.getFlag());
-        siteById.setComment(site.getComment());        
+    public SiteModel updateSite(@RequestBody SiteModelInput site, @PathVariable int id) throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
+        final SiteModel siteById = newSiteService.find(id);        //find(id) will do a sql select to physically fetch the entity from db, which is not required when just updating
+                                                                   //so, use getOne(id) which gets a referenceobject and does not fetch it from the db.
+        SiteModel modifiedSite = site.toSiteModel();
+        siteById.setSiteName(modifiedSite.getSiteName());
+        siteById.setLat(modifiedSite.getLat());
+        siteById.setLon(modifiedSite.getLon());
+        siteById.setMethodId(modifiedSite.getMethodId());
+        siteById.setAccuracy(modifiedSite.getAccuracy());
+        siteById.setDirections(modifiedSite.getDirections());
+        siteById.setOrigSystemId(modifiedSite.getOrigSystemId());
+        siteById.setOrigCoord(modifiedSite.getOrigCoord());
+        siteById.setHeight(modifiedSite.getHeight());
+        siteById.setHeightMethodId(modifiedSite.getHeightMethodId());
+        siteById.setHeightAccuracy(modifiedSite.getHeightAccuracy());
+        siteById.setCountryCode(modifiedSite.getCountryCode());
+        siteById.setFlag(modifiedSite.getFlag());
+        siteById.setComment(modifiedSite.getComment());     
+        siteById.setAuditMsg(modifiedSite.getAuditMsg());
         AuditLog newAuditLog = auditLogCreator(siteById, id);
         siteById.addAuditLog(newAuditLog);
         auditLogService.insert(newAuditLog);
