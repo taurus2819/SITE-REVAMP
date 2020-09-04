@@ -9,6 +9,7 @@ package nz.cri.gns.newsite.controller;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -79,7 +80,9 @@ public class NewSiteController {
             }
 */
         int newlyCreatedSiteId = site.getSiteId();
-        AuditLog newAuditLog = auditLogCreator(site, newlyCreatedSiteId);
+        List<String> siteinfoBefore = new ArrayList<>();
+        siteinfoBefore.add("message: Newly Created" );
+        AuditLog newAuditLog = auditLogCreator(site, newlyCreatedSiteId, siteinfoBefore);        
         site.addAuditLog(newAuditLog);
         auditLogService.insert(newAuditLog);
         response.setStatus(HttpServletResponse.SC_CREATED);
@@ -89,13 +92,14 @@ public class NewSiteController {
 //        }
     }
 
-    private AuditLog auditLogCreator(SiteModel site, int newlyCreatedSiteId) throws JsonProcessingException, JSONException {
+    private AuditLog auditLogCreator(SiteModel site, int createdOrModifiedSiteId, List<String> siteinfoBefore) throws JsonProcessingException, JSONException {
         JSONObject logTimestampMsg;
         logTimestampMsg = new JSONObject();
         logTimestampMsg.put("timestamp", new Date());
         logTimestampMsg.put("info",site.getAuditMsg());
+        logTimestampMsg.put("before", siteinfoBefore);
         ObjectMapper mapper = new ObjectMapper();
-        AuditLog newAuditLog = new AuditLog(newlyCreatedSiteId, mapper.readTree(logTimestampMsg.toString())); //, site);
+        AuditLog newAuditLog = new AuditLog(createdOrModifiedSiteId, mapper.readTree(logTimestampMsg.toString())); //, site);
         return newAuditLog;
     }
 
@@ -104,6 +108,11 @@ public class NewSiteController {
     public SiteModel updateSite(@RequestBody SiteModelInput site, @PathVariable int id) throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
         final SiteModel siteById = newSiteService.find(id);        //find(id) will do a sql select to physically fetch the entity from db, which is not required when just updating
                                                                    //so, use getOne(id) which gets a referenceobject and does not fetch it from the db.
+        List<String> siteinfoBefore= new ArrayList<String>();  
+        siteinfoBefore.add("siteName:" + siteById.getSiteName());
+        siteinfoBefore.add("lat:" + siteById.getLat());
+        siteinfoBefore.add("lon:" + siteById.getLon());
+        siteinfoBefore.add("origCoord:" + siteById.getOrigCoord());
         SiteModel modifiedSite = site.toSiteModel();
         siteById.setSiteName(modifiedSite.getSiteName());
         siteById.setLat(modifiedSite.getLat());
@@ -120,7 +129,7 @@ public class NewSiteController {
         siteById.setFlag(modifiedSite.getFlag());
         siteById.setComment(modifiedSite.getComment());     
         siteById.setAuditMsg(modifiedSite.getAuditMsg());
-        AuditLog newAuditLog = auditLogCreator(siteById, id);
+        AuditLog newAuditLog = auditLogCreator(siteById, id, siteinfoBefore);
         siteById.addAuditLog(newAuditLog);
         auditLogService.insert(newAuditLog);
         newSiteService.update(siteById);
