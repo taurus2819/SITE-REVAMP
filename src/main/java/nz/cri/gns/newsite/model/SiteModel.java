@@ -24,6 +24,7 @@ import javax.persistence.Transient;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import nz.cri.gns.newsite.audits.AuditLog;
+import org.gbif.common.shaded.com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
@@ -101,6 +102,10 @@ public class SiteModel implements Serializable{
 //    @Column(name = "shape")
 //    private String shape;
     
+    @Column(name="owner_id")
+    @JsonIgnore
+    private Integer ownerId;
+    
     @OneToMany(cascade = CascadeType.ALL, targetEntity=AuditLog.class, orphanRemoval = true)      //mappedBy = "sitemodel",
     @JoinColumn(name = "site_id")
     private List<AuditLog> auditLogs = new ArrayList<>();
@@ -115,7 +120,7 @@ public class SiteModel implements Serializable{
 
     public SiteModel(String siteName, double lat, double lon, Integer methodId, Double accuracy,
             String directions, Integer origSystemId, JsonNode origCoord, Double height, Integer heightMethodId,
-            Double heightAccuracy, String countryCode, Integer flag, String comment, String auditMsg ){  //   /*, String shape*/, String auditlogInfoMsg) {
+            Double heightAccuracy, String countryCode, Integer flag, String comment, Integer ownerId, String auditMsg ){  //   /*, String shape*/, String auditlogInfoMsg) {
         super();
         this.siteName = siteName;
         this.lat = lat;
@@ -132,6 +137,7 @@ public class SiteModel implements Serializable{
         this.flag = flag;
         this.comment = comment;
 //        this.shape = shape;
+        this.ownerId = ownerId;
         this.auditMsg = auditMsg;
     }
 
@@ -258,6 +264,14 @@ public class SiteModel implements Serializable{
 //    public void setShape(String shape) {
 //        this.shape = shape;
 //    }
+
+    public Integer getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Integer ownerId) {
+        this.ownerId = ownerId;
+    }   
 
     public String getAuditMsg() {
         return auditMsg;

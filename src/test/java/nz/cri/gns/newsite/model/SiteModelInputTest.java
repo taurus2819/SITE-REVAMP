@@ -20,7 +20,7 @@ public class SiteModelInputTest {
     @Test
     public void testToSiteModel() throws Exception {
         SiteModelInput smi = new SiteModelInput("test",3,null,"somewhere", 
-               null, null, 3.5, "NZ", "testing",
+               null, null, 3.5, "NZ", "testing",1618,
                27200, "U20/967978", null, null, null, null,"GridRef", "Unit test");
         SiteModel sm = smi.toSiteModel();
         assertEquals(sm.getLat(), -39.37637937, 0.0001);

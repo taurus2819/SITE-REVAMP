@@ -97,6 +97,7 @@ public class NewSiteController {
         logTimestampMsg = new JSONObject();
         logTimestampMsg.put("timestamp", new Date());
         logTimestampMsg.put("info",site.getAuditMsg());
+        logTimestampMsg.put("ownerId", site.getOwnerId());
         logTimestampMsg.put("before", siteinfoBefore);
         ObjectMapper mapper = new ObjectMapper();
         AuditLog newAuditLog = new AuditLog(createdOrModifiedSiteId, mapper.readTree(logTimestampMsg.toString())); //, site);
@@ -128,6 +129,7 @@ public class NewSiteController {
         siteById.setCountryCode(modifiedSite.getCountryCode());
         siteById.setFlag(modifiedSite.getFlag());
         siteById.setComment(modifiedSite.getComment());     
+        siteById.setOwnerId(modifiedSite.getOwnerId());     
         siteById.setAuditMsg(modifiedSite.getAuditMsg());
         AuditLog newAuditLog = auditLogCreator(siteById, id, siteinfoBefore);
         siteById.addAuditLog(newAuditLog);
