@@ -54,8 +54,14 @@ public class NewSiteServiceImpl implements NewSiteService{
 
 	@Override
 	public void delete(int id) {
-		retrieveWithNullCheck(id);
-		newSiteRepository.deleteById(id);
+		SiteModel site = retrieveWithNullCheck(id);
+                if(site.getComment().contains("test_data")){
+                    site.setFlag(2);
+                }else{
+                    site.setFlag(1);
+                }                
+//		newSiteRepository.deleteById(id);
+                newSiteRepository.save(site);
 	}
 	
 	@Override

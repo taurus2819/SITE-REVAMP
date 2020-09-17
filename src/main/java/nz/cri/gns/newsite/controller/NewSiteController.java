@@ -144,5 +144,11 @@ public class NewSiteController {
         System.out.println("Site in JSON = " + site);
         return OrigCoord.getEpsgInfoJsonString(site.getOrigSystemId(), site.getOrigCoord());
     }
+    
+    @RequestMapping(method = RequestMethod.DELETE, value = "/site/{id}")
+    public void delete(@PathVariable Integer id, HttpServletResponse response){
+        newSiteService.delete(id);
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+    }
 
 }
