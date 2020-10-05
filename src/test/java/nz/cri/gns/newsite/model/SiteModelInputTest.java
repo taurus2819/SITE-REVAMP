@@ -34,6 +34,7 @@ public class SiteModelInputTest {
         assertEquals(sm.getOrigCoord(),mapper.readTree("{\"epsg\":27200, \"format\":\"gridRef\", \"gridReference\":\"U20/967978\"}"));        
     }
     
+    
 //    @Test
 //    public void testToSiteModel2() throws Exception {
 //        SiteModelInput smi = new SiteModelInput("test",3,null,"somewhere", 
