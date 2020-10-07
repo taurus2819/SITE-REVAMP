@@ -26,7 +26,7 @@ public class SiteUsage implements Serializable{
     @Column(name = "su_id")
     @NotNull
     @Id
-    @SequenceGenerator(name = "sc.site_useage_su_id_seq", sequenceName = "sc.site_useage_su_id_seq", allocationSize = 1)
+//    @SequenceGenerator(name = "sc.site_useage_su_id_seq", sequenceName = "sc.site_useage_su_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sc.site_useage_su_id_seq")
     private Integer su_id; 
 

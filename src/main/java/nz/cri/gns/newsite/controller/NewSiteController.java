@@ -34,6 +34,12 @@ import nz.cri.gns.newsite.utils.ConversionToWgs84;
 import nz.cri.gns.newsite.utils.OrigCoord;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -154,22 +160,42 @@ public class NewSiteController {
     }
 
     @RequestMapping("/sites/query")
-    public List<SiteModel> getAllSitesWithin(@RequestBody SiteModelInput siteInput, @RequestParam(value = "minNorth") double minNorth, @RequestParam(value = "minEast") double minEast,
-            @RequestParam(value = "maxNorth") double maxNorth, @RequestParam(value = "maxEast") double maxEast, HttpServletResponse response)
+    public List<SiteModel> getAllSitesWithin(@RequestParam(value = "minNorth") double minNorth, @RequestParam(value = "minEast") double minEast,
+            @RequestParam(value = "maxNorth") double maxNorth, @RequestParam(value = "maxEast") double maxEast, @RequestParam(value = "EPSG") int epsg, HttpServletResponse response)
             throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
-        SiteModel site = siteInput.toSiteModel();
-        Point2D latlng1 = extractLatLong(minEast, maxNorth);
-        Point2D latlng2 = extractLatLong(maxEast, maxNorth);
-        Point2D latlng3 = extractLatLong(minEast, minNorth);
-        Point2D latlng4 = extractLatLong(maxEast, minNorth);
-        return newSiteService.listAllSites();
+        Point2D latlng1 = extractLatLong(minEast, maxNorth, epsg);
+        Point2D latlng2 = extractLatLong(maxEast, maxNorth, epsg);
+        Point2D latlng3 = extractLatLong(minEast, minNorth, epsg);
+        Point2D latlng4 = extractLatLong(maxEast, minNorth, epsg);
+        Coordinate[] sc = new Coordinate[5];
+        sc[0] = new Coordinate(latlng1.getY(), latlng1.getX());
+        sc[1] = new Coordinate(latlng2.getY(), latlng2.getX());
+        sc[2] = new Coordinate(latlng3.getY(), latlng3.getX());
+        sc[3] = new Coordinate(latlng4.getY(), latlng4.getX());
+        sc[4] = new Coordinate(latlng1.getY(), latlng1.getX());
+        GeometryFactory gf = new GeometryFactory();
+        Polygon bounds = gf.createPolygon(sc);
+        bounds.setSRID(4326);
+        return newSiteService.findWithinBounds(bounds);
     }
 
-    private Point2D extractLatLong(double easting, double northing) throws TransformException, FactoryException, MismatchedDimensionException {
+    @RequestMapping("/sites/closeto")
+    public List<SiteModel> getAllSitesClose(@RequestParam(value = "easting") double easting, @RequestParam(value = "northing") double northing,
+            @RequestParam(value = "metres") double distance, @RequestParam(value = "EPSG") int epsg, HttpServletResponse response)
+            throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
+        Point2D latlng = extractLatLong(easting, northing, epsg);
+        GeometryFactory gf = new GeometryFactory();
+        Point point = gf.createPoint(new Coordinate(latlng.getX(), latlng.getY()));
+        point.setSRID(4326);
+        distance = distance/111120;
+        return newSiteService.findCloseTo(point, distance);
+    }
+
+    private Point2D extractLatLong(double easting, double northing, int epsg) throws TransformException, FactoryException, MismatchedDimensionException {
         Point2D latlng;
         Point2D inputPt = new Point2D.Double();
         inputPt.setLocation(easting, northing);
-        latlng = OrigCoord.toWGS84(27200, inputPt);
+        latlng = OrigCoord.toWGS84(epsg, inputPt);
         return latlng;
     }
 

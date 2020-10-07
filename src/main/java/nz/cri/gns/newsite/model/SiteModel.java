@@ -28,6 +28,8 @@ import org.gbif.common.shaded.com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 
 import org.springframework.core.style.ToStringCreator;
 
@@ -98,9 +100,9 @@ public class SiteModel implements Serializable{
     @Column(name = "comment")
     private String comment;			//"blah blah"
 
-//    @JsonIgnore
-//    @Column(name = "shape")
-//    private String shape;
+    @JsonIgnore
+    @Column(name = "shape", columnDefinition = "Geometry")
+    private Geometry shape;
     
     @Column(name="owner_id")
     @JsonIgnore
@@ -257,13 +259,14 @@ public class SiteModel implements Serializable{
         this.comment = comment;
     }
 
-//    public String getShape() {
-//        return shape;
-//    }
-//
-//    public void setShape(String shape) {
-//        this.shape = shape;
-//    }
+    public Geometry getShape() {        
+        return shape;
+    }
+
+    public void setShape(Geometry shape) {
+        shape.setSRID(4326);
+        this.shape = shape;
+    }
 
     public Integer getOwnerId() {
         return ownerId;
