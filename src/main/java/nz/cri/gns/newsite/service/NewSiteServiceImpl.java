@@ -7,6 +7,7 @@ package nz.cri.gns.newsite.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +17,14 @@ import org.springframework.stereotype.Service;
 
 import nz.cri.gns.newsite.exception.ResourceMissingException;
 import nz.cri.gns.newsite.model.SiteModel;
+import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.repository.NewSiteRepository;
+import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
+import org.geotools.referencing.GeodeticCalculator;
+import org.locationtech.jts.geom.Coordinate;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.data.jpa.repository.Query;
 
 @Service
@@ -85,13 +92,30 @@ public class NewSiteServiceImpl implements NewSiteService {
 
     @Override
     public List<SiteModel> findWithinBounds(Geometry bounds) {
-      return newSiteRepository.findWithinBounds(bounds);
+        return newSiteRepository.findWithinBounds(bounds);
     }
 
     @Override
-    public List<SiteModel> findCloseTo(Geometry Point, double distance) {
-      return newSiteRepository.findCloseTo(Point, distance);
+    public List<SiteProximity> findCloseTo(Geometry Point, double distance) {
+        try {
+            List<SiteModel> sites = newSiteRepository.findCloseTo(Point, distance);
+            List<SiteProximity> proximities = new ArrayList<>();
+            CoordinateReferenceSystem crs;
+            crs = CRS.decode("EPSG:4326", true);
+            GeodeticCalculator gc = new GeodeticCalculator(crs);
+            Coordinate p1 = Point.getCoordinate();
+            gc.setStartingGeographicPoint(p1.x, p1.y);
+            for (SiteModel s:sites) {
+                gc.setDestinationGeographicPoint(s.getLon(), s.getLat());
+                double proximity = gc.getOrthodromicDistance();
+                SiteProximity sp = new SiteProximity(s,proximity);
+                proximities.add(sp);
+            }
+            return proximities;
+        } catch (FactoryException ex) {
+            java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
-
 
 }

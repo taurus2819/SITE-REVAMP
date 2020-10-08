@@ -7,6 +7,7 @@ package nz.cri.gns.newsite.service;
 import java.util.List;
 
 import nz.cri.gns.newsite.model.SiteModel;
+import nz.cri.gns.newsite.model.SiteProximity;
 import org.locationtech.jts.geom.Geometry;
 
 public interface NewSiteService {
@@ -17,7 +18,7 @@ public interface NewSiteService {
 	SiteModel find(int id);
 	List<SiteModel> findByOrigSystemId(int oid);
 	List<SiteModel> findWithinBounds(Geometry bounds);
-	List<SiteModel> findCloseTo(Geometry Point, double distance);
+	List<SiteProximity> findCloseTo(Geometry Point, double distance);
 	List<SiteModel> listAllSites();
 //	List<SiteModel> findAll(Integer origSystemID);
 	

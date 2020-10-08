@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.model.SiteModelInput;
+import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.service.AuditLogService;
 import nz.cri.gns.newsite.service.NewSiteService;
 import nz.cri.gns.newsite.utils.ConversionToWgs84;
@@ -159,6 +160,23 @@ public class NewSiteController {
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
+/**
+ * Query the Site database for all points within a given rectangle
+ * 
+ * @param minNorth 
+ * @param minEast
+ * @param maxNorth
+ * @param maxEast
+ * @param epsg
+ * @param response
+ * @return
+ * @throws InvalidLatLonFormat
+ * @throws InvalidOrigCoordinate
+ * @throws FactoryException
+ * @throws MismatchedDimensionException
+ * @throws TransformException
+ * @throws JsonProcessingException 
+ */
     @RequestMapping("/sites/query")
     public List<SiteModel> getAllSitesWithin(@RequestParam(value = "minNorth") double minNorth, @RequestParam(value = "minEast") double minEast,
             @RequestParam(value = "maxNorth") double maxNorth, @RequestParam(value = "maxEast") double maxEast, @RequestParam(value = "EPSG") int epsg, HttpServletResponse response)
@@ -178,14 +196,30 @@ public class NewSiteController {
         bounds.setSRID(4326);
         return newSiteService.findWithinBounds(bounds);
     }
-
+/**
+ * Query the site database for all points within a given distance of a point,
+ * returning the candidates points and the distance.
+ * 
+ * @param easting
+ * @param northing
+ * @param distance
+ * @param epsg
+ * @param response
+ * @return
+ * @throws InvalidLatLonFormat
+ * @throws InvalidOrigCoordinate
+ * @throws FactoryException
+ * @throws MismatchedDimensionException
+ * @throws TransformException
+ * @throws JsonProcessingException 
+ */
     @RequestMapping("/sites/closeto")
-    public List<SiteModel> getAllSitesClose(@RequestParam(value = "easting") double easting, @RequestParam(value = "northing") double northing,
+    public List<SiteProximity> getAllSitesClose(@RequestParam(value = "easting") double easting, @RequestParam(value = "northing") double northing,
             @RequestParam(value = "metres") double distance, @RequestParam(value = "EPSG") int epsg, HttpServletResponse response)
             throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
         Point2D latlng = extractLatLong(easting, northing, epsg);
         GeometryFactory gf = new GeometryFactory();
-        Point point = gf.createPoint(new Coordinate(latlng.getX(), latlng.getY()));
+        Point point = gf.createPoint(new Coordinate(latlng.getY(), latlng.getX()));
         point.setSRID(4326);
         distance = distance/111120;
         return newSiteService.findCloseTo(point, distance);
