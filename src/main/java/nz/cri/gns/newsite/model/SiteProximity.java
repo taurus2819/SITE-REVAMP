@@ -7,10 +7,10 @@ package nz.cri.gns.newsite.model;
 
 /**
  *
- * @author scaddenp
- * This is facade for siteModel, plus distance from a target point used in
- * isCloseTo api for returning the value of potential conflict points.
- * 
+ * @author scaddenp This is facade for siteModel, plus distance from a target
+ * point used in isCloseTo api for returning the value of potential conflict
+ * points.
+ *
  */
 public class SiteProximity {
 
@@ -21,7 +21,7 @@ public class SiteProximity {
         this.siteModel = siteModel;
         this.proximity = proximity;
     }
-    
+
     public long getSiteId() {
         return siteModel.getSiteId();
     }
@@ -58,4 +58,7 @@ public class SiteProximity {
         return siteModel.getLon();
     }
 
+    public String getOrigCoord() {
+        return siteModel.getOrigCoord().toString();
+    }
 }
