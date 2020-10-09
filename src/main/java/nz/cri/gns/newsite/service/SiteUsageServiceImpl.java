@@ -6,6 +6,7 @@
 package nz.cri.gns.newsite.service;
 
 import java.util.List;
+import javax.transaction.Transactional;
 import nz.cri.gns.newsite.model.SiteUsage;
 import nz.cri.gns.newsite.repository.SiteUsageRespository;
 import org.slf4j.Logger;
@@ -38,6 +39,7 @@ public class SiteUsageServiceImpl implements SiteUsageService{
 
 
     @Override
+    @Transactional
     public boolean unregisterUsage(SiteUsage siteUsage) {
         long count = siteUsageRepository.deleteBySiteIdAndUsedBy(siteUsage.getSiteId(),siteUsage.getUsedBy());
         return (count==1);

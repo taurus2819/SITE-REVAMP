@@ -25,7 +25,7 @@ public interface NewSiteRepository extends JpaRepository<SiteModel, Integer>{
     @Query(value = "Select s from #{#entityName} s where within(s.shape, :bounds )= true")
     public List<SiteModel> findWithinBounds(Geometry bounds);
     
-    @Query(value = "Select s from #{#entityName} s where dwithin(s.shape, :point, :distance)= true")
+    @Query(value = "Select s from #{#entityName} s INNER JOIN s.users where dwithin(s.shape, :point, :distance)= true")
     public List<SiteModel> findCloseTo(Geometry point, double distance);
 
 
