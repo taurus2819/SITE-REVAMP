@@ -85,13 +85,13 @@ public class OrigCoord {
         switch (epsg) {
             case 27292:
             case 27291:
-                outputPt = NZMS1.getFullCoordinates(sheetCode, east, north);
+                outputPt = NZMS1.getFullCoordinates(epsg, sheetCode, east, north);
                 break;
             case 2193:                        
-                outputPt = Topo50.getFullCoordinates(sheetCode, east, north);
+                outputPt = Topo50.getFullCoordinates(epsg, sheetCode, east, north);
                 break;
             case 27200:                        
-                outputPt = NZMS260.getFullCoordinates(sheetCode, east, north);
+                outputPt = NZMS260.getFullCoordinates(epsg, sheetCode, east, north);
                 break;
             default:
                 throw new InvalidOrigCoordinate("gridref epsg is not supported yet");

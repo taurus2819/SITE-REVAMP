@@ -19,7 +19,7 @@ public class Topo50Test {
     
     @Test
     public void testGetFullCoordinates() {
-        Point2D outputPt = Topo50.getFullCoordinates("CC13", 151, 8053);
+        Point2D outputPt = Topo50.getFullCoordinates(2193, "CC13", 151, 8053);
         assertEquals(outputPt.getX(), 1301510, 0.001);
         assertEquals(outputPt.getY(), 4980530, 0.001);
     }
