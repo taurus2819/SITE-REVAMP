@@ -52,18 +52,18 @@ public class NZMS260 extends MapSheet{
      */
     public static Point2D getFullCoordinates(int epsg, String mapsheet, int truncEast, int truncNorth) {
         if (!isValidMapSheet(mapsheet)) {
-            throw new InvalidOrigCoordinate("Not a valid mapsheet number with epsg: " + epsg);
+            throw new InvalidOrigCoordinate("Not within the valid mapsheet list for epsg: " + epsg);
         }
         int letter = mapsheet.toUpperCase().charAt(0) - 'A';
         long sheetEBound = 1970000 + 40000 * letter;
         long truncEBound = (sheetEBound / 10) % 10000;
         if (truncEBound <= 6000) {
             if (truncEast < truncEBound || truncEast > (truncEBound + 4000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         } else {
             if (truncEast < truncEBound && truncEast > (truncEBound - 6000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         }
         long easting = addToStart(sheetEBound, truncEast*10);
@@ -72,11 +72,11 @@ public class NZMS260 extends MapSheet{
         long truncNBound = (sheetNBound / 10) % 10000;
         if (truncNBound <= 7000) {
             if (truncNorth < truncNBound || truncNorth > (truncNBound + 3000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         } else {
             if (truncNorth < truncNBound && truncNorth > (truncNBound - 7000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         }
         long northing = addToStart(sheetNBound, truncNorth*10);
