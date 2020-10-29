@@ -1,4 +1,3 @@
-
 package nz.cri.gns.newsite.utils;
 
 import java.awt.geom.Point2D;
@@ -407,17 +406,17 @@ public class NZMS1 extends MapSheet{
                 grid = swcns[sheet - 1];
                 break;
             default:
-                throw new InvalidOrigCoordinate("mapsheet must be N or S for this projection");
+                throw new InvalidOrigCoordinate("mapsheet must be N or S for epsg: " + epsg);
         }
         int wbnd = 100 * Integer.parseInt(grid.substring(1, 3));
         int e1 = Integer.parseInt(grid.substring(0, 1));
         int zef = 0;
         if (wbnd<5200) {
             if (truncEast < wbnd || truncEast > (wbnd + 4500)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         } else if (truncEast < wbnd && truncEast > (wbnd - 5500)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
         }
         if (truncEast < wbnd) {
                 zef = 100000;
@@ -431,14 +430,14 @@ public class NZMS1 extends MapSheet{
         int znf = 0;
         if (sbnd>7000) {
             if (truncNorth < sbnd && truncNorth > (sbnd - 7000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
             if (truncNorth<sbnd) {
                 znf = 100000;
             }
         } else {
             if (truncNorth < sbnd || truncNorth > (sbnd + 3000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
             if (sbnd == 7000 && truncNorth == 0) {
                 znf = 100000;
