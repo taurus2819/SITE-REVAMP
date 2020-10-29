@@ -33,7 +33,7 @@ public class Topo50 extends MapSheet{
     public static Point2D getFullCoordinates(int epsg, String mapsheet, int truncEast, int truncNorth) {
         char s1 = mapsheet.charAt(0);
         int sheet;
-        if (!isValidMapSheet(mapsheet)) {
+        if (!isValidMapSheet(s1)) {
             throw new InvalidOrigCoordinate("Not within the valid mapsheet list set for epsg: " + epsg);
         }
 
