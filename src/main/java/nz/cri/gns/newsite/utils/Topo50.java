@@ -16,9 +16,10 @@ import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 public class Topo50 extends MapSheet{
 
     static final String NZTMSL = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-    static final String mapSheet = "ABC";
-    private static boolean isValidMapSheet(String mapSheet) {
-        return (validMapSheets.indexOf(mapSheet) >= 0);
+    static final String validMapReference = "ABC";
+    
+    private static boolean isValidMapSheet(char mapSheetReferenceChar) {
+        return (validMapReference.indexOf(mapSheetReferenceChar) == -1);
     }
 
     /**
@@ -32,11 +33,16 @@ public class Topo50 extends MapSheet{
 
     public static Point2D getFullCoordinates(int epsg, String mapsheet, int truncEast, int truncNorth) {
         char s1 = mapsheet.charAt(0);
-        int sheet;
-        if (!isValidMapSheet(s1)) {
-            throw new InvalidOrigCoordinate("Not within the valid mapsheet list set for epsg: " + epsg);
+        if(isValidMapSheet(s1))
+        {
+            throw new InvalidOrigCoordinate("Invalid mapsheet reference letter for this epsg: " + epsg);
         }
-
+        int sheet;
+        try {
+            sheet = Integer.parseInt(mapsheet.substring(2));
+        } catch (Exception e ) {
+            throw new InvalidOrigCoordinate("invalid sheet no. for this epsg: " + epsg);            
+        }
         int nid = NZTMSL.indexOf(mapsheet.charAt(1)) +1;
         if (sheet < 4 || sheet > 45 || nid < 1 || nid > 24) {
             throw new InvalidOrigCoordinate("grid reference is outside the bounds of this epsg: " + epsg);
