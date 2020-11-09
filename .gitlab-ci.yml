@@ -1,0 +1,40 @@
+stages:
+  - build
+  - deploy
+  - image
+
+build:
+  image: openjdk:11
+  tags:
+    - docker
+  stage: build
+  script:
+    - ./mvnw clean verify -s settings.xml
+  artifacts:
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+      cobertura:
+        - target/site/jacoco/jacoco.xml
+
+
+release:
+  image: openjdk:11
+  tags:
+    - docker
+  stage: deploy
+  only:
+    - main
+  script: |
+    ./mvnw jgitflow:release-start -B -s settings.xml
+    ./mvnw jgitflow:release-finish -s settings.xml
+
+
+deploy:
+  tags:
+    - linux
+  stage: deploy
+  script: |
+    . ./docker_build.sh -s huta16-d
+
+
