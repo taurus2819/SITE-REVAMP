@@ -23,10 +23,10 @@
         <geotools.version>24-SNAPSHOT</geotools.version>
     </properties>
     <repositories>
-        <!--repository>
+        repository>
             <id>gbif-all</id>
             <url>http://repository.gbif.org/content/groups/gbif</url>
-        </repository-->
+        </repository>
         <repository>
             <id>osgeo</id>
             <name>OSGeo Release Repository</name>
