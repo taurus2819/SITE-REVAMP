@@ -30,6 +30,24 @@
             <url>https://repo.gns.cri.nz/artifactory/repo</url>
             <id>repo</id>
         </mirror>
+         <mirror>
+            <id>osgeo-release</id>
+            <name>OSGeo Repository</name>
+            <url>https://repo.osgeo.org/repository/release/</url>
+            <mirrorOf>osgeo</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>geoserver-releases</id>
+            <name>Boundless Repository</name>
+            <url>https://repo.osgeo.org/repository/Geoserver-releases/</url>
+            <mirrorOf>boundless</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>gbif-all</id>
+            <name>gbif Repository</name>
+            <url>https://repository.gbif.org/repository/gbif/</url>
+            <mirrorOf>gbif</mirrorOf>
+        </mirror>
     </mirrors>
     <profiles>
         <profile>
@@ -47,24 +65,6 @@
                     <id>snapshots</id>
                     <name>libs-snapshots</name>
                     <url>https://repo.gns.cri.nz/artifactory/libs-snapshots</url>
-                </repository>
-                <repository>
-                    <id>gbif-all</id>
-                    <url>https://repository.gbif.org/repository/gbif/</url>
-                </repository>
-                <repository>
-                    <id>osgeo</id>
-                    <name>OSGeo Release Repository</name>
-                    <url>https://repo.osgeo.org/repository/release/</url>
-                    <snapshots><enabled>false</enabled></snapshots>
-                    <releases><enabled>true</enabled></releases>
-                </repository>
-                <repository>
-                    <id>osgeo-snapshot</id>
-                    <name>OSGeo Snapshot Repository</name>
-                    <url>https://repo.osgeo.org/repository/snapshot/</url>
-                    <snapshots><enabled>true</enabled></snapshots>
-                    <releases><enabled>false</enabled></releases>
                 </repository>
             </repositories>
             <pluginRepositories>
