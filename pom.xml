@@ -22,10 +22,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <geotools.version>24-SNAPSHOT</geotools.version>
     </properties>
-    <repositories>
+    <!-- <repositories>
         <repository>
             <id>gbif-all</id>
-            <url>http://repository.gbif.org/content/groups/gbif/</url>
+            <url>https://repository.gbif.org/repository/gbif/</url>
         </repository>
         <repository>
             <id>osgeo</id>
@@ -41,7 +41,7 @@
             <snapshots><enabled>true</enabled></snapshots>
             <releases><enabled>false</enabled></releases>
         </repository>
-    </repositories>
+    </repositories> -->
     
     <dependencies>
         <dependency>
