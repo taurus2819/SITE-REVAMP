@@ -10,12 +10,12 @@ build:
   stage: build
   script:
     - ./mvnw clean verify -s .mvn/settings.xml
-  artifacts:
-    reports:
-      junit:
-        - target/surefire-reports/TEST-*.xml
-      cobertura:
-        - target/site/jacoco/jacoco.xml
+  # artifacts:
+  #   reports:
+  #     junit:
+  #       - target/surefire-reports/TEST-*.xml
+  #     cobertura:
+  #       - target/site/jacoco/jacoco.xml
 
 
 release:
