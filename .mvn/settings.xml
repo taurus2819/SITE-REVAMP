@@ -30,24 +30,6 @@
             <url>https://repo.gns.cri.nz/artifactory/repo</url>
             <id>repo</id>
         </mirror>
-         <mirror>
-            <id>osgeo-release</id>
-            <name>OSGeo Repository</name>
-            <url>https://repo.osgeo.org/repository/release/</url>
-            <mirrorOf>osgeo</mirrorOf>
-        </mirror>
-        <mirror>
-            <id>geoserver-releases</id>
-            <name>Boundless Repository</name>
-            <url>https://repo.osgeo.org/repository/Geoserver-releases/</url>
-            <mirrorOf>boundless</mirrorOf>
-        </mirror>
-        <mirror>
-            <id>gbif-all</id>
-            <name>gbif Repository</name>
-            <url>https://repository.gbif.org/repository/gbif/</url>
-            <mirrorOf>gbif</mirrorOf>
-        </mirror>
     </mirrors>
     <profiles>
         <profile>
