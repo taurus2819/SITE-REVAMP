@@ -217,7 +217,11 @@ public class SiteModel implements Serializable{
     }
     
     public Double getHeight() {
-        return height;
+        if (Double.isInfinite(height)) {
+            return null;
+        } else {
+          return height;          
+        }
     }
 
     public void setHeight(Double height) {
