@@ -21,6 +21,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <geotools.version>24-SNAPSHOT</geotools.version>
+        <image.name>huta17-d.gns.cri.nz:5000/siterevamp/${project.artifactId}:${project.version}</image.name>
     </properties>
     <!-- <repositories>
         <repository>
@@ -166,6 +167,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-help-plugin</artifactId>
+            </plugin>
+
         </plugins>
     </build>
 
