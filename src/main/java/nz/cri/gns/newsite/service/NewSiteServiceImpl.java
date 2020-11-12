@@ -106,7 +106,8 @@ public class NewSiteServiceImpl implements NewSiteService {
             Coordinate p1 = Point.getCoordinate();
             gc.setStartingGeographicPoint(p1.x, p1.y);
             for (SiteModel s:sites) {
-                gc.setDestinationGeographicPoint(s.getLon(), s.getLat());
+                Coordinate c = s.getShape().getCoordinate();
+                gc.setDestinationGeographicPoint(c.getX(), c.getY());
                 double proximity = gc.getOrthodromicDistance();
                 SiteProximity sp = new SiteProximity(s,proximity);
                 proximities.add(sp);
