@@ -22,6 +22,9 @@ import org.gbif.common.parsers.geospatial.LatLng;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.referencing.CRS;
 import static org.geotools.referencing.CRS.AxisOrder.EAST_NORTH;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -283,8 +286,42 @@ public class OrigCoord {
       Point2D latlng = new Point2D.Double(ll.getPayload().getLng(),ll.getPayload().getLat());
       return latlng;
     }
-    
     /**
+     * Convert an east/north pair in a given epsg code to a point2D containing 4326 lat/long coordinates
+     * @param easting
+     * @param northing
+     * @param epsg
+     * @return Point2D where X = longitude and Y = latitude in WGS84 (4326)
+     * @throws TransformException
+     * @throws FactoryException
+     * @throws MismatchedDimensionException 
+     */
+      public static Point2D MakeLatLongPt(double easting, double northing, int epsg) throws TransformException, FactoryException, MismatchedDimensionException {
+        Point2D latlng;
+        Point2D inputPt = new Point2D.Double();
+        inputPt.setLocation(easting, northing);
+        latlng = OrigCoord.toWGS84(epsg, inputPt);
+        return latlng;
+    }
+    
+   /**
+     * Convert an east/north pair in a given epsg code to a Geometry Point containing 4326 lat/long coordinates
+     * @param easting
+     * @param northing
+     * @param epsg
+     * @return Point geometry representation of input
+    * @throws TransformException
+    * @throws FactoryException 
+    */   
+    public static Point MakeGeomPt(double easting, double northing, int epsg) throws TransformException, FactoryException  {
+        Point2D latlng = MakeLatLongPt(easting, northing, epsg);
+        GeometryFactory gf = new GeometryFactory();
+        Point point = gf.createPoint(new Coordinate(latlng.getY(), latlng.getX()));
+        point.setSRID(4326);
+        return point;
+    }
+
+     /**
      * Convert a coordinate in whatever coordinate reference system into a lat/long in WGS84
      * @param epsg The EPSG Code for the projection
      * @param inputPt easting (X) / Northing (Y) or longitude (X), Latitude (Y)
@@ -293,6 +330,7 @@ public class OrigCoord {
      * @throws MismatchedDimensionException
      * @throws TransformException 
      */
+  
     public static Point2D toWGS84(int epsg, Point2D inputPt) throws FactoryException, MismatchedDimensionException, TransformException {
         
        CoordinateReferenceSystem epsg4326 = CRS.decode("EPSG:4326");
