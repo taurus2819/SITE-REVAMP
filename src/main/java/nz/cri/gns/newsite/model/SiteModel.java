@@ -217,11 +217,7 @@ public class SiteModel implements Serializable{
     }
     
     public Double getHeight() {
-        if (Double.isInfinite(height)) {
-            return null;
-        } else {
           return height;          
-        }
     }
 
     public void setHeight(Double height) {
@@ -309,6 +305,15 @@ public class SiteModel implements Serializable{
     public void removeAuditLogs(){
         
     }
+
+    public List<String> getUsers() {
+        List<String> usedby = new ArrayList<>();
+        users.forEach((u) -> {
+            usedby.add(u.getUsedBy());
+        });
+        return usedby;
+    }
+    
     
     @Override
     public String toString(){
