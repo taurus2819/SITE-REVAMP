@@ -6,14 +6,12 @@ package nz.cri.gns.newsite.controller;
  */
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 import nz.cri.gns.newsite.audits.AuditLog;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
@@ -31,13 +29,10 @@ import nz.cri.gns.newsite.model.SiteModelInput;
 import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.service.AuditLogService;
 import nz.cri.gns.newsite.service.NewSiteService;
-import nz.cri.gns.newsite.utils.ConversionToWgs84;
 import nz.cri.gns.newsite.utils.OrigCoord;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
@@ -118,7 +113,7 @@ public class NewSiteController {
     public SiteModel updateSite(@RequestBody SiteModelInput site, @PathVariable int id) throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
         final SiteModel siteById = newSiteService.find(id);        //find(id) will do a sql select to physically fetch the entity from db, which is not required when just updating
         //so, use getOne(id) which gets a referenceobject and does not fetch it from the db.
-        List<String> siteinfoBefore = new ArrayList<String>();
+        List<String> siteinfoBefore = new ArrayList<>();
         siteinfoBefore.add("siteName:" + siteById.getSiteName());
         siteinfoBefore.add("lat:" + siteById.getLat());
         siteinfoBefore.add("lon:" + siteById.getLon());
@@ -181,10 +176,10 @@ public class NewSiteController {
     public List<SiteModel> getAllSitesWithin(@RequestParam(value = "minNorth") double minNorth, @RequestParam(value = "minEast") double minEast,
             @RequestParam(value = "maxNorth") double maxNorth, @RequestParam(value = "maxEast") double maxEast, @RequestParam(value = "EPSG") int epsg, HttpServletResponse response)
             throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
-        Point2D latlng1 = extractLatLong(minEast, maxNorth, epsg);
-        Point2D latlng2 = extractLatLong(maxEast, maxNorth, epsg);
-        Point2D latlng3 = extractLatLong(minEast, minNorth, epsg);
-        Point2D latlng4 = extractLatLong(maxEast, minNorth, epsg);
+        Point2D latlng1 = OrigCoord.MakeLatLongPt(minEast, maxNorth, epsg);
+        Point2D latlng2 = OrigCoord.MakeLatLongPt(maxEast, maxNorth, epsg);
+        Point2D latlng3 = OrigCoord.MakeLatLongPt(minEast, minNorth, epsg);
+        Point2D latlng4 = OrigCoord.MakeLatLongPt(maxEast, minNorth, epsg);
         Coordinate[] sc = new Coordinate[5];
         sc[0] = new Coordinate(latlng1.getY(), latlng1.getX());
         sc[1] = new Coordinate(latlng2.getY(), latlng2.getX());
@@ -217,20 +212,9 @@ public class NewSiteController {
     public List<SiteProximity> getAllSitesClose(@RequestParam(value = "easting") double easting, @RequestParam(value = "northing") double northing,
             @RequestParam(value = "metres") double distance, @RequestParam(value = "EPSG") int epsg, HttpServletResponse response)
             throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
-        Point2D latlng = extractLatLong(easting, northing, epsg);
-        GeometryFactory gf = new GeometryFactory();
-        Point point = gf.createPoint(new Coordinate(latlng.getY(), latlng.getX()));
-        point.setSRID(4326);
-        distance = distance/111120;
+        Point point = OrigCoord.MakeGeomPt(easting, northing, epsg);
+        distance = distance/111120; // approximately convert meters into degrees. 
         return newSiteService.findCloseTo(point, distance);
-    }
-
-    private Point2D extractLatLong(double easting, double northing, int epsg) throws TransformException, FactoryException, MismatchedDimensionException {
-        Point2D latlng;
-        Point2D inputPt = new Point2D.Double();
-        inputPt.setLocation(easting, northing);
-        latlng = OrigCoord.toWGS84(epsg, inputPt);
-        return latlng;
     }
 
 }
