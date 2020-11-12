@@ -107,7 +107,7 @@ echo "Starting container $APP_NAME"
 CONTAINER_CREATE=$(http POST huta16-d:9000/api/endpoints/1/docker/containers/create "Authorization: Bearer $TOKEN" \
 name=="$APP_NAME" \
 Image="$IMAGE" \
-HostConfig:='{ "PortBindings": { "8080/tcp": [{ "HostPort": "8090" }] }, "RestartPolicy": {"Name":"always" } }' \
+HostConfig:='{ "PortBindings": { "8080/tcp": [{ "HostPort": "9010" }] }, "RestartPolicy": {"Name":"always" } }' \
 ExposedPorts:='{ "8080/tcp": {} }' \
 Env:='["SPRING_PROFILES_ACTIVE=dev"]' \
  --ignore-stdin -b)
