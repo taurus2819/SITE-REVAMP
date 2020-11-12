@@ -178,8 +178,8 @@ public class NewSiteController {
             throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
         Point2D latlng1 = OrigCoord.MakeLatLongPt(minEast, maxNorth, epsg);
         Point2D latlng2 = OrigCoord.MakeLatLongPt(maxEast, maxNorth, epsg);
-        Point2D latlng3 = OrigCoord.MakeLatLongPt(minEast, minNorth, epsg);
-        Point2D latlng4 = OrigCoord.MakeLatLongPt(maxEast, minNorth, epsg);
+        Point2D latlng3 = OrigCoord.MakeLatLongPt(maxEast, minNorth, epsg);
+        Point2D latlng4 = OrigCoord.MakeLatLongPt(minEast, minNorth, epsg);
         Coordinate[] sc = new Coordinate[5];
         sc[0] = new Coordinate(latlng1.getY(), latlng1.getX());
         sc[1] = new Coordinate(latlng2.getY(), latlng2.getX());
