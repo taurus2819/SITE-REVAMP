@@ -5,6 +5,8 @@
  */
 package nz.cri.gns.newsite.model;
 
+import java.util.List;
+
 /**
  *
  * @author scaddenp This is facade for siteModel, plus distance from a target
@@ -50,15 +52,19 @@ public class SiteProximity {
         return siteModel.getComment();
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return siteModel.getLat();
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return siteModel.getLon();
     }
 
     public String getOrigCoord() {
         return siteModel.getOrigCoord().toString();
+    }
+    
+    public List<String> getUsers() {
+        return siteModel.getUsers();
     }
 }
