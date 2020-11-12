@@ -6,12 +6,14 @@
 package nz.cri.gns.newsite.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.geom.Point2D;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.assertj.core.data.Offset;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Point;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -144,5 +146,29 @@ public class OrigCoordTest {
         assert(OrigCoord.createOrigFormatJson(2193, "EN", "", "", "", 1528677.3, 5413457.7).equals(mapper.readTree("{\"epsg\":2193,\"format\":\"EN\",\"easting\":1528677.3,\"northing\":5413457.7}")));
         assert(OrigCoord.createOrigFormatJson(27200, "gridRef", "U20/962872", "", "", null, null).equals(mapper.readTree("{\"epsg\":27200,\"format\":\"gridRef\",\"gridReference\":\"U20/962872\"}")));
     }
+    
+    @Test
+    public void testMakeLatLongPt(){
+        try {
+            Point2D testpt = OrigCoord.MakeLatLongPt(1625839.02,5575773.87,2193);
+            assertThat(testpt.getY()).isCloseTo(173.302600, Offset.offset(0.0005));
+            assertThat(testpt.getX()).isCloseTo(-39.967778, Offset.offset(0.0005));
+        } catch (Exception ex) {
+            fail("Reason: " + ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testMakeGeomPt(){
+        try {
+            Point testpt = OrigCoord.MakeGeomPt(2535853.07,6137531.28,27200);
+            assertThat(testpt.getX()).isCloseTo(173.302600, Offset.offset(0.0005));
+            assertThat(testpt.getY()).isCloseTo(-39.967778, Offset.offset(0.0005));
+            assertThat(testpt.getSRID()).isEqualTo(4326);
+        } catch (Exception ex) {
+            fail("Reason: " + ex.getMessage());
+        }
+    }
+    
 
 }
