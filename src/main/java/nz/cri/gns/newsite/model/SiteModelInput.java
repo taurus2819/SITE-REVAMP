@@ -6,7 +6,6 @@
 package nz.cri.gns.newsite.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.awt.geom.Point2D;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
@@ -20,7 +19,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author scaddenp
  */
 public class SiteModelInput {
-    private SiteModel siteModel;
+    private final SiteModel siteModel;
     private int epsg;
     private String gridref;
     private Double easting;
@@ -215,6 +214,7 @@ public class SiteModelInput {
  * @throws FactoryException
  * @throws MismatchedDimensionException
  * @throws TransformException 
+     * @throws com.fasterxml.jackson.core.JsonProcessingException 
  */    
     public SiteModel toSiteModel() throws InvalidLatLonFormat,InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException{
         siteModel.setOrigCoord(OrigCoord.createOrigFormatJson(epsg,format,gridref,latitude,longitude, easting, northing));
