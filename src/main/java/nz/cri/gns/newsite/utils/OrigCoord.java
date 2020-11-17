@@ -283,7 +283,7 @@ public class OrigCoord {
       if (ll.getConfidence() != ParseResult.CONFIDENCE.DEFINITE && ll.getConfidence() != ParseResult.CONFIDENCE.PROBABLE) {
           throw new InvalidLatLonFormat("Invalid lat/lon format" + ll.getConfidence().toString());
       }
-      Point2D latlng = new Point2D.Double(ll.getPayload().getLng(),ll.getPayload().getLat());
+      Point2D latlng = new Point2D.Double(ll.getPayload().getLat(),ll.getPayload().getLng());
       return latlng;
     }
     /**

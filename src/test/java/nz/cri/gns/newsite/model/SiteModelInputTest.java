@@ -33,6 +33,18 @@ public class SiteModelInputTest {
         ObjectMapper mapper = new ObjectMapper();
         assertEquals(sm.getOrigCoord(),mapper.readTree("{\"epsg\":27200, \"format\":\"gridRef\", \"gridReference\":\"U20/967978\"}"));        
     }
+
+    @Test
+    public void testToSiteModelLL() throws Exception {
+        SiteModelInput smi = new SiteModelInput("test1",3,null,"somewhere", 
+               null, null, 3.5, "NZ", "testing",1618,
+               4326, null, null, null, "-39.16630691","173.1451122" ,"DD", "Unit test");
+        SiteModel sm = smi.toSiteModel();
+        assertEquals(sm.getLat(), -39.16630691, 0.0001);
+        assertEquals(sm.getLon(), 173.1451122, 0.0001);
+        ObjectMapper mapper = new ObjectMapper();
+        assertEquals(sm.getOrigCoord(),mapper.readTree("{\"epsg\":4326,\"format\":\"DD\",\"longitude\":\"173.1451122\",\"latitude\":\"-39.16630691\"}"));        
+    }
     
     
 //    @Test

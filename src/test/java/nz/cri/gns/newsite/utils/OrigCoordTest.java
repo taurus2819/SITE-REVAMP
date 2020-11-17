@@ -38,8 +38,8 @@ public class OrigCoordTest {
 
     private void assertDMS(String lat, String lon, double eLat, double eLon) {
         Point2D ll = OrigCoord.parseLatLng(lat, lon);
-        assertEquals(eLat, ll.getY(), 0.000001);
-        assertEquals(eLon, ll.getX(), 0.000001);
+        assertEquals(eLat, ll.getX(), 0.000001);
+        assertEquals(eLon, ll.getY(), 0.000001);
     }
 
     @Test
