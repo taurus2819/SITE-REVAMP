@@ -1,4 +1,3 @@
-
 package nz.cri.gns.newsite.utils;
 
 import java.awt.geom.Point2D;
@@ -383,19 +382,20 @@ public class NZMS1 extends MapSheet{
 
     /**
      * Function to convert NZMS1 truncated coordinates derived from a grid reference into full coordinates
+     * @param epsg 27291/27292
      * @param mapsheet The mapsheet reference. eg N34 or S101 (S is south island, N is north island)
      * @param truncEast the 4-figure truncated easting value (3 figure truncated eastings should be multiplied by 10 before passing to this routine)
      * @param truncNorth the 4-figure truncated northing value (3 figure truncated northings should be multiplied by 10 before passing to this routine)
      * @return a Point2D x,y containing the full easting and northings
      */
-    public static Point2D getFullCoordinates(String mapsheet, int truncEast, int truncNorth) {
+    public static Point2D getFullCoordinates(int epsg, String mapsheet, int truncEast, int truncNorth) {
         char island = mapsheet.charAt(0);
         int sheet;
         Point2D outputPt = new Point2D.Double();
         try {
             sheet = Integer.parseInt(mapsheet.substring(1));
         } catch (Exception e) {
-            throw new InvalidOrigCoordinate("mapsheet format incorrect for this projection");
+            throw new InvalidOrigCoordinate("mapsheet incorrect for this epsg: " + epsg);
         }
         String grid;
         switch (island) {
@@ -406,17 +406,17 @@ public class NZMS1 extends MapSheet{
                 grid = swcns[sheet - 1];
                 break;
             default:
-                throw new InvalidOrigCoordinate("mapsheet must by N or S for this projection");
+                throw new InvalidOrigCoordinate("mapsheet must be N or S for epsg: " + epsg);
         }
         int wbnd = 100 * Integer.parseInt(grid.substring(1, 3));
         int e1 = Integer.parseInt(grid.substring(0, 1));
         int zef = 0;
         if (wbnd<5200) {
             if (truncEast < wbnd || truncEast > (wbnd + 4500)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         } else if (truncEast < wbnd && truncEast > (wbnd - 5500)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
         }
         if (truncEast < wbnd) {
                 zef = 100000;
@@ -430,14 +430,14 @@ public class NZMS1 extends MapSheet{
         int znf = 0;
         if (sbnd>7000) {
             if (truncNorth < sbnd && truncNorth > (sbnd - 7000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
             if (truncNorth<sbnd) {
                 znf = 100000;
             }
         } else {
             if (truncNorth < sbnd || truncNorth > (sbnd + 3000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
             if (sbnd == 7000 && truncNorth == 0) {
                 znf = 100000;

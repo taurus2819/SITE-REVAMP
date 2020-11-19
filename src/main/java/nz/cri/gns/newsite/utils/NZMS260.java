@@ -44,25 +44,26 @@ public class NZMS260 extends MapSheet{
 
     /**
      * Function to convert NZMS260 (NZ Map Grid) truncated coordinates derived from a grid reference into full coordinates
+     * @param epsg  27200
      * @param mapsheet The mapsheet reference. eg U34
      * @param truncEast the 4-figure truncated easting value (3 figure truncated eastings should be multiplied by 10 before passing to this routine)
      * @param truncNorth the 4-figure truncated northing value (3 figure truncated northings should be multiplied by 10 before passing to this routine)
      * @return a Point2D x,y containing the full easting and northings
      */
-    public static Point2D getFullCoordinates(String mapsheet, int truncEast, int truncNorth) {
+    public static Point2D getFullCoordinates(int epsg, String mapsheet, int truncEast, int truncNorth) {
         if (!isValidMapSheet(mapsheet)) {
-            throw new InvalidOrigCoordinate("Not a valid mapsheet number");
+            throw new InvalidOrigCoordinate("Not within the valid mapsheet list for epsg: " + epsg);
         }
         int letter = mapsheet.toUpperCase().charAt(0) - 'A';
         long sheetEBound = 1970000 + 40000 * letter;
         long truncEBound = (sheetEBound / 10) % 10000;
         if (truncEBound <= 6000) {
             if (truncEast < truncEBound || truncEast > (truncEBound + 4000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         } else {
             if (truncEast < truncEBound && truncEast > (truncEBound - 6000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         }
         long easting = addToStart(sheetEBound, truncEast*10);
@@ -71,11 +72,11 @@ public class NZMS260 extends MapSheet{
         long truncNBound = (sheetNBound / 10) % 10000;
         if (truncNBound <= 7000) {
             if (truncNorth < truncNBound || truncNorth > (truncNBound + 3000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         } else {
             if (truncNorth < truncNBound && truncNorth > (truncNBound - 7000)) {
-                throw new InvalidOrigCoordinate("grid reference is not compatible with the sheet no");
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         }
         long northing = addToStart(sheetNBound, truncNorth*10);

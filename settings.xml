@@ -3,24 +3,19 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <servers>
         <server>
-            <username>jenkins</username>
+            <username>${env.artifactory_user}</username>
             <password>${env.jenkins_auth}</password>
             <id>central</id>
         </server>
         <server>
-            <username>jenkins</username>
+            <username>${env.artifactory_user}</username>
             <password>${env.jenkins_auth}</password>
             <id>snapshots</id>
         </server>
         <server>
-            <username>jenkins</username>
+            <username>${env.artifactory_user}</username>
             <password>${env.jenkins_auth}</password>
             <id>repo</id>
-        </server>
-        <server>
-            <id>Tomcat</id>
-            <username>admin</username>
-            <password>${env.tomcat_auth}</password>
         </server>
     </servers>
     <mirrors>

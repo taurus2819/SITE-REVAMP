@@ -14,12 +14,13 @@ import java.awt.geom.Point2D;
 abstract class MapSheet {
     /**
      * Function to convert mapsheet truncated coordinates derived from a grid reference into full coordinates
+     * @param epsg 27200(NZMG), 27292(NZGD49), 27291(NZGD49), 2193(NZGD2000)
      * @param mapsheet The mapsheet reference. eg U34
      * @param truncEast the 4-figure truncated easting value (3 figure truncated eastings should be multiplied by 10 before passing to this routine)
      * @param truncNorth the 4-figure truncated northing value (3 figure truncated northings should be multiplied by 10 before passing to this routine)
      * @return a Point2D x,y containing the full easting and northings
      */
-    static Point2D getFullCoordinates(String mapsheet, int truncEast, int truncNorth) {
+    static Point2D getFullCoordinates(int epsg, String mapsheet, int truncEast, int truncNorth) {
         return null;
     };
     
