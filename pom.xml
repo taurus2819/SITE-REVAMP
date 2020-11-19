@@ -21,11 +21,12 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <geotools.version>24-SNAPSHOT</geotools.version>
+        <image.name>huta17-d.gns.cri.nz:5000/siterevamp/${project.artifactId}:${project.version}</image.name>
     </properties>
-    <repositories>
+    <!-- <repositories>
         <repository>
             <id>gbif-all</id>
-            <url>https://repository.gbif.org/content/groups/gbif</url>
+            <url>https://repository.gbif.org/repository/gbif/</url>
         </repository>
         <repository>
             <id>osgeo</id>
@@ -41,7 +42,7 @@
             <snapshots><enabled>true</enabled></snapshots>
             <releases><enabled>false</enabled></releases>
         </repository>
-    </repositories>
+    </repositories> -->
     
     <dependencies>
         <dependency>
@@ -52,6 +53,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>com.oracle.ojdbc</groupId>
@@ -166,6 +172,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-help-plugin</artifactId>
+            </plugin>
+
         </plugins>
     </build>
 
