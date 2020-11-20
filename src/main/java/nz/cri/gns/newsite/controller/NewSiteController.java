@@ -65,24 +65,8 @@ public class NewSiteController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/site")
     public SiteModel addSite(@RequestBody SiteModelInput siteInput, HttpServletResponse response) throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
-//    try {
         SiteModel site = siteInput.toSiteModel();
         site = newSiteService.insert(site);
-        /*            if (site.getLat() == 0.0 && site.getLon() == 0.0) {
-                String epsgFormatInfo = OrigCoord.getEpsgInfoJsonString(site.getOrigSystemId(), site.getOrigCoord());
-                JSONObject obj = new JSONObject(epsgFormatInfo);
-                if (obj.getString("format").equals("EN")) {
-                    site.setLat(Double.parseDouble(obj.getString("latitude")));
-                    site.setLon(Double.parseDouble(obj.getString("longitude")));
-                    site = updateSite(site, site.getSiteId());
-                } else if (obj.getString("format").equals("DD")) {
-                    ConversionToWgs84 llToWgs84 = new ConversionToWgs84(obj.getDouble("latitude"), obj.getDouble("longitude"));
-                    site.setLat(llToWgs84.getConvertedLat());
-                    site.setLon(llToWgs84.getConvertedLon());
-                    site = updateSite(site, site.getSiteId());
-                }
-            }
-         */
         int newlyCreatedSiteId = site.getSiteId();
         List<String> siteinfoBefore = new ArrayList<>();
         siteinfoBefore.add("message: Newly Created");
@@ -91,9 +75,6 @@ public class NewSiteController {
         auditLogService.insert(newAuditLog);
         response.setStatus(HttpServletResponse.SC_CREATED);
         return site;
-//        } catch (Exception e) {
-//            throw new InvalidOrigCoordinate("Not a valid format#$%");
-//        }
     }
 
     private AuditLog auditLogCreator(SiteModel site, int createdOrModifiedSiteId, List<String> siteinfoBefore) throws JsonProcessingException, JSONException {
