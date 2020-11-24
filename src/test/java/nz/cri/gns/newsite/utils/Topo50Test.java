@@ -23,8 +23,6 @@ public class Topo50Test {
     @Test
     public void testGetFullCoordinates() {
         Point2D outputPt = Topo50.getFullCoordinates(2193, "CC13", 151, 805);
-//        System.out.println("X = " + outputPt.getX());
-//        System.out.println("Y = " + outputPt.getY());
         assertEquals(outputPt.getX(), 1301510, 0.001);
         assertEquals(outputPt.getY(), 4908050, 0.001);
     }    

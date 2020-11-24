@@ -13,6 +13,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,6 +29,8 @@ import org.gbif.common.shaded.com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 
 import org.springframework.core.style.ToStringCreator;
 
@@ -98,9 +101,9 @@ public class SiteModel implements Serializable{
     @Column(name = "comment")
     private String comment;			//"blah blah"
 
-//    @JsonIgnore
-//    @Column(name = "shape")
-//    private String shape;
+    @JsonIgnore
+    @Column(name = "shape", columnDefinition = "Geometry")
+    private Geometry shape;
     
     @Column(name="owner_id")
     @JsonIgnore
@@ -109,6 +112,10 @@ public class SiteModel implements Serializable{
     @OneToMany(cascade = CascadeType.ALL, targetEntity=AuditLog.class, orphanRemoval = true)      //mappedBy = "sitemodel",
     @JoinColumn(name = "site_id")
     private List<AuditLog> auditLogs = new ArrayList<>();
+    
+    @OneToMany(targetEntity=SiteUsage.class, mappedBy="siteId", fetch=FetchType.LAZY)
+    @JsonIgnore
+    private List<SiteUsage> users;
    
     @JsonIgnore
     @Transient
@@ -210,7 +217,7 @@ public class SiteModel implements Serializable{
     }
     
     public Double getHeight() {
-        return height;
+          return height;          
     }
 
     public void setHeight(Double height) {
@@ -257,13 +264,14 @@ public class SiteModel implements Serializable{
         this.comment = comment;
     }
 
-//    public String getShape() {
-//        return shape;
-//    }
-//
-//    public void setShape(String shape) {
-//        this.shape = shape;
-//    }
+    public Geometry getShape() {        
+        return shape;
+    }
+
+    public void setShape(Geometry shape) {
+        shape.setSRID(4326);
+        this.shape = shape;
+    }
 
     public Integer getOwnerId() {
         return ownerId;
@@ -297,6 +305,15 @@ public class SiteModel implements Serializable{
     public void removeAuditLogs(){
         
     }
+
+    public List<String> getUsers() {
+        List<String> usedby = new ArrayList<>();
+        users.forEach((u) -> {
+            usedby.add(u.getUsedBy());
+        });
+        return usedby;
+    }
+    
     
     @Override
     public String toString(){
