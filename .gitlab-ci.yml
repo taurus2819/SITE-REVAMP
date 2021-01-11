@@ -35,6 +35,6 @@ deploy:
     - linux
   stage: deploy
   script: |
-    . ./docker_build.sh -s huta16-d
+    . ./docker_build.sh -s App-dev -t GGW
 
 

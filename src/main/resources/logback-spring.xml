@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property resource="git.properties" />
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="no name"/>
+    <property scope="context" name="hostname" value="${HOSTNAME}" />
+
+    <springProfile name="dev">
+        <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>huta16-d.gns.cri.nz:8500</destination>
+            <keepAliveDuration>5 minutes</keepAliveDuration>
+            <!-- encoder is required -->
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <customFields>{"buildinfo": {"version":"${git.build.version}","lastcommit":"${git.commit.id.abbrev}"}}</customFields>
+            </encoder>
+        </appender>
+        <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%-5level %logger{35} - %msg %n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="stash" />
+            <appender-ref ref="console" />
+        </root>
+
+    </springProfile>
+
+    <springProfile name="!dev">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <!-- encoders are assigned the type
+                 ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+            <encoder>
+                <pattern>%-5level %logger{35} - %msg %n</pattern>
+            </encoder>
+        </appender>
+
+        <root level="DEBUG">
+            <appender-ref ref="STDOUT" />
+        </root>
+    </springProfile>
+
+</configuration>
