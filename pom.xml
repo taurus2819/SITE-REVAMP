@@ -5,8 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.5.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.3.4.RELEASE</version>
     </parent>
     <groupId>nz.cri.gns.newsite</groupId>
     <artifactId>new-site-api</artifactId>
@@ -14,35 +13,12 @@
     <name>New Site API</name>
     <description>New Site API </description>
 
-<!--    <properties>
-        <java.version>1.8</java.version>
-        <geotools.version>23.2</geotools.version>
-    </properties>-->
     <properties>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <geotools.version>24-SNAPSHOT</geotools.version>
         <image.name>huta17-d.gns.cri.nz:5000/siterevamp/${project.artifactId}:${project.version}</image.name>
     </properties>
-    <!-- <repositories>
-        <repository>
-            <id>gbif-all</id>
-            <url>https://repository.gbif.org/repository/gbif/</url>
-        </repository>
-        <repository>
-            <id>osgeo</id>
-            <name>OSGeo Release Repository</name>
-            <url>https://repo.osgeo.org/repository/release/</url>
-            <snapshots><enabled>false</enabled></snapshots>
-            <releases><enabled>true</enabled></releases>
-        </repository>
-        <repository>
-            <id>osgeo-snapshot</id>
-            <name>OSGeo Snapshot Repository</name>
-            <url>https://repo.osgeo.org/repository/snapshot/</url>
-            <snapshots><enabled>true</enabled></snapshots>
-            <releases><enabled>false</enabled></releases>
-        </repository>
-    </repositories> -->
     
     <dependencies>
         <dependency>
@@ -57,7 +33,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.oracle.ojdbc</groupId>
@@ -94,7 +73,6 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>2.5.5</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -103,16 +81,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>2.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20160212</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.vladmihalcea</groupId>
@@ -128,7 +99,6 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.4</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
@@ -149,7 +119,6 @@
             <groupId>org.gbif</groupId>
             <artifactId>gbif-parsers</artifactId>
             <version>0.51-SNAPSHOT</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -166,12 +135,11 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.7.0</version>
          </dependency>
+        <!-- Logging -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>5.2.9.RELEASE</version>
-            <scope>test</scope>
-            <type>jar</type>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>6.4</version>
         </dependency>
     </dependencies>
 
@@ -185,7 +153,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-help-plugin</artifactId>
             </plugin>
-
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 

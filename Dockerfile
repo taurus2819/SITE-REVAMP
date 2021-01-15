@@ -2,7 +2,7 @@ FROM openjdk:11 as builder
 COPY . .
 ARG jenkins_auth
 ARG artifactory_user
-RUN ./mvnw spring-boot:build-info verify -s settings.xml -q
+RUN ./mvnw spring-boot:build-info verify -s settings.xml -ntp
 
 FROM openjdk:11-jre-slim
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
