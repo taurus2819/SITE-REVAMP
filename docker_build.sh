@@ -2,16 +2,25 @@
 
 set -e
 
-
 PARAMS=""
-
+PORTAINER_HOST='huta17-d:9000'
 SERVER=""
+TEAM="GGW"
 
 while (( "$#" )); do
   case "$1" in
     -s|--server)
       if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
         SERVER=$2
+        shift 2
+      else
+        echo "Error: Argument for $1 is missing" >&2
+        exit 1
+      fi
+      ;;
+    -t|--team)
+      if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
+        TEAM=$2
         shift 2
       else
         echo "Error: Argument for $1 is missing" >&2
@@ -32,26 +41,54 @@ done
 # set positional arguments in their proper place
 eval set -- "$PARAMS"
 
+## Find target server
 if [ -z "$SERVER" ]
 then
   echo "Server is undefined"
   exit 1
 fi
 
+if [[ -z "$portainer_user" || -z "$portainer_auth" || -z "$artifactory_user" || -z "$jenkins_auth" ]]
+then
+  echo "Environment variables undefined"
+  exit 2
+else
+  echo "Building as $artifactory_user and $portainer_user"
+fi
 
-echo "Building as $artifactory_user and $portainer_user"
+TOKEN=$(http POST "$PORTAINER_HOST"/api/auth Username="$portainer_user" Password="$portainer_auth" --ignore-stdin  | jq .jwt -r)
 
-IMAGE="$(./mvnw help:evaluate -Dexpression=image.name -q -DforceStdout)"
+if [[ -z "$TOKEN" ]]
+then
+  echo "unauthorised access"
+  exit 3
+fi
+
+SERVER_ID=$( http GET "$PORTAINER_HOST"/api/endpoints "Authorization: Bearer $TOKEN" --ignore-stdin  -b | jq --arg SERVER "$SERVER" '.[] | select(.Name == $SERVER) | .Id')
+
+if [[ -z "$SERVER_ID" ]]
+then
+  echo "Server $SERVER unavailable"
+  exit 4
+fi
+
+TEAM_ID=$(http GET "$PORTAINER_HOST"/api/teams "Authorization: Bearer $TOKEN" --ignore-stdin  -b | jq --arg TEAM "$TEAM" '.[] | select(.Name == $TEAM) | .Id')
+if [[ -z "$TEAM_ID" ]]
+then
+  echo "Team $TEAM unavailable"
+  exit 4
+fi
+
+IMAGE=$(./mvnw help:evaluate -Dexpression=image.name -q -DforceStdout)
 echo "Building $IMAGE"
 docker build . --build-arg jenkins_auth="$jenkins_auth" --build-arg artifactory_user="$artifactory_user" -t "$IMAGE"
 
 echo "Pushing $IMAGE"
 docker image push "$IMAGE"
-TOKEN=$(http POST huta16-d:9000/api/auth Username="$portainer_user" Password="$portainer_auth" --ignore-stdin  | jq .jwt -r)
 
 APP_NAME=$(./mvnw help:evaluate -Dexpression=project.name -q -DforceStdout | sed "s/ /_/g")
 echo "Cleaning up old versions of $APP_NAME"
-CONTAINERS=$(http GET huta16-d:9000/api/endpoints/1/docker/containers/json?filters=\{\"name\":\{\""/$APP_NAME"\":true\}\} "Authorization: Bearer $TOKEN" --ignore-stdin  -b)
+CONTAINERS=$(http GET "$PORTAINER_HOST"/api/endpoints/"$SERVER_ID"/docker/containers/json?filters=\{\"name\":\{\""/$APP_NAME"\":true\}\} "Authorization: Bearer $TOKEN" --ignore-stdin  -b)
 echo "Found running containers $CONTAINERS"
 
 if [[ ! -z $(echo $CONTAINERS | jq .[]? ) ]]
@@ -60,12 +97,12 @@ then
   for id in $IDS
   do
     echo "Stopping $id"
-    if http POST huta16-d:9000/api/endpoints/1/docker/containers/"$id"/stop "Authorization: Bearer $TOKEN" --check-status --ignore-stdin &> /dev/null
+    if http POST "$PORTAINER_HOST"/api/endpoints/"$SERVER_ID"/docker/containers/"$id"/stop "Authorization: Bearer $TOKEN" --check-status --ignore-stdin &> /dev/null
     then
-      STOP_STATUS=$(http POST huta16-d:9000/api/endpoints/1/docker/containers/"$id"/wait "Authorization: Bearer $TOKEN" --check-status --ignore-stdin -b)
+      STOP_STATUS=$(http POST "$PORTAINER_HOST"/api/endpoints/"$SERVER_ID"/docker/containers/"$id"/wait "Authorization: Bearer $TOKEN" --check-status --ignore-stdin -b)
       echo "Stopped $id with status $STOP_STATUS"
       echo "Removing $id"
-      if http DELETE huta16-d:9000/api/endpoints/1/docker/containers/"$id" "Authorization: Bearer $TOKEN" --check-status --ignore-stdin &> /dev/null
+      if http DELETE "$PORTAINER_HOST"/api/endpoints/"$SERVER_ID"/docker/containers/"$id" "Authorization: Bearer $TOKEN" --check-status --ignore-stdin &> /dev/null
       then
         echo "Removed $id"
       else
@@ -89,7 +126,7 @@ else
 fi
 
 echo "Creating $IMAGE"
-CREATE_RESP=$(http -f POST huta16-d:9000/api/endpoints/1/docker/images/create "Authorization: Bearer $TOKEN" "fromImage=$IMAGE" --ignore-stdin -b)
+CREATE_RESP=$(http -f POST "$PORTAINER_HOST"/api/endpoints/"$SERVER_ID"/docker/images/create "Authorization: Bearer $TOKEN" "fromImage=$IMAGE" --ignore-stdin -b)
 
 if [[ -z  "$CREATE_RESP" ]]
 then
@@ -104,7 +141,7 @@ fi
 
 echo "Starting container $APP_NAME"
 
-CONTAINER_CREATE=$(http POST huta16-d:9000/api/endpoints/1/docker/containers/create "Authorization: Bearer $TOKEN" \
+CONTAINER_CREATE=$(http POST "$PORTAINER_HOST"/api/endpoints/"$SERVER_ID"/docker/containers/create "Authorization: Bearer $TOKEN" \
 name=="$APP_NAME" \
 Image="$IMAGE" \
 HostConfig:='{ "PortBindings": { "8080/tcp": [{ "HostPort": "9010" }] }, "RestartPolicy": {"Name":"always" } }' \
@@ -112,19 +149,23 @@ ExposedPorts:='{ "8080/tcp": {} }' \
 Env:='["SPRING_PROFILES_ACTIVE=dev"]' \
  --ignore-stdin -b)
 
-echo $CONTAINER_CREATE
+echo "$CONTAINER_CREATE"
 
-if [[ -z $(echo $CONTAINER_CREATE | jq .Id ) ]]
+if [[ -z $(echo "$CONTAINER_CREATE" | jq .Id ) ]]
 then
   echo "Could not create container $(jq -r .message)"
   echo "Could not create container $(jq -r .Warnings)"
 else
-  NEW_APP=$(echo $CONTAINER_CREATE | jq -r .Id)
-  if http POST huta16-d:9000/api/endpoints/1/docker/containers/"$NEW_APP"/start "Authorization: Bearer $TOKEN" --check-status --ignore-stdin &> /dev/null
+  NEW_APP=$(echo "$CONTAINER_CREATE" | jq -r .Id)
+  http POST "$PORTAINER_HOST"/api/endpoints/"$SERVER_ID"/docker/containers/"$NEW_APP"/start "Authorization: Bearer $TOKEN" --check-status --ignore-stdin &> /dev/null
+  RET=$?
+  if [[ $RET -eq 0 ]]
   then
-    echo "Starting $APP_NAME - $id"
+    echo "Starting $APP_NAME - $id on $SERVER"
+    RESOURCE_ID=$(echo "$CONTAINER_CREATE" | jq -r '.Portainer.ResourceControl.Id' )
+    http PUT "$PORTAINER_HOST"/api/resource_controls/"$RESOURCE_ID" "Authorization: Bearer $TOKEN" Teams:=["$TEAM_ID"] --ignore-stdin -b &> /dev/null
   else
-      case $? in
+      case $RET in
         3) echo "$APP_NAME already started";;
         4) echo "No such container $id" ;;
         5) echo 'HTTP 5xx Server Error!' ;;

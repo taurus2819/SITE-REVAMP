@@ -9,7 +9,7 @@ build:
     - docker
   stage: build
   script:
-    - ./mvnw clean verify -s .mvn/settings.xml
+    - ./mvnw clean verify -ntp -s .mvn/settings.xml
   # artifacts:
   #   reports:
   #     junit:
@@ -26,8 +26,8 @@ release:
   only:
     - main
   script: |
-    ./mvnw jgitflow:release-start -B -s .mvn/settings.xml
-    ./mvnw jgitflow:release-finish -s .mvn/settings.xml
+    ./mvnw jgitflow:release-start -ntp -B -s .mvn/settings.xml
+    ./mvnw jgitflow:release-finish -ntp -s .mvn/settings.xml
 
 
 deploy:
@@ -35,6 +35,6 @@ deploy:
     - linux
   stage: deploy
   script: |
-    . ./docker_build.sh -s huta16-d
+    . ./docker_build.sh -s App-dev -t GGW
 
 
