@@ -33,3 +33,6 @@ build/
 # /
 /target
 /nbproject
+.classpath
+nbactions.xml
+.project
