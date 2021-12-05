@@ -4,12 +4,16 @@ stages:
   - image
 
 build:
-  image: openjdk:11
+  image: maven:3.8-openjdk-11
   tags:
     - docker
   stage: build
-  script:
-    - ./mvnw clean deploy -ntp -s .mvn/settings.xml
+  except:
+    - main
+  script: |
+    cp $settings_xml ~/.m2/settings.xml
+    mvn clean deploy -ntp
+
   # artifacts:
   #   reports:
   #     junit:
