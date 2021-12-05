@@ -40,7 +40,7 @@ deploy:
     | sed 's/${project.artifactId}/'"$NAME"'/' \
     | sed 's/${project.version}/'"$VERSION"'/')"
     APP_NAME="$(echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:properties/x:application.name/text()' | xmllint --shell pom.xml | grep -v "^/")"
-    APP_SERVER="App-dev"
+    APP_SERVER="Applications Development"
     TEAM="GGW"
     DOCKER_CONFIG=(HostConfig:='{ "PortBindings": { "8080/tcp": [{ "HostPort": "9010" }] }, "RestartPolicy": {"Name":"always" } }' )
     ./docker_build.sh -i "$IMAGE"
