@@ -138,7 +138,7 @@
         <dependency>
             <groupId>org.gbif</groupId>
             <artifactId>gbif-parsers</artifactId>
-            <version>0.51-SNAPSHOT</version>
+            <version>0.56</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
