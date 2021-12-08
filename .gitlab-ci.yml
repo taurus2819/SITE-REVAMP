@@ -11,7 +11,8 @@ build:
   except:
     - main
   script: |
-    mvn clean deploy -ntp -s $settings_xml
+    cp $settings_xml ~/.m2/settings.xml
+    mvn clean deploy -ntp
 
   # artifacts:
   #   reports:
