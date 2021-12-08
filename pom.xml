@@ -16,7 +16,7 @@
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <geotools.version>24-SNAPSHOT</geotools.version>
+        <geotools.version>26.1.01</geotools.version>
         <application.name>New_Site_Api</application.name>
         <image.name>huta17-d.gns.cri.nz:5000/siterevamp/${project.artifactId}:${project.version}</image.name>
     </properties>
