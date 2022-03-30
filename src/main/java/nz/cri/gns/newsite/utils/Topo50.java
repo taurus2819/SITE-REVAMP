@@ -18,7 +18,7 @@ import org.locationtech.jts.geom.PrecisionModel;
  *
  * @author scaddenp
  */
-public class Topo50 extends MapSheet{
+public class Topo50 extends MapSheet implements MapSeries{
 
     static final String NZTMSL = "ABCDEFGHJKLMNPQRSTUVWXYZ";
     static final String validMapReference = "ABC";
@@ -120,7 +120,7 @@ public class Topo50 extends MapSheet{
         bboxWest = sheet * 24000 + 988000;
         bboxEast = bboxWest + 24000;
 
-        final GeometryFactory factory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 2193);
+        final GeometryFactory factory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), getDefaultEPSG());
 
         Polygon polygon = factory.createPolygon(factory.createLinearRing(new Coordinate[]{
             new Coordinate(bboxWest, bboxSouth),
@@ -131,4 +131,12 @@ public class Topo50 extends MapSheet{
         }), null);   
         return polygon;
     }
+    
+    /**
+     * NZTM
+     * @return EPSG code
+     */
+    public static int getDefaultEPSG() {
+       return 2193;
+    } 
 }

@@ -20,6 +20,7 @@ import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.repository.NewSiteRepository;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
+import nz.cri.gns.newsite.utils.QMAPSheet;
 import nz.cri.gns.newsite.utils.Topo50;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
@@ -138,7 +139,29 @@ public class NewSiteServiceImpl implements NewSiteService {
         }
         
         try {
-            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(bbox, 2193));
+            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(bbox, Topo50.getDefaultEPSG()));
+        } catch (TransformException ex) {
+            java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FactoryException ex) {
+            java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    @Override
+    public List<SiteModel> findWithinQMAPSheets(List<String> sheetNames) {
+        
+        Geometry bbox = null;
+        for(String sheetName: sheetNames)   {
+            bbox = QMAPSheet.getBoundingBox(sheetName);
+            //TODO merge geometries
+        }
+        if(bbox==null)  {
+            return null;
+        }
+        
+        try {
+            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(bbox, QMAPSheet.getDefaultEPSG()));
         } catch (TransformException ex) {
             java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FactoryException ex) {

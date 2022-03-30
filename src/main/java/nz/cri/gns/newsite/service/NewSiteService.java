@@ -21,6 +21,8 @@ public interface NewSiteService {
 	List<SiteProximity> findCloseTo(Geometry Point, double distance);
 	List<SiteModel> listAllSites();
         List<SiteModel> findWithinTopo50Sheets(List<String> sheetnames);
+        List<SiteModel> findWithinQMAPSheets(List<String> sheetnames);
+
 //	List<SiteModel> findAll(Integer origSystemID);
 	
 }
