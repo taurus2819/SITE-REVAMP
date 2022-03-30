@@ -6,11 +6,11 @@
 package nz.cri.gns.newsite.utils;
 
 import java.awt.geom.Point2D;
-import javax.validation.constraints.AssertTrue;
-import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import static org.junit.Assert.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -26,4 +26,20 @@ public class Topo50Test {
         assertEquals(outputPt.getX(), 1301510, 0.001);
         assertEquals(outputPt.getY(), 4908050, 0.001);
     }    
+    
+    
+    @Test
+    public void testBbox()  {
+        
+        double tolerance = 0.001;
+        Geometry bbox = Topo50.getBoundingBox("BD32");
+        
+        assertTrue(bbox instanceof Polygon);
+        
+        Coordinate[] coordinates = bbox.getCoordinates();
+        assertTrue(coordinates.length == 5);
+        
+        assertEquals(1756000, coordinates[0].x, tolerance);
+        assertEquals(5802000, coordinates[0].y, tolerance);
+    }
 }

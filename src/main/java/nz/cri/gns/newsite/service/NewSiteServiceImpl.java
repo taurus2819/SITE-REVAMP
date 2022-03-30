@@ -19,12 +19,18 @@ import nz.cri.gns.newsite.exception.ResourceMissingException;
 import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.repository.NewSiteRepository;
+import nz.cri.gns.newsite.utils.CoordinateConverter;
+import nz.cri.gns.newsite.utils.Topo50;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.geotools.referencing.GeodeticCalculator;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 import org.springframework.data.jpa.repository.Query;
 
 @Service
@@ -117,6 +123,28 @@ public class NewSiteServiceImpl implements NewSiteService {
             java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
+    }
+    
+    @Override
+    public List<SiteModel> findWithinTopo50Sheets(List<String> sheetNames) {
+        
+        Geometry bbox = null;
+        for(String sheetName: sheetNames)   {
+            bbox = Topo50.getBoundingBox(sheetName);
+            //TODO merge geometries
+        }
+        if(bbox==null)  {
+            return null;
+        }
+        
+        try {
+            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(bbox, 2193));
+        } catch (TransformException ex) {
+            java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FactoryException ex) {
+            java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
 }

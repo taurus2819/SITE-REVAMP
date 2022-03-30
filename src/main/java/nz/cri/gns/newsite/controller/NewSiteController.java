@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +30,7 @@ import nz.cri.gns.newsite.model.SiteModelInput;
 import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.service.AuditLogService;
 import nz.cri.gns.newsite.service.NewSiteService;
+import nz.cri.gns.newsite.utils.CoordinateConverter;
 import nz.cri.gns.newsite.utils.OrigCoord;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -153,25 +155,21 @@ public class NewSiteController {
  * @throws TransformException
  * @throws JsonProcessingException 
  */
-    @RequestMapping("/sites/query")
+    @RequestMapping("/sites/query/bbox")
     public List<SiteModel> getAllSitesWithin(@RequestParam(value = "minNorth") double minNorth, @RequestParam(value = "minEast") double minEast,
             @RequestParam(value = "maxNorth") double maxNorth, @RequestParam(value = "maxEast") double maxEast, @RequestParam(value = "EPSG") int epsg, HttpServletResponse response)
             throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
-        Point2D latlng1 = OrigCoord.MakeLatLongPt(minEast, maxNorth, epsg);
-        Point2D latlng2 = OrigCoord.MakeLatLongPt(maxEast, maxNorth, epsg);
-        Point2D latlng3 = OrigCoord.MakeLatLongPt(maxEast, minNorth, epsg);
-        Point2D latlng4 = OrigCoord.MakeLatLongPt(minEast, minNorth, epsg);
-        Coordinate[] sc = new Coordinate[5];
-        sc[0] = new Coordinate(latlng1.getY(), latlng1.getX());
-        sc[1] = new Coordinate(latlng2.getY(), latlng2.getX());
-        sc[2] = new Coordinate(latlng3.getY(), latlng3.getX());
-        sc[3] = new Coordinate(latlng4.getY(), latlng4.getX());
-        sc[4] = new Coordinate(latlng1.getY(), latlng1.getX());
-        GeometryFactory gf = new GeometryFactory();
-        Polygon bounds = gf.createPolygon(sc);
-        bounds.setSRID(4326);
-        return newSiteService.findWithinBounds(bounds);
+
+        return newSiteService.findWithinBounds(CoordinateConverter.convertBbox(minNorth, minEast, maxNorth, maxEast, epsg));
     }
+    
+    @RequestMapping("/sites/query/mapsheets")
+    List<SiteModel> getAllSitesWithinMapsheets(@RequestParam(value = "topo50sheet") String[] topo50SheetNames)   {
+        //TODO mix different mapsheet filters
+        return newSiteService.findWithinTopo50Sheets(Arrays.asList(topo50SheetNames));
+    }
+    
+    
 /**
  * Query the site database for all points within a given distance of a point,
  * returning the candidates points and the distance.
@@ -197,5 +195,5 @@ public class NewSiteController {
         distance = distance/111120; // approximately convert meters into degrees. 
         return newSiteService.findCloseTo(point, distance);
     }
-
+    
 }

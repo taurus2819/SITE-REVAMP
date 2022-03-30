@@ -20,6 +20,7 @@ public interface NewSiteService {
 	List<SiteModel> findWithinBounds(Geometry bounds);
 	List<SiteProximity> findCloseTo(Geometry Point, double distance);
 	List<SiteModel> listAllSites();
+        List<SiteModel> findWithinTopo50Sheets(List<String> sheetnames);
 //	List<SiteModel> findAll(Integer origSystemID);
 	
 }

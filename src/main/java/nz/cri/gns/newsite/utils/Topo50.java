@@ -7,6 +7,11 @@ package nz.cri.gns.newsite.utils;
 
 import java.awt.geom.Point2D;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.PrecisionModel;
 
 /**
  * Utility class for converting NZTopo50 (NZ Transverse Mercator, NZTM, EPSG 2193)  gridrefs into full Easting northing
@@ -68,5 +73,62 @@ public class Topo50 extends MapSheet{
         int eastST = Math.floorDiv(eastS, 100000) * 100000;
         double east = truncEast * 10 + eastST;
         return new Point2D.Double(east, north);
+    }
+    
+    /**
+     * Generates the bounding geometry of the specified mapsheet in NZMG
+     * @param mapsheet
+     * @return 
+     */
+    public static Geometry getBoundingBox(String mapsheet) {
+        //TODO #1 check in GIS and add test cases
+        //TODO #2 handle irregular map sheet names, like 'BD39ptBE39'
+        //TODO #3 check if this is actually precise enough, as current DB function has different increments
+        
+        char s1 = mapsheet.charAt(0);
+        if(isValidMapSheet(s1))
+        {
+            throw new InvalidOrigCoordinate("Invalid mapsheet reference letter for mapsheet: " + mapsheet);
+        }
+        int sheet;
+        try {
+            sheet = Integer.parseInt(mapsheet.substring(2));
+        } catch (NumberFormatException e ) {
+            throw new InvalidOrigCoordinate("Invalid sheet no. for mapsheet: " + mapsheet);           
+        }
+        int nid = NZTMSL.indexOf(mapsheet.charAt(1)) +1;
+        if (sheet < 4 || sheet > 45 || nid < 1 || nid > 24) {
+            throw new InvalidOrigCoordinate("Grid reference is outside the bounds of this mapsheet: " + mapsheet);
+        }
+        int bboxSouth, bboxNorth, bboxEast, bboxWest;
+        switch (s1) {
+            case 'A':
+                bboxSouth = 6810000;
+                break;
+            case 'B':
+                bboxSouth = 5946000;
+                break;
+            case 'C':
+                bboxSouth = 5082000;
+                break;
+            default:
+                throw new InvalidOrigCoordinate("grid reference is outside the bounds of this mapsheet: " + mapsheet);
+        }
+        bboxSouth = bboxSouth - nid * 36000;
+        bboxNorth = bboxSouth + 36000;
+        
+        bboxWest = sheet * 24000 + 988000;
+        bboxEast = bboxWest + 24000;
+
+        final GeometryFactory factory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 2193);
+
+        Polygon polygon = factory.createPolygon(factory.createLinearRing(new Coordinate[]{
+            new Coordinate(bboxWest, bboxSouth),
+            new Coordinate(bboxWest, bboxNorth),
+            new Coordinate(bboxEast, bboxNorth),
+            new Coordinate(bboxEast, bboxSouth),
+            new Coordinate(bboxWest, bboxSouth),
+        }), null);   
+        return polygon;
     }
 }
