@@ -22,6 +22,7 @@ public interface NewSiteService {
 	List<SiteModel> listAllSites();
         List<SiteModel> findWithinTopo50Sheets(List<String> sheetnames);
         List<SiteModel> findWithinQMAPSheets(List<String> sheetnames);
+        String getQMAPSheetsGeoJson(List<String> sheetnames);
 
 //	List<SiteModel> findAll(Integer origSystemID);
 	

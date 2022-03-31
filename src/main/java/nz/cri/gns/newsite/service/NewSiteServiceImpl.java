@@ -6,7 +6,6 @@ package nz.cri.gns.newsite.service;
  */
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 
 import org.slf4j.Logger;
@@ -21,18 +20,19 @@ import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.repository.NewSiteRepository;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
 import nz.cri.gns.newsite.utils.QMAPSheet;
+import static nz.cri.gns.newsite.utils.QMAPSheet.getDefaultEPSG;
 import nz.cri.gns.newsite.utils.Topo50;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.geotools.referencing.GeodeticCalculator;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.io.geojson.GeoJsonWriter;
+import org.locationtech.jts.operation.union.UnaryUnionOp;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.springframework.data.jpa.repository.Query;
 
 @Service
 @Scope("singleton")
@@ -126,48 +126,95 @@ public class NewSiteServiceImpl implements NewSiteService {
         }
     }
     
+    
+    /**
+     * Returns all sites within the NZTOPO50 mapsheets provided (union of mapsheets, logical OR)
+     * @param sheetNames the names of the mapsheets
+     * @return all sites within the mapsheets, or an empty mapsheet if no matches exist
+     */
     @Override
     public List<SiteModel> findWithinTopo50Sheets(List<String> sheetNames) {
         
-        Geometry bbox = null;
+        if(sheetNames == null || sheetNames.isEmpty())  {
+            return new ArrayList<>();
+        }
+        List<Geometry> geometries = new ArrayList<>();
         for(String sheetName: sheetNames)   {
-            bbox = Topo50.getBoundingBox(sheetName);
-            //TODO merge geometries
+            geometries.add(Topo50.getBoundingBox(sheetName));
         }
-        if(bbox==null)  {
-            return null;
-        }
+        if(geometries.isEmpty())
+            return new ArrayList<>();
+        
+        Geometry unionOfMapsheets =  UnaryUnionOp.union(new GeometryCollection(
+                        geometries.toArray(new Geometry[0]),
+                        new PrecisionModel(PrecisionModel.FLOATING), 
+                        getDefaultEPSG()));
         
         try {
-            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(bbox, Topo50.getDefaultEPSG()));
-        } catch (TransformException ex) {
-            java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
+            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, Topo50.getDefaultEPSG()));
+        } catch (TransformException | FactoryException ex) {
             java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return new ArrayList<>();
     }
     
+    
+    /**
+     * Returns all sites within the QMAP mapsheets provided (union of mapsheets, logical OR)
+     * @param sheetNames the names of the mapsheets
+     * @return all sites within the mapsheets, or an empty mapsheet if no matches exist
+     */
     @Override
     public List<SiteModel> findWithinQMAPSheets(List<String> sheetNames) {
         
-        Geometry bbox = null;
+        if(sheetNames == null || sheetNames.isEmpty())  {
+            return new ArrayList<>();
+        }
+        List<Geometry> geometries = new ArrayList<>();
         for(String sheetName: sheetNames)   {
-            bbox = QMAPSheet.getBoundingBox(sheetName);
-            //TODO merge geometries
+            geometries.add(QMAPSheet.getBoundingBox(sheetName));
         }
-        if(bbox==null)  {
-            return null;
-        }
+        if(geometries.isEmpty())
+            return new ArrayList<>();
+        
+        Geometry unionOfMapsheets =  UnaryUnionOp.union(new GeometryCollection(
+                        geometries.toArray(new Geometry[0]),
+                        new PrecisionModel(PrecisionModel.FLOATING), 
+                        getDefaultEPSG()));
         
         try {
-            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(bbox, QMAPSheet.getDefaultEPSG()));
-        } catch (TransformException ex) {
-            java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
+            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, QMAPSheet.getDefaultEPSG()));
+        } catch (TransformException | FactoryException ex) {
             java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return new ArrayList<>();
+    }
+    
+    /**
+     * Convenience method to return (sort of) a GeoJSON represnetation of the union of bboxes
+     * as defined by the list of mapsheets. Return type is a
+     * @param sheetNames the names of the mapsheets
+     * @return  multipolygon gemeotry without any attributes.
+     */
+    @Override
+    public String getQMAPSheetsGeoJson(List<String> sheetNames) {
+        
+        if(sheetNames == null || sheetNames.isEmpty())  {
+            return null;
+        }
+        List<Geometry> geometries = new ArrayList<>();
+        for(String sheetName: sheetNames)   {
+            geometries.add(QMAPSheet.getBoundingBox(sheetName));
+        }
+        if(geometries.isEmpty())
+            return null;
+        
+        return new GeoJsonWriter().write(
+                UnaryUnionOp.union(new GeometryCollection(
+                        geometries.toArray(new Geometry[0]),
+                        new PrecisionModel(PrecisionModel.FLOATING), 
+                        getDefaultEPSG()))
+        );
     }
 
 }

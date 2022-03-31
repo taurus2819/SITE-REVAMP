@@ -5,6 +5,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 /**
  *
@@ -73,6 +74,12 @@ public class QMAPSheet implements MapSeries {
     
     public static Geometry getBoundingBox(String mapsheet) {
         return QMAPSheetBBox.lookup(mapsheet);
+    }
+    
+    public static String getBoundingBoxGeoJson(String mapsheet) {
+        Geometry geom = getBoundingBox(mapsheet);
+        if (geom == null) return "";
+        return new GeoJsonWriter().write(geom);
     }
 
     /**

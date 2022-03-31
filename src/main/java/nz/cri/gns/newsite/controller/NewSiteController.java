@@ -172,6 +172,19 @@ public class NewSiteController {
         return newSiteService.findWithinQMAPSheets(Arrays.asList(qmapSheetNames));
     }
     
+    /**
+     * Helper API endpoint to return GIS digestible polygons 
+     * @param topo50SheetNames
+     * @param qmapSheetNames
+     * @return 
+     */
+    @RequestMapping(value = "/mapsheets/geojson", produces = "application/json")
+    String getMapsheetsGeoJson(
+            @RequestParam(value = "topo50sheet") String[] topo50SheetNames, 
+            @RequestParam(value = "qmapSheet") String[] qmapSheetNames)   {
+        return newSiteService.getQMAPSheetsGeoJson(Arrays.asList(qmapSheetNames));
+    }
+    
     
 /**
  * Query the site database for all points within a given distance of a point,
