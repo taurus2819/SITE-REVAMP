@@ -7,6 +7,7 @@ package nz.cri.gns.newsite.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,10 +192,10 @@ public class NewSiteServiceImpl implements NewSiteService {
     }
     
     /**
-     * Convenience method to return (sort of) a GeoJSON represnetation of the union of bboxes
+     * Convenience method to return (sort of) a GeoJSON representation of the union of bboxes
      * as defined by the list of mapsheets. Return type is a
      * @param sheetNames the names of the mapsheets
-     * @return  multipolygon gemeotry without any attributes.
+     * @return  multipolygon geometry without any attributes.
      */
     @Override
     public String getQMAPSheetsGeoJson(List<String> sheetNames) {
@@ -215,6 +216,28 @@ public class NewSiteServiceImpl implements NewSiteService {
                         new PrecisionModel(PrecisionModel.FLOATING), 
                         getDefaultEPSG()))
         );
+    }
+    
+    
+    /**
+     * Filters by different map sheets, logical AND (intersection) between map sheet types
+     * @param topo50Sheets
+     * @param qmapSheets
+     * @return 
+     */
+    @Override
+    public List<SiteModel> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets) {
+        if((topo50Sheets == null || topo50Sheets.isEmpty())
+        && (qmapSheets == null || qmapSheets.isEmpty())){
+            return null;
+        }
+        List<SiteModel> topo50Matches = findWithinTopo50Sheets(topo50Sheets);
+        List<SiteModel> qmapMatches = findWithinQMAPSheets(qmapSheets);
+        
+        return topo50Matches.stream()
+            .distinct()
+            .filter(qmapMatches::contains)
+            .collect(Collectors.toList());
     }
 
 }

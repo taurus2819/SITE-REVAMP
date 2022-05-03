@@ -20,9 +20,10 @@ public interface NewSiteService {
 	List<SiteModel> findWithinBounds(Geometry bounds);
 	List<SiteProximity> findCloseTo(Geometry Point, double distance);
 	List<SiteModel> listAllSites();
+        List<SiteModel> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets);
         List<SiteModel> findWithinTopo50Sheets(List<String> sheetnames);
         List<SiteModel> findWithinQMAPSheets(List<String> sheetnames);
-        String getQMAPSheetsGeoJson(List<String> sheetnames);
+        String getQMAPSheetsGeoJson(List<String> qmapSheets);
 
 //	List<SiteModel> findAll(Integer origSystemID);
 	

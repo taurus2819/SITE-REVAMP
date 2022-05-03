@@ -169,7 +169,8 @@ public class NewSiteController {
             @RequestParam(value = "qmapSheet") String[] qmapSheetNames)   {
         //TODO mix different mapsheet filters
         //return newSiteService.findWithinTopo50Sheets(Arrays.asList(topo50SheetNames));
-        return newSiteService.findWithinQMAPSheets(Arrays.asList(qmapSheetNames));
+        //return newSiteService.findWithinQMAPSheets(Arrays.asList(qmapSheetNames));
+        return newSiteService.findWithinMapSheets(Arrays.asList(topo50SheetNames), Arrays.asList(qmapSheetNames));
     }
     
     /**

@@ -10,6 +10,7 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -331,4 +332,31 @@ public class SiteModel implements Serializable{
 //                .append("Shape", this.getShape())
                 .toString();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.siteId);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SiteModel other = (SiteModel) obj;
+        if (!Objects.equals(this.siteId, other.siteId)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }
