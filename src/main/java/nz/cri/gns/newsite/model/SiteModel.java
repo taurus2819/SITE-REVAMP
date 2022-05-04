@@ -110,6 +110,7 @@ public class SiteModel implements Serializable{
     @JsonIgnore
     private Integer ownerId;
     
+    //@JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, targetEntity=AuditLog.class, orphanRemoval = true)      //mappedBy = "sitemodel",
     @JoinColumn(name = "site_id")
     private List<AuditLog> auditLogs = new ArrayList<>();

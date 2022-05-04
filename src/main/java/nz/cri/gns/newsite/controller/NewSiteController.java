@@ -164,13 +164,43 @@ public class NewSiteController {
     }
     
     @RequestMapping("/sites/query/mapsheets")
-    List<SiteModel> getAllSitesWithinMapsheets(
+    List<SiteModel> getAllSitesWithinMapSheets(
             @RequestParam(value = "topo50sheet") String[] topo50SheetNames, 
             @RequestParam(value = "qmapSheet") String[] qmapSheetNames)   {
-        //TODO mix different mapsheet filters
-        //return newSiteService.findWithinTopo50Sheets(Arrays.asList(topo50SheetNames));
-        //return newSiteService.findWithinQMAPSheets(Arrays.asList(qmapSheetNames));
-        return newSiteService.findWithinMapSheets(Arrays.asList(topo50SheetNames), Arrays.asList(qmapSheetNames));
+        
+        long start = System.nanoTime();
+        List<SiteModel> result = newSiteService.findWithinMapSheets(Arrays.asList(topo50SheetNames), Arrays.asList(qmapSheetNames));
+        long finish = System.nanoTime();
+        long timeElapsed = finish - start;
+        System.err.println(String.format("API response time: %d ms", timeElapsed/1000000));
+        
+        return result;
+    }
+    
+    @RequestMapping("/sites/query/mapsheets/qmap")
+    List<SiteModel> getAllSitesWithinQMapSheets( 
+            @RequestParam(value = "qmapSheet") String[] qmapSheetNames)   {
+       
+        long start = System.nanoTime();
+        List<SiteModel> result = newSiteService.findWithinQMAPSheets(Arrays.asList(qmapSheetNames));
+        long finish = System.nanoTime();
+        long timeElapsed = finish - start;
+        System.err.println(String.format("API response time: %d ms", timeElapsed/1000000));
+        
+        return result;
+    }
+    
+    @RequestMapping("/sites/query/mapsheets/topo50")
+    List<SiteModel> getAllSitesWithiTopo50Sheets(
+            @RequestParam(value = "topo50sheet") String[] topo50SheetNames)   {
+        
+        long start = System.nanoTime();
+        List<SiteModel> result = newSiteService.findWithinTopo50Sheets(Arrays.asList(topo50SheetNames));
+        long finish = System.nanoTime();
+        long timeElapsed = finish - start;
+        System.err.println(String.format("API response time: %d ms", timeElapsed/1000000));
+        
+        return result;
     }
     
     /**
