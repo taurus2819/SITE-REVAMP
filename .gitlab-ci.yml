@@ -1,37 +1,45 @@
+variables:
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--batch-mode -ntp --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+  SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+  GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  GIT_STRATEGY: clone
+
+image: maven:3-openjdk-11
+
 stages:
   - build
   - deploy
   - image
 
+default:
+  before_script:
+    - cp $settings_xml ~/.m2/settings.xml
+
 build:
-  image: maven:3.8-openjdk-11
   tags:
     - docker
   stage: build
   except:
     - main
   script: |
-    cp $settings_xml ~/.m2/settings.xml
-    mvn clean deploy -ntp
-
-  # artifacts:
-  #   reports:
-  #     junit:
-  #       - target/surefire-reports/TEST-*.xml
-  #     cobertura:
-  #       - target/site/jacoco/jacoco.xml
+    mvn $MAVEN_CLI_OPTS clean deploy
 
 
 release:
-  image: openjdk:11
   tags:
     - docker
   stage: deploy
   only:
-    - main
+    - master
   script: |
-    ./mvnw jgitflow:release-start -ntp -B -s .mvn/settings.xml
-    ./mvnw jgitflow:release-finish -ntp -s .mvn/settings.xml
+    git config user.name "\"$GITLAB_USER_NAME\""
+    git config user.email "\"$GITLAB_USER_EMAIL\""
+    git config http.sslverify false
+    git remote set-url --push origin "https://gitlab-project-token:$release_token@git.gns.cri.nz/$CI_PROJECT_PATH.git"
+    git config pull.ff only
+    mvn $MAVEN_CLI_OPTS gitflow:release-start
+    mvn $MAVEN_CLI_OPTS gitflow:release-finish
 
 deploy:
   tags:
@@ -47,6 +55,6 @@ deploy:
     APP_SERVER="Applications Development"
     TEAM="GGW"
     DOCKER_CONFIG=(HostConfig:='{ "PortBindings": { "8080/tcp": [{ "HostPort": "9010" }] }, "RestartPolicy": {"Name":"always" } }' )
-    ./docker_build.sh -i "$IMAGE"
+    docker_build_sh -i "$IMAGE"
     ./docker_deploy.sh -i "$IMAGE" -a "$APP_NAME" -s "$APP_SERVER" -t "$TEAM" -d "$DOCKER_CONFIG"
 
