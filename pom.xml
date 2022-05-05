@@ -25,12 +25,12 @@
         <repository>
             <id>central</id>
             <name>GNS Private Repository</name>
-            <url>https://artifactory.gns.cri.nz/artifactory/gns-libs-release/</url>
+            <url>https://artifactory.gns.cri.nz/artifactory/gns-libs-release-local</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>libs-snapshots</name>
-            <url>https://artifactory.gns.cri.nz/artifactory/gns-libs-snapshot/</url>
+            <url>https://artifactory.gns.cri.nz/artifactory/gns-libs-snapshot-local</url>
         </snapshotRepository>
     </distributionManagement>
 
