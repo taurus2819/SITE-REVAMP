@@ -55,6 +55,6 @@ deploy:
     APP_SERVER="Applications Development"
     TEAM="GGW"
     DOCKER_CONFIG=(HostConfig:='{ "PortBindings": { "8080/tcp": [{ "HostPort": "9010" }] }, "RestartPolicy": {"Name":"always" } }' )
-    docker_build_sh -i "$IMAGE"
+    $docker_build_sh -i "$IMAGE"
     ./docker_deploy.sh -i "$IMAGE" -a "$APP_NAME" -s "$APP_SERVER" -t "$TEAM" -d "$DOCKER_CONFIG"
 
