@@ -18,19 +18,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <geotools.version>26.1.01</geotools.version>
         <application.name>New_Site_Api</application.name>
-        <image.name>huta17-d.gns.cri.nz:5000/siterevamp/${project.artifactId}:${project.version}</image.name>
+        <image.name>artifactory.gns.cri.nz/gns/${project.artifactId}:${project.version}</image.name>
     </properties>
 
     <distributionManagement>
         <repository>
             <id>central</id>
             <name>GNS Private Repository</name>
-            <url>https://artifactory.gns.cri.nz/artifactory/gns-libs-release/</url>
+            <url>https://artifactory.gns.cri.nz/artifactory/gns-libs-release-local</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>libs-snapshots</name>
-            <url>https://artifactory.gns.cri.nz/artifactory/gns-libs-snapshot/</url>
+            <url>https://artifactory.gns.cri.nz/artifactory/gns-libs-snapshot-local</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -176,6 +176,21 @@
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+                <version>1.16.0</version>
+                <configuration>
+                    <fetchRemote>false</fetchRemote>
+                    <gitFlowConfig>
+                        <productionBranch>master</productionBranch>
+                        <developmentBranch>master</developmentBranch>
+                    </gitFlowConfig>
+                    <commitMessages>
+                        <releaseFinishMessage>[ci skip] Update for next development version</releaseFinishMessage>
+                    </commitMessages>
+                </configuration>
             </plugin>
         </plugins>
     </build>

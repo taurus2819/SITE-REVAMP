@@ -1,7 +1,4 @@
 #!/bin/bash
-
-set -e
-
 ####### Aliases #################################
 PORTAINER_HOST='portainer'
 STD_HTTPS_OPTS="--verify no --ignore-stdin"
@@ -80,46 +77,25 @@ done
 eval set -- "$PARAMS"
 
 ## Find target server
-if [ -z "$IMAGE" ]
-then
-  echo "Image name is undefined"
-  exit 1
-fi
-
-## Find target server
 if [ -z "$APP_SERVER" ]
 then
   echo "Server is undefined"
   exit 1
 fi
 
-## Find target server
-if [ -z "$APP_NAME" ]
-then
-  echo "App name needs to be defined"
-  exit 1
-fi
-
 # Get the API auth token
-if [[ -z "$portainer_user" || -z "$portainer_auth" ]]
+if [[ -z "$portainer_auth" ]]
 then
-  echo "Environment variables undefined"
+  echo "Environment auth token undefined"
   exit 2
 else
-  echo "Building as $portainer_user and deploying to $APP_SERVER"
+  echo "Deploying to $APP_SERVER"
 fi
 
-TOKEN=$(https POST "$PORTAINER_HOST"/api/auth Username="$portainer_user" Password="$portainer_auth" $STD_HTTPS_OPTS | jq .jwt -r)
+AUTH="X-API-key:$portainer_auth"
 
-if [[ -z "$TOKEN" ]]
-then
-  echo "unauthorised access"
-  exit 3
-fi
-
-AUTH="Authorization: Bearer $TOKEN"
 ## Find the target server id
-APP_SERVER_ID=$( https GET "$PORTAINER_HOST"/api/endpoints "$AUTH" $STD_HTTPS_OPTS -b | jq --arg APP_SERVER "$APP_SERVER" '.[] | select(.Name == $APP_SERVER) | .Id')
+APP_SERVER_ID=$( https GET "$PORTAINER_HOST"/api/endpoints "$AUTH" $STD_HTTPS_OPTS -b | jq --arg APP_SERVER "$APP_SERVER" '.[] | select(.Name == $APP_SERVER)| .Id')
 
 if [[ -z "$APP_SERVER_ID" ]]
 then
@@ -180,7 +156,7 @@ fi
 
 echo "Creating $IMAGE"
 CREATE_RESP=$(https -f -b POST "$PORTAINER_HOST"/api/endpoints/"$APP_SERVER_ID"/docker/images/create "fromImage=$IMAGE" "$AUTH" $STD_HTTPS_OPTS)
-echo "Create response: $CREATE_RESP"
+
 if [[ -z  "$CREATE_RESP" ]]
 then
   echo "No response when trying to create the image for $IMAGE"
@@ -201,14 +177,10 @@ Image="$IMAGE" \
 "${DOCKER_CONFIG[@]}" \
 "$AUTH" --verify no --ignore-stdin )
 
-if [[ -z "$CONTAINER_CREATE" ]]
+if [[ -z $(echo "$CONTAINER_CREATE" | jq .Id ) ]]
 then
-  echo "Create Response null"
-elif [[ -z $(echo "$CONTAINER_CREATE" | jq .Id )  ]]
-then
-  echo "$CONTAINER_CREATE"
-  echo "Could not create container $(echo $CONTAINER_CREATE | jq -r .message)"
-  echo "Could not create container $(echo $CONTAINER_CREATE | jq -r .Warnings)"
+  echo "Could not create container $(jq -r .message)"
+  echo "Could not create container $(jq -r .Warnings)"
   exit 6
 else
   NEW_APP=$(echo "$CONTAINER_CREATE" | jq -r .Id)
