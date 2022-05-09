@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import nz.cri.gns.newsite.audits.AuditLog;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
+import nz.cri.gns.newsite.model.SiteDetailed;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,6 +66,11 @@ public class NewSiteController {
         return newSiteService.find(id);
     }
 
+    @RequestMapping("/sites/{id}/details")
+    public SiteDetailed getSiteDetails(@PathVariable int id) {
+        return newSiteService.findDetails(id);
+    }
+    
     @RequestMapping(method = RequestMethod.POST, value = "/site")
     public SiteModel addSite(@RequestBody SiteModelInput siteInput, HttpServletResponse response) throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
         SiteModel site = siteInput.toSiteModel();

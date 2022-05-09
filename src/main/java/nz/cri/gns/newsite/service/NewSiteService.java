@@ -5,6 +5,7 @@ package nz.cri.gns.newsite.service;
  * @author sitikond
  */
 import java.util.List;
+import nz.cri.gns.newsite.model.SiteDetailed;
 
 import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.model.SiteProximity;
@@ -24,6 +25,8 @@ public interface NewSiteService {
         List<SiteModel> findWithinTopo50Sheets(List<String> sheetnames);
         List<SiteModel> findWithinQMAPSheets(List<String> sheetnames);
         String getQMAPSheetsGeoJson(List<String> qmapSheets);
+        
+        SiteDetailed findDetails(int id);
 
 //	List<SiteModel> findAll(Integer origSystemID);
 	

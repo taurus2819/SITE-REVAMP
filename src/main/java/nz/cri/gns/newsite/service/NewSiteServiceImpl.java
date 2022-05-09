@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import nz.cri.gns.newsite.exception.ResourceMissingException;
+import nz.cri.gns.newsite.model.SiteDetailed;
 import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.repository.NewSiteRepository;
@@ -238,6 +239,18 @@ public class NewSiteServiceImpl implements NewSiteService {
             .distinct()
             .filter(qmapMatches::contains)
             .collect(Collectors.toList());
+    }
+    
+    
+    @Override
+    public SiteDetailed findDetails(int id) {
+        SiteModel sm = retrieveWithNullCheck(id);
+        
+        if(sm == null)  {
+            return null;
+        }
+        
+        return new SiteDetailed(sm);
     }
 
 }
