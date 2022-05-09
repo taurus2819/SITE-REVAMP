@@ -23,14 +23,14 @@ public class NZMS260Test {
     
     @Test
     public void testGetFullCoordinates() {
-        Point2D outputPt = NZMS260.getFullCoordinates(27200, "U20", 9670, 9780);
+        Point2D outputPt = NZMS260.getInstance().getFullCoordinates(27200, "U20", 9670, 9780);
         assertEquals(outputPt.getX(), 2796700, 0.001);
         assertEquals(outputPt.getY(), 6197800, 0.001);
-        outputPt = NZMS260.getFullCoordinates(27200, "D49", 2325, 2591);
+        outputPt = NZMS260.getInstance().getFullCoordinates(27200, "D49", 2325, 2591);
         assertEquals(outputPt.getX(), 2123250.000, 0.001);
         assertEquals(outputPt.getY(), 5325910.000, 0.001);
         InvalidOrigCoordinate iocException = assertThrows(InvalidOrigCoordinate.class, ()->{
-            NZMS260.getFullCoordinates(27200, "Z50", 2325, 2591);
+            NZMS260.getInstance().getFullCoordinates(27200, "Z50", 2325, 2591);
         });
         assertEquals("Not within the valid mapsheet list for epsg: 27200", iocException.getMessage());
     }

@@ -94,13 +94,13 @@ public class OrigCoord {
         switch (epsg) {
             case 27292:
             case 27291:
-                outputPt = NZMS1.getFullCoordinates(epsg, sheetCode, east, north);
+                outputPt = NZMS1.getInstance().getFullCoordinates(epsg, sheetCode, east, north);
                 break;
             case 2193:
-                outputPt = Topo50.getFullCoordinates(epsg, sheetCode, east, north);
+                outputPt = Topo50.getInstance().getFullCoordinates(epsg, sheetCode, east, north);
                 break;
             case 27200:
-                outputPt = NZMS260.getFullCoordinates(epsg, sheetCode, east, north);
+                outputPt = NZMS260.getInstance().getFullCoordinates(epsg, sheetCode, east, north);
                 break;
             default:
                 throw new InvalidOrigCoordinate("gridref epsg is not supported yet");
@@ -321,6 +321,14 @@ public class OrigCoord {
         latlng = OrigCoord.toWGS84(epsg, inputPt);
         return latlng;
     }
+    
+    public static Point2D MakePt(double easting, double northing, int inputEpsg, int outputEpsg) throws TransformException, FactoryException, MismatchedDimensionException {
+        Point2D latlng;
+        Point2D inputPt = new Point2D.Double();
+        inputPt.setLocation(easting, northing);
+        latlng = OrigCoord.convertEpsg(inputEpsg, outputEpsg, inputPt);
+        return latlng;
+    }
 
     /**
      * Convert an east/north pair in a given epsg code to a Geometry Point
@@ -353,21 +361,24 @@ public class OrigCoord {
      * @throws TransformException
      */
     public static Point2D toWGS84(int epsg, Point2D inputPt) throws FactoryException, MismatchedDimensionException, TransformException {
+        return convertEpsg(epsg, 4326, inputPt);
+    }
+    
+    public static Point2D convertEpsg(int inputEpsg, int outputEpsg, Point2D inputPt) throws FactoryException, MismatchedDimensionException, TransformException {
+        CoordinateReferenceSystem inputCrs = CRS.decode(String.format("EPSG:%04d", inputEpsg));
+        CoordinateReferenceSystem outputCrs = CRS.decode(String.format("EPSG:%04d", outputEpsg));
 
-        CoordinateReferenceSystem epsg4326 = CRS.decode("EPSG:4326");
-        CoordinateReferenceSystem crs = CRS.decode(String.format("EPSG:%04d", epsg));
-        MathTransform transform = CRS.findMathTransform(crs, epsg4326, true);
+        MathTransform transform = CRS.findMathTransform(inputCrs, outputCrs, true);
         DirectPosition2D outputDp = new DirectPosition2D();
         DirectPosition2D inputDp;
-        if (CRS.getAxisOrder(crs) == EAST_NORTH) {
-            inputDp = new DirectPosition2D(crs, inputPt.getX(), inputPt.getY());
+        if (CRS.getAxisOrder(inputCrs) == EAST_NORTH) {
+            inputDp = new DirectPosition2D(inputCrs, inputPt.getX(), inputPt.getY());
         } else {
-            inputDp = new DirectPosition2D(crs, inputPt.getY(), inputPt.getX());
+            inputDp = new DirectPosition2D(inputCrs, inputPt.getY(), inputPt.getX());
         }
         transform.transform(inputDp, outputDp);
 
         return outputDp.toPoint2D();
-
     }
 
     public static JsonNode createOrigFormatJson(int epsg, String format, String gridRef, String latitude, String longitude, Double easting, Double northing) throws JsonProcessingException {

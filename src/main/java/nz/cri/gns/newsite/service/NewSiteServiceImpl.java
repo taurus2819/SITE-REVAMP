@@ -22,7 +22,6 @@ import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.repository.NewSiteRepository;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
 import nz.cri.gns.newsite.utils.QMAPSheet;
-import static nz.cri.gns.newsite.utils.QMAPSheet.getDefaultEPSG;
 import nz.cri.gns.newsite.utils.Topo50;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
@@ -137,12 +136,13 @@ public class NewSiteServiceImpl implements NewSiteService {
     @Override
     public List<SiteModel> findWithinTopo50Sheets(List<String> sheetNames) {
         
+        Topo50 topo50 = Topo50.getInstance();
         if(sheetNames == null || sheetNames.isEmpty())  {
             return new ArrayList<>();
         }
         List<Geometry> geometries = new ArrayList<>();
         for(String sheetName: sheetNames)   {
-            geometries.add(Topo50.getBoundingBox(sheetName));
+            geometries.add(topo50.getBoundingBox(sheetName));
         }
         if(geometries.isEmpty())
             return new ArrayList<>();
@@ -150,10 +150,10 @@ public class NewSiteServiceImpl implements NewSiteService {
         Geometry unionOfMapsheets =  UnaryUnionOp.union(new GeometryCollection(
                         geometries.toArray(new Geometry[0]),
                         new PrecisionModel(PrecisionModel.FLOATING), 
-                        getDefaultEPSG()));
+                        topo50.getDefaultEPSG()));
         
         try {
-            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, Topo50.getDefaultEPSG()));
+            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, topo50.getDefaultEPSG()));
         } catch (TransformException | FactoryException ex) {
             java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -174,7 +174,7 @@ public class NewSiteServiceImpl implements NewSiteService {
         }
         List<Geometry> geometries = new ArrayList<>();
         for(String sheetName: sheetNames)   {
-            geometries.add(QMAPSheet.getBoundingBox(sheetName));
+            geometries.add(QMAPSheet.getInstance().getBoundingBox(sheetName));
         }
         if(geometries.isEmpty())
             return new ArrayList<>();
@@ -182,7 +182,7 @@ public class NewSiteServiceImpl implements NewSiteService {
         Geometry unionOfMapsheets =  UnaryUnionOp.union(new GeometryCollection(
                         geometries.toArray(new Geometry[0]),
                         new PrecisionModel(PrecisionModel.FLOATING), 
-                        getDefaultEPSG()));
+                        QMAPSheet.getDefaultEPSG()));
         
         try {
             return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, QMAPSheet.getDefaultEPSG()));
@@ -206,7 +206,7 @@ public class NewSiteServiceImpl implements NewSiteService {
         }
         List<Geometry> geometries = new ArrayList<>();
         for(String sheetName: sheetNames)   {
-            geometries.add(QMAPSheet.getBoundingBox(sheetName));
+            geometries.add(QMAPSheet.getInstance().getBoundingBox(sheetName));
         }
         if(geometries.isEmpty())
             return null;
@@ -215,7 +215,7 @@ public class NewSiteServiceImpl implements NewSiteService {
                 UnaryUnionOp.union(new GeometryCollection(
                         geometries.toArray(new Geometry[0]),
                         new PrecisionModel(PrecisionModel.FLOATING), 
-                        getDefaultEPSG()))
+                        QMAPSheet.getDefaultEPSG()))
         );
     }
     

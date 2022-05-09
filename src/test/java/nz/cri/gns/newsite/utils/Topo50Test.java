@@ -22,7 +22,7 @@ public class Topo50Test {
     
     @Test
     public void testGetFullCoordinates() {
-        Point2D outputPt = Topo50.getFullCoordinates(2193, "CC13", 151, 805);
+        Point2D outputPt = Topo50.getInstance().getFullCoordinates(2193, "CC13", 151, 805);
         assertEquals(outputPt.getX(), 1301510, 0.001);
         assertEquals(outputPt.getY(), 4908050, 0.001);
     }    
@@ -32,7 +32,7 @@ public class Topo50Test {
     public void testBbox()  {
         
         double tolerance = 0.001;
-        Geometry bbox = Topo50.getBoundingBox("BD32");
+        Geometry bbox = Topo50.getInstance().getBoundingBox("BD32");
         
         assertTrue(bbox instanceof Polygon);
         

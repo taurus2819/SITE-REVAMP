@@ -9,10 +9,13 @@ import java.awt.geom.Point2D;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 
 /**
- * Utility class for converting NZMS260 (New Zealand Map Grid, NZMG, EPSG 27200) gridrefs into full Easting northing
+ * Utility class for converting NZMS260 (New Zealand Map Grid, NZMG, EPSG 27200)
+ * gridrefs into full Easting northing
+ *
  * @author scaddenp
  */
-public class NZMS260 extends MapSheet{
+public class NZMS260 extends MapSheet {
+
     private static final String validMapSheets = "A44A45B41B42B43B44B45B46B47C40C41C42C43C44C45C46C49C50D38D39D40D41D42D43D44D45D46"
             + "D47D48D49D50E37E38E39E40E41E42E43E44E45E46E47E48E49F36F37F38F39F40F41F42F43F44F45F46F47F48G35G36G37G38G39G40G41G42G43G44"
             + "G45G46G47H34H35H36H37H38H39H40H41H42H43H44H45H46H47I33I34I35I36I37I38I39I40I41I42I43I44I45J31J32J33J34J35J36J37J38J39J40"
@@ -23,7 +26,17 @@ public class NZMS260 extends MapSheet{
             + "T16T17T18T19T20T21T22T23T24T25T26T27T28U10U11U12U13U14U15U16U17U18U19U20U21U22U23U24U25U26V14V15V16V17V18V19V20V21V22V23"
             + "V24W13W14W15W16W17W18W19W20W21W22X14X15X16X17X18X19X20Y14Y15Y16Y17Y18Y19Y20Z14Z15Z16Z17";
 
+    private static NZMS260 _instance;
 
+    private NZMS260() {
+    }
+   
+    public static NZMS260 getInstance() {
+        if (_instance == null) {
+            _instance = new NZMS260();
+        }
+        return _instance;
+    }
 
     private static boolean isValidMapSheet(String mapSheet) {
         return (validMapSheets.indexOf(mapSheet) >= 0);
@@ -43,14 +56,19 @@ public class NZMS260 extends MapSheet{
     }
 
     /**
-     * Function to convert NZMS260 (NZ Map Grid) truncated coordinates derived from a grid reference into full coordinates
-     * @param epsg  27200
+     * Function to convert NZMS260 (NZ Map Grid) truncated coordinates derived
+     * from a grid reference into full coordinates
+     *
+     * @param epsg 27200
      * @param mapsheet The mapsheet reference. eg U34
-     * @param truncEast the 4-figure truncated easting value (3 figure truncated eastings should be multiplied by 10 before passing to this routine)
-     * @param truncNorth the 4-figure truncated northing value (3 figure truncated northings should be multiplied by 10 before passing to this routine)
+     * @param truncEast the 4-figure truncated easting value (3 figure truncated
+     * eastings should be multiplied by 10 before passing to this routine)
+     * @param truncNorth the 4-figure truncated northing value (3 figure
+     * truncated northings should be multiplied by 10 before passing to this
+     * routine)
      * @return a Point2D x,y containing the full easting and northings
      */
-    public static Point2D getFullCoordinates(int epsg, String mapsheet, int truncEast, int truncNorth) {
+    public Point2D getFullCoordinates(int epsg, String mapsheet, int truncEast, int truncNorth) {
         if (!isValidMapSheet(mapsheet)) {
             throw new InvalidOrigCoordinate("Not within the valid mapsheet list for epsg: " + epsg);
         }
@@ -66,7 +84,7 @@ public class NZMS260 extends MapSheet{
                 throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         }
-        long easting = addToStart(sheetEBound, truncEast*10);
+        long easting = addToStart(sheetEBound, truncEast * 10);
         int number = Integer.parseInt(mapsheet.substring(1));
         long sheetNBound = 6790000 - 30000 * number;
         long truncNBound = (sheetNBound / 10) % 10000;
@@ -79,10 +97,28 @@ public class NZMS260 extends MapSheet{
                 throw new InvalidOrigCoordinate("grid reference is outside the bounds of epsg: " + epsg);
             }
         }
-        long northing = addToStart(sheetNBound, truncNorth*10);
-        return new Point2D.Double(easting*1.0d,northing*1.0d);
+        long northing = addToStart(sheetNBound, truncNorth * 10);
+        return new Point2D.Double(easting * 1.0d, northing * 1.0d);
     }
 
+    /**
+     * Taken over from Oracle DB
+     *
+     * @param easting
+     * @param northing
+     * @return
+     */
+    @Override
+    public String lookupMapSheet(double easting, double northing) {
+        int i = (int)((easting-1930000)/40000);
+        int j = (int)((6820000-northing)/30000);
+        
+        String result = String.format("%s%s%d", Character.toString((char)('A' + i - 1)), j<10?"0":"", j);
+        return result;
+    }
 
-    
+    @Override
+    public int getMapsheetLookupEPSG() {
+        return 27200;
+    }
 }

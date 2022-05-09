@@ -12,49 +12,42 @@ import org.locationtech.jts.io.geojson.GeoJsonWriter;
  *
  * @author sorenh
  */
-public class QMAPSheet extends MapSheet implements MapSeries {
+public class NZMS262 extends MapSheet implements MapSeries {
 
-    private static QMAPSheet _instance; 
+    private static NZMS262 _instance; 
     
-    private QMAPSheet(){};
+    private NZMS262(){};
    
-    public static QMAPSheet getInstance()  {
+    public static NZMS262 getInstance()  {
         if(_instance == null)   {
-            _instance = new QMAPSheet();
+            _instance = new NZMS262();
         }
         return _instance;
     }
     
-    //TODO - change bboxes to use NZTM
-    private enum QMAPSheetBBox{
-        KAITAIA("Kaitaia", 2410000, 2570000, 6550000, 6790000),
-        WHANGAREI("Whangarei", 2570000, 2730000, 6550000, 6700000),
+    private enum NZMS262SheetBBox{
+        NORTHLAND("Northland", 2410000, 2810000, 6550000, 6790000),
         AUCKLAND("Auckland", 2570000, 2810000, 6400000, 6550000),
-        WAIKATO("Waikato", 2570000, 2730000, 6250000, 6400000),
-        ROTORUA("Rotorua", 2730000, 2890000, 6250000, 6400000),
-        RAUKUMARA("Raukumara", 2890000, 3050000, 6190000, 6400000),
-        TARANAKI("Taranaki", 2570000, 2730000, 6100000, 6250000),
-        HAWKES_BAY("Hawkes Bay", 2730000, 2890000, 6100000, 6250000),
-        WELLINGTON("Wellington", 2570000, 2730000, 5950000, 6100000),
-        WAIRARAPA("Wairarapa", 2730000, 2890000, 5950000, 6100000),
-        NELSON("Nelson", 2410000, 2570000, 5950000, 6100000),
-        GREYMOUTH("Greymouth", 2250000, 2450000, 5800000, 5950000),
+        WAIKATO("Waikato", 2610000, 2810000, 6250000, 6400000),
+        EAST_CAPE("East Cape", 2810000, 3010000, 6250000, 6430000),
+        TARANAKI("Taranaki", 2570000, 2770000, 6100000, 6250000),
+        HAWKES_BAY("Hawkes Bay", 2770000, 2970000, 6100000, 6250000),
+        WELLINGTON("Wellington", 2650000, 2850000, 5950000, 6100000),
+        NELSON("Nelson", 2410000, 2650000, 5950000, 6100000),
+        GREY("Grey", 2290000, 2450000, 5800000, 5950000),
         KAIKOURA("Kaikoura", 2450000, 2650000, 5800000, 5950000),
-        HAAST("Haast", 2090000, 2250000, 5650000, 5800000),
-        AORAKI("Aoraki", 2250000, 2410000, 5650000, 5800000),
-        CHRISTCHURCH("Christchurch", 2410000, 2570000, 5650000, 5800000),
-        FIORDLAND_WAKATIPU("Fiordland,Wakatipu", 2090000, 2125000, 5500000, 5636000),   //TODO check with GIS
-        WAKATIPU("Wakatipu", 2090000, 2250000, 5500000, 5650000),
-        WAITAKI("Waitaki", 2250000, 2410000, 5500000, 5650000),
-        FIORDLAND("Fiordland", 1990000, 2090000, 5380000, 5636000),
-        MURIHUKU("Murihiku", 2090000, 2250000, 5290000, 5500000),
-        DUNEDIN("Dunedin", 2250000, 2410000, 2410000, 5500000),
+        MT_COOK("Mt Cook", 2090000, 2330000, 5650000, 5800000),
+        CHRISTCHURCH("Christchurch", 2330000, 2530000, 5650000, 5800000),
+        TE_ANAU("Te Anau", 2010000, 2210000, 5500000, 5650000),
+        WAITAKI("Waitaki", 2210000, 2410000, 5500000, 5650000),
+        INVERCARGILL("Invercargill", 1970000, 2170000, 5290000, 5500000),
+        DUNEDIN("Dunedin", 2170000, 2370000, 5350000, 5500000),
         ;
         
         private final String name;
         private final int bboxSouth, bboxNorth, bboxEast, bboxWest;
         
-        QMAPSheetBBox(String name, int bboxEast, int bboxWest, int bboxSouth, int bboxNorth)    {
+        NZMS262SheetBBox(String name, int bboxEast, int bboxWest, int bboxSouth, int bboxNorth)    {
             this.name = name;
             this.bboxEast = bboxEast;
             this.bboxWest = bboxWest;
@@ -63,7 +56,7 @@ public class QMAPSheet extends MapSheet implements MapSeries {
         }
         
         public static Geometry lookup(String name)  {
-            for(QMAPSheetBBox bbox : values())  {
+            for(NZMS262SheetBBox bbox : values())  {
                 if(bbox.name.equals(name))   {
                     return bbox.getBBox();
                 }
@@ -84,7 +77,7 @@ public class QMAPSheet extends MapSheet implements MapSeries {
         }
         
         public static String lookupSheet(Geometry location)    {
-            for(QMAPSheetBBox bbox : values())  {
+            for(NZMS262SheetBBox bbox : values())  {
                 double easting = location.getCoordinate().getX();
                 double northing = location.getCoordinate().getY();
                 
@@ -97,7 +90,7 @@ public class QMAPSheet extends MapSheet implements MapSeries {
     }
     
     public Geometry getBoundingBox(String mapsheet) {
-        return QMAPSheetBBox.lookup(mapsheet);
+        return NZMS262SheetBBox.lookup(mapsheet);
     }
     
     public String getBoundingBoxGeoJson(String mapsheet) {
@@ -111,7 +104,7 @@ public class QMAPSheet extends MapSheet implements MapSeries {
         GeometryFactory gf = new GeometryFactory();
         Point point = gf.createPoint(new Coordinate(easting,northing));
         point.setSRID(getMapsheetLookupEPSG());
-        return QMAPSheetBBox.lookupSheet(point);
+        return NZMS262SheetBBox.lookupSheet(point);
     }
     
     /**
