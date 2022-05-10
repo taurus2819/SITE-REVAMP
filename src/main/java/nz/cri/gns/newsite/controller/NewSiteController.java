@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
 @RequestMapping("/api/v1")
+@CrossOrigin(origins="*", allowedHeaders="*")
 public class NewSiteController {
 
     @Autowired
@@ -69,7 +70,6 @@ public class NewSiteController {
         return newSiteService.find(id);
     }
 
-    @CrossOrigin
     @RequestMapping("/sites/{id}/details")
     public SiteDetailed getSiteDetails(@PathVariable int id) {
         return newSiteService.findDetails(id);
