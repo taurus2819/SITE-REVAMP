@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import nz.cri.gns.newsite.exception.ResourceMissingException;
+import nz.cri.gns.newsite.model.Island;
 import nz.cri.gns.newsite.model.SiteDetailed;
 import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.model.SiteProximity;
@@ -28,6 +29,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.geotools.referencing.GeodeticCalculator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
@@ -44,6 +46,9 @@ public class NewSiteServiceImpl implements NewSiteService {
 
     @Autowired
     NewSiteRepository newSiteRepository;
+    
+    @Autowired
+    IslandService islandService;
 
     @Override
     public SiteModel insert(SiteModel s) {
@@ -249,8 +254,12 @@ public class NewSiteServiceImpl implements NewSiteService {
         if(sm == null)  {
             return null;
         }
+        SiteDetailed sd = new SiteDetailed(sm);
         
-        return new SiteDetailed(sm);
+        List<Island> islandsAtLocation = islandService.findByLocation((Point)sm.getShape());
+        sd.setIsland(islandsAtLocation.isEmpty()? null : islandsAtLocation.get(0));
+        
+        return sd;
     }
 
 }
