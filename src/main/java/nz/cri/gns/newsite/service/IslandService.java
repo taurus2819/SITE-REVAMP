@@ -10,5 +10,5 @@ import org.locationtech.jts.geom.Point;
  */
 public interface IslandService {
     public List<Island> findByLocation(Point location);
-    public List<Island> getAll();
+    public List<Island> findAll();
 }

@@ -28,13 +28,12 @@ public class IslandServiceImpl implements IslandService    {
     }
 
     @Override
-    public List<Island> getAll() {
+    public List<Island> findAll() {
         return islandRepository.findAll(sortByNameAsc());
     }
     
     private Sort sortByNameAsc()    {
         return Sort.by(Sort.Direction.ASC, "name");
     }
-    
     
 }

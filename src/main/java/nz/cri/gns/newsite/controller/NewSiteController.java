@@ -17,6 +17,7 @@ import nz.cri.gns.newsite.audits.AuditLog;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 import nz.cri.gns.newsite.model.Island;
+import nz.cri.gns.newsite.model.MapSheetPayload;
 import nz.cri.gns.newsite.model.SiteDetailed;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.service.AuditLogService;
 import nz.cri.gns.newsite.service.IslandService;
 import nz.cri.gns.newsite.service.NewSiteService;
+import nz.cri.gns.newsite.service.QMAPService;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
 import nz.cri.gns.newsite.utils.OrigCoord;
 import org.json.JSONException;
@@ -58,6 +60,9 @@ public class NewSiteController {
     
     @Autowired
     IslandService islandService;
+    
+    @Autowired
+    QMAPService qmapService;
 
     @RequestMapping("/sites/origsysid/{oid}")
     public List<SiteModel> getAllSites(@PathVariable int oid) {
@@ -254,8 +259,12 @@ public class NewSiteController {
     }
     
     @RequestMapping(method = RequestMethod.GET, value = "/islands")
-    public List<Island> getAllIslands() {
-        return islandService.getAll();
+    public List<Island> findAllIslands() {
+        return islandService.findAll();
     }
     
+    @RequestMapping(method = RequestMethod.GET, value = "/qmapsheets")
+    public List<MapSheetPayload> findAllQmapSheets() {
+        return qmapService.findAll();
+    }
 }

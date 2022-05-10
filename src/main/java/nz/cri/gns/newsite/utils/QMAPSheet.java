@@ -1,5 +1,8 @@
 package nz.cri.gns.newsite.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+import nz.cri.gns.newsite.model.MapSheetPayload;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -112,6 +115,14 @@ public class QMAPSheet extends MapSheet implements MapSeries {
         Point point = gf.createPoint(new Coordinate(easting,northing));
         point.setSRID(getMapsheetLookupEPSG());
         return QMAPSheetBBox.lookupSheet(point);
+    }
+    
+    public List<MapSheetPayload> getAllSheets()  {
+        List<MapSheetPayload> mapSheets = new ArrayList<>();
+        for(QMAPSheetBBox sheet : QMAPSheetBBox.values())   {
+            mapSheets.add(new MapSheetPayload(sheet.name, sheet.bboxEast, sheet.bboxWest, sheet.bboxSouth, sheet.bboxNorth));
+        }
+        return mapSheets;
     }
     
     /**
