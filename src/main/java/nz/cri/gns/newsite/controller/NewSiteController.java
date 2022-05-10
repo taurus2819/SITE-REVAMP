@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import nz.cri.gns.newsite.audits.AuditLog;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
+import nz.cri.gns.newsite.model.Island;
 import nz.cri.gns.newsite.model.SiteDetailed;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.model.SiteModelInput;
 import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.service.AuditLogService;
+import nz.cri.gns.newsite.service.IslandService;
 import nz.cri.gns.newsite.service.NewSiteService;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
 import nz.cri.gns.newsite.utils.OrigCoord;
@@ -52,6 +54,9 @@ public class NewSiteController {
 
     @Autowired
     AuditLogService auditLogService;
+    
+    @Autowired
+    IslandService islandService;
 
     @RequestMapping("/sites/origsysid/{oid}")
     public List<SiteModel> getAllSites(@PathVariable int oid) {
@@ -246,6 +251,11 @@ public class NewSiteController {
         Point point = OrigCoord.MakeGeomPt(easting, northing, epsg);
         distance = distance/111120; // approximately convert meters into degrees. 
         return newSiteService.findCloseTo(point, distance);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/islands")
+    public List<Island> getAllIslands() {
+        return islandService.getAll();
     }
     
 }
