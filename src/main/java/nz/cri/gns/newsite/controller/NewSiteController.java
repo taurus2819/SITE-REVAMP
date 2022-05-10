@@ -8,7 +8,6 @@ package nz.cri.gns.newsite.controller;
 //import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,14 +34,12 @@ import nz.cri.gns.newsite.utils.CoordinateConverter;
 import nz.cri.gns.newsite.utils.OrigCoord;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -61,11 +58,13 @@ public class NewSiteController {
         return newSiteService.findByOrigSystemId(oid);
     }
 
+
     @RequestMapping("/sites/{id}")
     public SiteModel getSite(@PathVariable int id) {
         return newSiteService.find(id);
     }
 
+    @CrossOrigin
     @RequestMapping("/sites/{id}/details")
     public SiteDetailed getSiteDetails(@PathVariable int id) {
         return newSiteService.findDetails(id);
