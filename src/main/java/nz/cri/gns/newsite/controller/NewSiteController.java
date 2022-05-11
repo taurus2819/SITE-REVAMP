@@ -180,8 +180,10 @@ public class NewSiteController {
     
     @RequestMapping("/sites/query/mapsheets")
     List<SiteModel> getAllSitesWithinMapSheets(
-            @RequestParam(value = "topo50sheet") String[] topo50SheetNames, 
-            @RequestParam(value = "qmapSheet") String[] qmapSheetNames)   {
+            @RequestParam(value = "topo50sheet", required=false) String[] topo50SheetNames, 
+            @RequestParam(value = "qmapSheet", required=false) String[] qmapSheetNames,
+            @RequestParam(value = "nzmgSheet", required=false) String[] nzmgSheetNames,
+            @RequestParam(value = "island", required=false) String[] islandNames)   {
         
         long start = System.nanoTime();
         List<SiteModel> result = newSiteService.findWithinMapSheets(Arrays.asList(topo50SheetNames), Arrays.asList(qmapSheetNames));
