@@ -186,7 +186,9 @@ public class NewSiteController {
             @RequestParam(value = "island", required=false) String[] islandNames)   {
         
         long start = System.nanoTime();
-        List<SiteModel> result = newSiteService.findWithinMapSheets(Arrays.asList(topo50SheetNames), Arrays.asList(qmapSheetNames));
+        List<SiteModel> result = newSiteService.findWithinMapSheets(
+                topo50SheetNames != null ? Arrays.asList(topo50SheetNames) : new ArrayList<>(), 
+                qmapSheetNames != null ? Arrays.asList(qmapSheetNames) : new ArrayList<>());
         long finish = System.nanoTime();
         long timeElapsed = finish - start;
         System.err.println(String.format("API response time: %d ms", timeElapsed/1000000));
