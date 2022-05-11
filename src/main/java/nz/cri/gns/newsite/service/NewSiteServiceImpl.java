@@ -105,6 +105,7 @@ public class NewSiteServiceImpl implements NewSiteService {
 
     @Override
     public List<SiteModel> findWithinBounds(Geometry bounds) {
+
         return newSiteRepository.findWithinBounds(bounds);
     }
 

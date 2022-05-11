@@ -25,11 +25,11 @@ public class CoordinateConverter {
         Point2D latlng3 = OrigCoord.MakeLatLongPt(maxEast, minNorth, epsg);
         Point2D latlng4 = OrigCoord.MakeLatLongPt(minEast, minNorth, epsg);
         Coordinate[] sc = new Coordinate[5];
-        sc[0] = new Coordinate(latlng1.getY(), latlng1.getX());
-        sc[1] = new Coordinate(latlng2.getY(), latlng2.getX());
-        sc[2] = new Coordinate(latlng3.getY(), latlng3.getX());
-        sc[3] = new Coordinate(latlng4.getY(), latlng4.getX());
-        sc[4] = new Coordinate(latlng1.getY(), latlng1.getX());
+        sc[0] = new Coordinate(latlng1.getX(), latlng1.getY());
+        sc[1] = new Coordinate(latlng2.getX(), latlng2.getY());
+        sc[2] = new Coordinate(latlng3.getX(), latlng3.getY());
+        sc[3] = new Coordinate(latlng4.getX(), latlng4.getY());
+        sc[4] = new Coordinate(latlng1.getX(), latlng1.getY());
         GeometryFactory gf = new GeometryFactory();
         Polygon bounds = gf.createPolygon(sc);
         bounds.setSRID(STANDARD_EPSG_4326);

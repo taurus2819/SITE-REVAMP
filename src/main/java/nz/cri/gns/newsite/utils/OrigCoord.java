@@ -365,20 +365,20 @@ public class OrigCoord {
     }
     
     public static Point2D convertEpsg(int inputEpsg, int outputEpsg, Point2D inputPt) throws FactoryException, MismatchedDimensionException, TransformException {
-        CoordinateReferenceSystem inputCrs = CRS.decode(String.format("EPSG:%04d", inputEpsg));
-        CoordinateReferenceSystem outputCrs = CRS.decode(String.format("EPSG:%04d", outputEpsg));
-
+        CoordinateReferenceSystem inputCrs = CRS.decode(String.format("EPSG:%04d", inputEpsg), true);  //always EAST_NORTH / X_Y
+        CoordinateReferenceSystem outputCrs = CRS.decode(String.format("EPSG:%04d", outputEpsg, true)); //always EAST_NORTH / X_Y
+        
         MathTransform transform = CRS.findMathTransform(inputCrs, outputCrs, true);
         DirectPosition2D outputDp = new DirectPosition2D();
         DirectPosition2D inputDp;
-        if (CRS.getAxisOrder(inputCrs) == EAST_NORTH) {
-            inputDp = new DirectPosition2D(inputCrs, inputPt.getX(), inputPt.getY());
-        } else {
-            inputDp = new DirectPosition2D(inputCrs, inputPt.getY(), inputPt.getX());
-        }
+        //if (CRS.getAxisOrder(inputCrs) == EAST_NORTH) {
+            inputDp = new DirectPosition2D(inputCrs, inputPt.getX(), inputPt.getY()); //always EAST_NORTH / X_Y
+        //} else {
+        //    inputDp = new DirectPosition2D(inputCrs, inputPt.getY(), inputPt.getX());
+        //}
         transform.transform(inputDp, outputDp);
-
-        return outputDp.toPoint2D();
+        Point2D p2d = outputDp.toPoint2D();
+        return new Point2D.Double(p2d.getY(), p2d.getX());  //need to swap coordinates!
     }
 
     public static JsonNode createOrigFormatJson(int epsg, String format, String gridRef, String latitude, String longitude, Double easting, Double northing) throws JsonProcessingException {
