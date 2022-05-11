@@ -344,7 +344,7 @@ public class OrigCoord {
     public static Point MakeGeomPt(double easting, double northing, int epsg) throws TransformException, FactoryException {
         Point2D latlng = MakeLatLongPt(easting, northing, epsg);
         GeometryFactory gf = new GeometryFactory();
-        Point point = gf.createPoint(new Coordinate(latlng.getY(), latlng.getX()));
+        Point point = gf.createPoint(new Coordinate(latlng.getX(), latlng.getY()));
         point.setSRID(4326);
         return point;
     }
