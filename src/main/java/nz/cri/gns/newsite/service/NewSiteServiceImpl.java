@@ -241,10 +241,29 @@ public class NewSiteServiceImpl implements NewSiteService {
         List<SiteModel> topo50Matches = findWithinTopo50Sheets(topo50Sheets);
         List<SiteModel> qmapMatches = findWithinQMAPSheets(qmapSheets);
         
-        return topo50Matches.stream()
-            .distinct()
-            .filter(qmapMatches::contains)
-            .collect(Collectors.toList());
+        List<SiteModel> mixedAndMatched = new ArrayList<>();
+        
+        if(!topo50Matches.isEmpty())    {
+            mixedAndMatched = topo50Matches.stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+        } 
+        
+        if(!qmapMatches.isEmpty())    {
+            if(mixedAndMatched.isEmpty())   {   //no match yet
+                mixedAndMatched = qmapMatches.stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+            } else {
+                mixedAndMatched = mixedAndMatched.stream()
+                    .distinct()
+                    .filter(qmapMatches::contains)
+                    .collect(Collectors.toList());
+            }
+            
+        }
+           
+        return mixedAndMatched;        
     }
     
     

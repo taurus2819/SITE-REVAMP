@@ -353,10 +353,7 @@ public class SiteModel implements Serializable{
             return false;
         }
         final SiteModel other = (SiteModel) obj;
-        if (!Objects.equals(this.siteId, other.siteId)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.siteId, other.siteId);
     }
     
     
