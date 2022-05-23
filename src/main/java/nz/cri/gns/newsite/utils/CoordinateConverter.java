@@ -42,11 +42,15 @@ public class CoordinateConverter {
 
     
     public static Geometry convertGeometryCoordinates(Geometry geometry, int fromEpsg, int toEpsg) throws TransformException, FactoryException {
-        
+                
         List<Coordinate> convertedCoordinates = new ArrayList<>();
         Coordinate targetCoord;
         for(Coordinate srcCoord : geometry.getCoordinates())   {
+            System.err.println(String.format("Input point: X - %f, Y - %f ", srcCoord.x, srcCoord.y));
+
             Point2D latlng = OrigCoord.MakePt(srcCoord.x, srcCoord.y, fromEpsg, toEpsg);
+            System.err.println(String.format("Point2D latlng: X - %f, Y - %f ", latlng.getX(), latlng.getY()));
+            
             targetCoord = new Coordinate(latlng.getX(), latlng.getY());
             convertedCoordinates.add(targetCoord);
         }
