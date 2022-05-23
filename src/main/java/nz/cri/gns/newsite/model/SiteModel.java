@@ -23,15 +23,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import nz.cri.gns.newsite.audits.AuditLog;
-import org.gbif.common.shaded.com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Point;
 
 import org.springframework.core.style.ToStringCreator;
 
@@ -43,6 +40,8 @@ import org.springframework.core.style.ToStringCreator;
 public class SiteModel implements Serializable{
     
     private static final long serialVersionUID = 1L;
+    
+    public static final int SITE_EPSG = 4326;
 
     @Column(name = "site_id", updatable = false)
     @NotNull

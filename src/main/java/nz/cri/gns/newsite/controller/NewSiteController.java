@@ -32,6 +32,7 @@ import nz.cri.gns.newsite.model.SiteModelInput;
 import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.service.AuditLogService;
 import nz.cri.gns.newsite.service.IslandService;
+import nz.cri.gns.newsite.service.MasterFileService;
 import nz.cri.gns.newsite.service.NewSiteService;
 import nz.cri.gns.newsite.service.QMAPService;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
@@ -63,6 +64,9 @@ public class NewSiteController {
     
     @Autowired
     QMAPService qmapService;
+    
+    @Autowired
+    MasterFileService masterFileService;
 
     @RequestMapping("/sites/origsysid/{oid}")
     public List<SiteModel> getAllSites(@PathVariable int oid) {
@@ -151,6 +155,17 @@ public class NewSiteController {
     public void delete(@PathVariable Integer id, HttpServletResponse response) {
         newSiteService.delete(id);
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+    }
+    
+    @RequestMapping(
+            value = "/site/{id}/masterfile", 
+            method = {RequestMethod.GET})
+    public int getMasterFile(
+            @PathVariable int id, 
+            @RequestParam(value = "registrationAreaId") int registrationAreaId,
+            @RequestParam(value = "backlogFeature", defaultValue = "false") boolean isBacklogFeature) {
+        SiteModel site = getSite(id);
+        return masterFileService.getMasterFile(site, registrationAreaId, isBacklogFeature);
     }
 
 /**
