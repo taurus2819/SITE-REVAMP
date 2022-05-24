@@ -1,12 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.cri.gns.newsite.utils;
 
 import java.awt.geom.Point2D;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.PrecisionModel;
 
 /**
  * Utility class for converting NZMS260 (New Zealand Map Grid, NZMG, EPSG 27200)
@@ -116,9 +116,45 @@ public class NZMS260 extends MapSheet {
         String result = String.format("%s%s%d", Character.toString((char)('A' + i - 1)), j<10?"0":"", j);
         return result;
     }
+    
+    public Geometry getBoundingBox(String mapsheet) {
+        char letter = mapsheet.charAt(0);
+        if (!isValidMapSheet(""+letter)) {
+            throw new InvalidOrigCoordinate("Invalid mapsheet reference letter for mapsheet: " + mapsheet);
+        }
+        int i = letter - (char)('A') + 1;
+        double bboxWest = (i * 40000) + 1930000;
+        double bboxEast = bboxWest + 40000;
+        
+        int sheet;
+        try {
+            sheet = Integer.parseInt(mapsheet.substring(1));
+        } catch (NumberFormatException e) {
+            throw new InvalidOrigCoordinate("Invalid sheet no. for mapsheet: " + mapsheet);
+        }
+        double bboxNorth =  6820000 - (sheet * 30000);
+        double bboxSouth = bboxNorth - 30000;
+        System.err.println(String.format("BBOX: LL %f,%f, UR %f %f", bboxWest, bboxSouth, bboxEast, bboxNorth));
+        
+        final GeometryFactory factory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), getDefaultEPSG());
+        
+        
+        
+        Polygon polygon = factory.createPolygon(factory.createLinearRing(new Coordinate[]{
+            new Coordinate(bboxWest, bboxSouth),
+            new Coordinate(bboxWest, bboxNorth),
+            new Coordinate(bboxEast, bboxNorth),
+            new Coordinate(bboxEast, bboxSouth),
+            new Coordinate(bboxWest, bboxSouth),}), null);
+        return polygon;
+    }
+    
+    public static int getDefaultEPSG() {
+       return 27200;
+    } 
 
     @Override
     public int getMapsheetLookupEPSG() {
-        return 27200;
+        return getDefaultEPSG();
     }
 }

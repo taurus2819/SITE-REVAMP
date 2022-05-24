@@ -22,6 +22,7 @@ import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.repository.NewSiteRepository;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
+import nz.cri.gns.newsite.utils.NZMS260;
 import nz.cri.gns.newsite.utils.QMAPSheet;
 import nz.cri.gns.newsite.utils.Topo50;
 import org.geotools.referencing.CRS;
@@ -199,6 +200,37 @@ public class NewSiteServiceImpl implements NewSiteService {
     }
     
     /**
+     * Returns all sites within the NZMG/NZMS260 mapsheets provided (union of mapsheets, logical OR)
+     * @param sheetNames the names of the mapsheets
+     * @return all sites within the mapsheets, or an empty mapsheet if no matches exist
+     */
+    @Override
+    public List<SiteModel> findWithinNZMGSheets(List<String> sheetNames) {
+        
+        if(sheetNames == null || sheetNames.isEmpty())  {
+            return new ArrayList<>();
+        }
+        List<Geometry> geometries = new ArrayList<>();
+        for(String sheetName: sheetNames)   {
+            geometries.add(NZMS260.getInstance().getBoundingBox(sheetName));
+        }
+        if(geometries.isEmpty())
+            return new ArrayList<>();
+        
+        Geometry unionOfMapsheets =  UnaryUnionOp.union(new GeometryCollection(
+                        geometries.toArray(new Geometry[0]),
+                        new PrecisionModel(PrecisionModel.FLOATING), 
+                        NZMS260.getDefaultEPSG()));
+        
+        try {
+            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, NZMS260.getDefaultEPSG()));
+        } catch (TransformException | FactoryException ex) {
+            java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return new ArrayList<>();
+    }
+    
+    /**
      * Returns all sites within the Islands provided (union of islands, logical OR)
      * @param islandNames the names of the islands
      * @return all sites within the islands, or an empty island if no matches exist
@@ -259,18 +291,21 @@ public class NewSiteServiceImpl implements NewSiteService {
      * Filters by different map sheets, logical AND (intersection) between map sheet types
      * @param topo50Sheets
      * @param qmapSheets
+     * @param nzmgSheets
      * @param islands
      * @return 
      */
     @Override
-    public List<SiteModel> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets, List<String> islands) {
+    public List<SiteModel> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets, List<String> nzmgSheets, List<String> islands) {
         if((topo50Sheets == null || topo50Sheets.isEmpty())
         && (qmapSheets == null || qmapSheets.isEmpty())
+        && (nzmgSheets == null || nzmgSheets.isEmpty())
         && (islands == null || islands.isEmpty())){
             return null;
         }
         List<SiteModel> topo50Matches = findWithinTopo50Sheets(topo50Sheets);
         List<SiteModel> qmapMatches = findWithinQMAPSheets(qmapSheets);
+        List<SiteModel> nzmgMatches = findWithinNZMGSheets(nzmgSheets);
         List<SiteModel> islandMatches = findWithinIslands(islands);
         
         List<SiteModel> mixedAndMatched = new ArrayList<>();
@@ -291,8 +326,20 @@ public class NewSiteServiceImpl implements NewSiteService {
                     .distinct()
                     .filter(qmapMatches::contains)
                     .collect(Collectors.toList());
-            }
-            
+            } 
+        }
+        
+        if(!nzmgMatches.isEmpty())    {
+            if(mixedAndMatched.isEmpty())   {   //no match yet
+                mixedAndMatched = nzmgMatches.stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+            } else {
+                mixedAndMatched = mixedAndMatched.stream()
+                    .distinct()
+                    .filter(nzmgMatches::contains)
+                    .collect(Collectors.toList());
+            }    
         }
         
         if(!islandMatches.isEmpty())    {
@@ -305,8 +352,7 @@ public class NewSiteServiceImpl implements NewSiteService {
                     .distinct()
                     .filter(islandMatches::contains)
                     .collect(Collectors.toList());
-            }
-            
+            }   
         }
            
         return mixedAndMatched;        

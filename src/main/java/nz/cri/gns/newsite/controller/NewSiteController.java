@@ -204,6 +204,7 @@ public class NewSiteController {
         List<SiteModel> result = newSiteService.findWithinMapSheets(
                 topo50SheetNames != null ? Arrays.asList(topo50SheetNames) : new ArrayList<>(), 
                 qmapSheetNames != null ? Arrays.asList(qmapSheetNames) : new ArrayList<>(),
+                nzmgSheetNames != null ? Arrays.asList(nzmgSheetNames) : new ArrayList<>(),
                 islandNames != null ? Arrays.asList(islandNames) : new ArrayList<>());
         long finish = System.nanoTime();
         long timeElapsed = finish - start;
