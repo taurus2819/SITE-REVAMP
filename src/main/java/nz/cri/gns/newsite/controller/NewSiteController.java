@@ -203,7 +203,8 @@ public class NewSiteController {
         long start = System.nanoTime();
         List<SiteModel> result = newSiteService.findWithinMapSheets(
                 topo50SheetNames != null ? Arrays.asList(topo50SheetNames) : new ArrayList<>(), 
-                qmapSheetNames != null ? Arrays.asList(qmapSheetNames) : new ArrayList<>());
+                qmapSheetNames != null ? Arrays.asList(qmapSheetNames) : new ArrayList<>(),
+                islandNames != null ? Arrays.asList(islandNames) : new ArrayList<>());
         long finish = System.nanoTime();
         long timeElapsed = finish - start;
         System.err.println(String.format("API response time: %d ms", timeElapsed/1000000));

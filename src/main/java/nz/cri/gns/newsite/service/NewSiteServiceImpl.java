@@ -199,6 +199,35 @@ public class NewSiteServiceImpl implements NewSiteService {
     }
     
     /**
+     * Returns all sites within the Islands provided (union of islands, logical OR)
+     * @param islandNames the names of the islands
+     * @return all sites within the islands, or an empty island if no matches exist
+     */
+    @Override
+    public List<SiteModel> findWithinIslands(List<String> islandNames) {
+        if(islandNames == null || islandNames.isEmpty())  {
+            return new ArrayList<>();
+        }
+        List<Geometry> geometries = new ArrayList<>();
+        List<Island> islands;
+        for(String islandName: islandNames)   {
+            islands = islandService.findByName(islandName);
+            if(islands != null && islands.size() > 0)    {
+                geometries.add(islands.get(0).getBBox());
+            }
+        }
+        if(geometries.isEmpty())
+            return new ArrayList<>();
+        
+        Geometry unionOfMapsheets =  UnaryUnionOp.union(new GeometryCollection(
+                        geometries.toArray(new Geometry[0]),
+                        new PrecisionModel(PrecisionModel.FLOATING), 
+                        Island.getDefaultEPSG()));
+        
+        return newSiteRepository.findWithinBounds(unionOfMapsheets);
+    }
+    
+    /**
      * Convenience method to return (sort of) a GeoJSON representation of the union of bboxes
      * as defined by the list of mapsheets. Return type is a
      * @param sheetNames the names of the mapsheets
@@ -230,16 +259,19 @@ public class NewSiteServiceImpl implements NewSiteService {
      * Filters by different map sheets, logical AND (intersection) between map sheet types
      * @param topo50Sheets
      * @param qmapSheets
+     * @param islands
      * @return 
      */
     @Override
-    public List<SiteModel> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets) {
+    public List<SiteModel> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets, List<String> islands) {
         if((topo50Sheets == null || topo50Sheets.isEmpty())
-        && (qmapSheets == null || qmapSheets.isEmpty())){
+        && (qmapSheets == null || qmapSheets.isEmpty())
+        && (islands == null || islands.isEmpty())){
             return null;
         }
         List<SiteModel> topo50Matches = findWithinTopo50Sheets(topo50Sheets);
         List<SiteModel> qmapMatches = findWithinQMAPSheets(qmapSheets);
+        List<SiteModel> islandMatches = findWithinIslands(islands);
         
         List<SiteModel> mixedAndMatched = new ArrayList<>();
         
@@ -258,6 +290,20 @@ public class NewSiteServiceImpl implements NewSiteService {
                 mixedAndMatched = mixedAndMatched.stream()
                     .distinct()
                     .filter(qmapMatches::contains)
+                    .collect(Collectors.toList());
+            }
+            
+        }
+        
+        if(!islandMatches.isEmpty())    {
+            if(mixedAndMatched.isEmpty())   {   //no match yet
+                mixedAndMatched = islandMatches.stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+            } else {
+                mixedAndMatched = mixedAndMatched.stream()
+                    .distinct()
+                    .filter(islandMatches::contains)
                     .collect(Collectors.toList());
             }
             

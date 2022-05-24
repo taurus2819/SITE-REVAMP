@@ -26,6 +26,11 @@ public class IslandServiceImpl implements IslandService    {
     public List<Island> findByLocation(Point location) {
         return islandRepository.findByLocation(location.getX(), location.getY());
     }
+    
+    @Override
+    public List<Island> findByName(String islandName) {
+        return islandRepository.findByName(islandName);
+    }
 
     @Override
     public List<Island> findAll() {

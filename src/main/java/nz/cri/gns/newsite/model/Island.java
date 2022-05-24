@@ -8,8 +8,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
+import static nz.cri.gns.newsite.utils.QMAPSheet.getDefaultEPSG;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.PrecisionModel;
 
 /**
  *
@@ -45,5 +51,25 @@ public class Island implements Serializable {
     
     @Column(name = "right")
     private double bboxRight;
+    
+    public Geometry getBBox()   {
+        final GeometryFactory factory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), getDefaultEPSG());
+            Polygon polygon = factory.createPolygon(factory.createLinearRing(new Coordinate[]{
+                new Coordinate(bboxLeft, bboxBottom),
+                new Coordinate(bboxLeft, bboxTop),
+                new Coordinate(bboxRight, bboxTop),
+                new Coordinate(bboxRight, bboxBottom),
+                new Coordinate(bboxLeft, bboxBottom),
+            }), null);   
+            return polygon;
+    }
+    
+    /**
+     * NZMG
+     * @return EPSG code
+     */
+    public static int getDefaultEPSG() {
+       return 4326;
+    } 
 
 }
