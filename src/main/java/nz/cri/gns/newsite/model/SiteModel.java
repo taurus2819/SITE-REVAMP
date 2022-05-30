@@ -217,6 +217,22 @@ public class SiteModel implements Serializable{
         this.origCoord = origCoord;
     }
     
+    /**
+     * Moved here from application (PET): "Lat/Long:" : "Grid Ref"
+     * @return a human-friendly category of the original spatial reference system category
+     */
+    public String getOrigSystemCategoryTitle()  {
+        if(origSystemId.equals(29) || origSystemId.equals(38))  {   //geographic
+            return "Lat/Long:";
+        } else  {
+            return "Grid Ref";
+        }
+    }
+    
+    public String getPrettyOrigSystemCoordinates()  {
+        return getOrigCoord().toPrettyString(); //TODO
+    }
+    
     public Double getHeight() {
           return height;          
     }
