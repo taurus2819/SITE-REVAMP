@@ -1,5 +1,6 @@
 package nz.cri.gns.newsite.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -8,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
-import static nz.cri.gns.newsite.utils.QMAPSheet.getDefaultEPSG;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 import org.locationtech.jts.geom.Coordinate;
@@ -52,6 +52,7 @@ public class Island implements Serializable {
     @Column(name = "right")
     private double bboxRight;
     
+    @JsonIgnore
     public Geometry getBBox()   {
         final GeometryFactory factory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), getDefaultEPSG());
             Polygon polygon = factory.createPolygon(factory.createLinearRing(new Coordinate[]{

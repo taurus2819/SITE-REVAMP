@@ -1,14 +1,11 @@
 package nz.cri.gns.newsite.model;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import nz.cri.gns.newsite.service.IslandService;
 import nz.cri.gns.newsite.utils.NZMS262;
 import nz.cri.gns.newsite.utils.NZMS260;
 import nz.cri.gns.newsite.utils.QMAPSheet;
 import nz.cri.gns.newsite.utils.Topo50;
-import org.locationtech.jts.geom.Point;
 
 /**
  *
