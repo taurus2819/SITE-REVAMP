@@ -225,7 +225,7 @@ public class SiteModel implements Serializable{
         if(origSystemId.equals(29) || origSystemId.equals(38))  {   //geographic
             return "Lat/Long:";
         } else  {
-            return "Grid Ref";
+            return "Grid Ref:";
         }
     }
     
