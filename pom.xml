@@ -11,7 +11,7 @@
     <artifactId>new-site-api</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <name>New Site API</name>
-    <description>New Site API </description>
+    <description>New Site API</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -35,9 +35,9 @@
     </distributionManagement>
 
     <scm>
-        <url>scm:git:git@tanuki.gns.cri.nz:applications/SITE-REVAMP.git</url>
-        <connection>scm:git:git@tanuki.gns.cri.nz:applications/SITE-REVAMP.git</connection>
-        <developerConnection>scm:git:git@tanuki.gns.cri.nz:applications/SITE-REVAMP.git</developerConnection>
+        <url>scm:git:git@git.gns.cri.nz:applications/SITE-REVAMP.git</url>
+        <connection>scm:git:git@git.gns.cri.nz:applications/SITE-REVAMP.git</connection>
+        <developerConnection>scm:git:git@git.gns.cri.nz:applications/SITE-REVAMP.git</developerConnection>
     </scm>
 
     <dependencies>
@@ -204,6 +204,30 @@
                         <releaseFinishMessage>[ci skip] Update for next development version</releaseFinishMessage>
                     </commitMessages>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>block-vulnerable-log4j-versions</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>org.apache.logging.log4j:log4j-core:(,2.16.0)</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
