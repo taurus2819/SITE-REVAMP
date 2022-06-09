@@ -6,12 +6,12 @@ package nz.cri.gns.newsite.repository;
  */
 
 import java.util.List;
+import nz.cri.gns.newsite.model.Site;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import nz.cri.gns.newsite.model.SiteModel;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 
 public interface NewSiteRepository extends JpaRepository<SiteModel, Integer>{
 	
@@ -23,7 +23,7 @@ public interface NewSiteRepository extends JpaRepository<SiteModel, Integer>{
     public List<SiteModel> findAllByOrigSystemId(int oid) ;
 
     @Query(value = "Select s from #{#entityName} s where within(s.shape, :bounds )= true")
-    public List<SiteModel> findWithinBounds(Geometry bounds);
+    public List<Site> findWithinBounds(Geometry bounds);
     
     @Query(value = "Select s from #{#entityName} s where dwithin(s.shape, :point, :distance) = true AND EXISTS( select su.siteId from SiteUsage su where su.siteId = s.siteId)")
     public List<SiteModel> findCloseTo(Geometry point, double distance);

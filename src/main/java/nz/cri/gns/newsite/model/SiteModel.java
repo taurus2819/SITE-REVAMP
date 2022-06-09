@@ -7,7 +7,6 @@ package nz.cri.gns.newsite.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +36,7 @@ import org.springframework.core.style.ToStringCreator;
 @TypeDefs({
     @TypeDef(name = "json", typeClass = JsonBinaryType.class)
 })
-public class SiteModel implements Serializable{
+public class SiteModel implements Site{
     
     private static final long serialVersionUID = 1L;
     

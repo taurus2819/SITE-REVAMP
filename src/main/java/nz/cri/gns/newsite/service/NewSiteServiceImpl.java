@@ -17,9 +17,12 @@ import org.springframework.stereotype.Service;
 
 import nz.cri.gns.newsite.exception.ResourceMissingException;
 import nz.cri.gns.newsite.model.Island;
+import nz.cri.gns.newsite.model.Site;
+import nz.cri.gns.newsite.model.Site.SiteMode;
 import nz.cri.gns.newsite.model.SiteDetailed;
 import nz.cri.gns.newsite.model.SiteModel;
 import nz.cri.gns.newsite.model.SiteProximity;
+import nz.cri.gns.newsite.repository.NewSiteIdRepository;
 import nz.cri.gns.newsite.repository.NewSiteRepository;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
 import nz.cri.gns.newsite.utils.NZMS260;
@@ -47,6 +50,9 @@ public class NewSiteServiceImpl implements NewSiteService {
 
     @Autowired
     NewSiteRepository newSiteRepository;
+    
+    @Autowired
+    NewSiteIdRepository newSiteIdRepository;
     
     @Autowired
     IslandService islandService;
@@ -105,9 +111,13 @@ public class NewSiteServiceImpl implements NewSiteService {
     }
 
     @Override
-    public List<SiteModel> findWithinBounds(Geometry bounds) {
-
-        return newSiteRepository.findWithinBounds(bounds);
+    public List<Site> findWithinBounds(Geometry bounds, SiteMode mode) {
+        switch(mode)    {
+            case COMPLETE:
+                return newSiteRepository.findWithinBounds(bounds);
+            default:
+                return newSiteIdRepository.findWithinBounds(bounds);
+        } 
     }
 
     @Override
@@ -141,7 +151,7 @@ public class NewSiteServiceImpl implements NewSiteService {
      * @return all sites within the mapsheets, or an empty mapsheet if no matches exist
      */
     @Override
-    public List<SiteModel> findWithinTopo50Sheets(List<String> sheetNames) {
+    public List<Site> findWithinTopo50Sheets(List<String> sheetNames, SiteMode mode) {
         
         Topo50 topo50 = Topo50.getInstance();
         if(sheetNames == null || sheetNames.isEmpty())  {
@@ -160,7 +170,12 @@ public class NewSiteServiceImpl implements NewSiteService {
                         topo50.getDefaultEPSG()));
         
         try {
-            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, topo50.getDefaultEPSG()));
+            switch(mode)    {
+                case COMPLETE:
+                    return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, topo50.getDefaultEPSG()));
+                default:
+                    return newSiteIdRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, topo50.getDefaultEPSG()));
+            } 
         } catch (TransformException | FactoryException ex) {
             java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -171,10 +186,11 @@ public class NewSiteServiceImpl implements NewSiteService {
     /**
      * Returns all sites within the QMAP mapsheets provided (union of mapsheets, logical OR)
      * @param sheetNames the names of the mapsheets
+     * @param mode
      * @return all sites within the mapsheets, or an empty mapsheet if no matches exist
      */
     @Override
-    public List<SiteModel> findWithinQMAPSheets(List<String> sheetNames) {
+    public List<Site> findWithinQMAPSheets(List<String> sheetNames, SiteMode mode) {
         
         if(sheetNames == null || sheetNames.isEmpty())  {
             return new ArrayList<>();
@@ -192,7 +208,12 @@ public class NewSiteServiceImpl implements NewSiteService {
                         QMAPSheet.getDefaultEPSG()));
         
         try {
-            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, QMAPSheet.getDefaultEPSG()));
+            switch(mode)    {
+                case COMPLETE:
+                    return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, QMAPSheet.getDefaultEPSG()));
+                default:
+                    return newSiteIdRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, QMAPSheet.getDefaultEPSG()));
+            } 
         } catch (TransformException | FactoryException ex) {
             java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -202,10 +223,11 @@ public class NewSiteServiceImpl implements NewSiteService {
     /**
      * Returns all sites within the NZMG/NZMS260 mapsheets provided (union of mapsheets, logical OR)
      * @param sheetNames the names of the mapsheets
+     * @param mode
      * @return all sites within the mapsheets, or an empty mapsheet if no matches exist
      */
     @Override
-    public List<SiteModel> findWithinNZMGSheets(List<String> sheetNames) {
+    public List<Site> findWithinNZMGSheets(List<String> sheetNames, SiteMode mode) {
         
         if(sheetNames == null || sheetNames.isEmpty())  {
             return new ArrayList<>();
@@ -223,7 +245,12 @@ public class NewSiteServiceImpl implements NewSiteService {
                         NZMS260.getDefaultEPSG()));
         
         try {
-            return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, NZMS260.getDefaultEPSG()));
+            switch(mode)    {
+                case COMPLETE:
+                    return newSiteRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, NZMS260.getDefaultEPSG()));
+                default:
+                    return newSiteIdRepository.findWithinBounds(CoordinateConverter.convertGeometryCoordinates(unionOfMapsheets, NZMS260.getDefaultEPSG()));
+            } 
         } catch (TransformException | FactoryException ex) {
             java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -233,10 +260,11 @@ public class NewSiteServiceImpl implements NewSiteService {
     /**
      * Returns all sites within the Islands provided (union of islands, logical OR)
      * @param islandNames the names of the islands
+     * @param mode
      * @return all sites within the islands, or an empty island if no matches exist
      */
     @Override
-    public List<SiteModel> findWithinIslands(List<String> islandNames) {
+    public List<Site> findWithinIslands(List<String> islandNames, SiteMode mode) {
         if(islandNames == null || islandNames.isEmpty())  {
             return new ArrayList<>();
         }
@@ -255,37 +283,14 @@ public class NewSiteServiceImpl implements NewSiteService {
                         geometries.toArray(new Geometry[0]),
                         new PrecisionModel(PrecisionModel.FLOATING), 
                         Island.getDefaultEPSG()));
-        
-        return newSiteRepository.findWithinBounds(unionOfMapsheets);
+        switch(mode)    {
+            case COMPLETE:
+                return newSiteRepository.findWithinBounds(unionOfMapsheets);
+            default:
+                return newSiteIdRepository.findWithinBounds(unionOfMapsheets);
+        } 
     }
-    
-    /**
-     * Convenience method to return (sort of) a GeoJSON representation of the union of bboxes
-     * as defined by the list of mapsheets. Return type is a
-     * @param sheetNames the names of the mapsheets
-     * @return  multipolygon geometry without any attributes.
-     */
-    @Override
-    public String getQMAPSheetsGeoJson(List<String> sheetNames) {
         
-        if(sheetNames == null || sheetNames.isEmpty())  {
-            return null;
-        }
-        List<Geometry> geometries = new ArrayList<>();
-        for(String sheetName: sheetNames)   {
-            geometries.add(QMAPSheet.getInstance().getBoundingBox(sheetName));
-        }
-        if(geometries.isEmpty())
-            return null;
-        
-        return new GeoJsonWriter().write(
-                UnaryUnionOp.union(new GeometryCollection(
-                        geometries.toArray(new Geometry[0]),
-                        new PrecisionModel(PrecisionModel.FLOATING), 
-                        QMAPSheet.getDefaultEPSG()))
-        );
-    }
-    
     
     /**
      * Filters by different map sheets, logical AND (intersection) between map sheet types
@@ -296,19 +301,19 @@ public class NewSiteServiceImpl implements NewSiteService {
      * @return 
      */
     @Override
-    public List<SiteModel> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets, List<String> nzmgSheets, List<String> islands) {
+    public List<Site> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets, List<String> nzmgSheets, List<String> islands, SiteMode mode) {
         if((topo50Sheets == null || topo50Sheets.isEmpty())
         && (qmapSheets == null || qmapSheets.isEmpty())
         && (nzmgSheets == null || nzmgSheets.isEmpty())
         && (islands == null || islands.isEmpty())){
             return null;
         }
-        List<SiteModel> topo50Matches = findWithinTopo50Sheets(topo50Sheets);
-        List<SiteModel> qmapMatches = findWithinQMAPSheets(qmapSheets);
-        List<SiteModel> nzmgMatches = findWithinNZMGSheets(nzmgSheets);
-        List<SiteModel> islandMatches = findWithinIslands(islands);
+        List<Site> topo50Matches = findWithinTopo50Sheets(topo50Sheets, mode);
+        List<Site> qmapMatches = findWithinQMAPSheets(qmapSheets, mode);
+        List<Site> nzmgMatches = findWithinNZMGSheets(nzmgSheets, mode);
+        List<Site> islandMatches = findWithinIslands(islands, mode);
         
-        List<SiteModel> mixedAndMatched = new ArrayList<>();
+        List<Site> mixedAndMatched = new ArrayList<>();
         
         if(!topo50Matches.isEmpty())    {
             mixedAndMatched = topo50Matches.stream()
@@ -358,6 +363,32 @@ public class NewSiteServiceImpl implements NewSiteService {
         return mixedAndMatched;        
     }
     
+        /**
+     * Convenience method to return (sort of) a GeoJSON representation of the union of bboxes
+     * as defined by the list of mapsheets. Return type is a
+     * @param sheetNames the names of the mapsheets
+     * @return  multipolygon geometry without any attributes.
+     */
+    @Override
+    public String getQMAPSheetsGeoJson(List<String> sheetNames) {
+        
+        if(sheetNames == null || sheetNames.isEmpty())  {
+            return null;
+        }
+        List<Geometry> geometries = new ArrayList<>();
+        for(String sheetName: sheetNames)   {
+            geometries.add(QMAPSheet.getInstance().getBoundingBox(sheetName));
+        }
+        if(geometries.isEmpty())
+            return null;
+        
+        return new GeoJsonWriter().write(
+                UnaryUnionOp.union(new GeometryCollection(
+                        geometries.toArray(new Geometry[0]),
+                        new PrecisionModel(PrecisionModel.FLOATING), 
+                        QMAPSheet.getDefaultEPSG()))
+        );
+    }
     
     @Override
     public SiteDetailed findDetails(int id) {
