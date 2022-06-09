@@ -19,7 +19,7 @@ import nz.cri.gns.newsite.model.SiteUsage;
 import nz.cri.gns.newsite.service.SiteUsageService;
 
 @RestController
-@RequestMapping("/api/v1/sites/usage")
+@RequestMapping("/site/api/v1/sites/usage")
 public class SiteUsageController {
 
 

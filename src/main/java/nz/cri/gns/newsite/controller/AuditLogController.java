@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author sitikond
  */
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/site/api/v1")
 public class AuditLogController {
     
     @Autowired
