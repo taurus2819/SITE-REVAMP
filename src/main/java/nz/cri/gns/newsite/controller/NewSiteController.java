@@ -258,7 +258,7 @@ public class NewSiteController {
      * @param qmapSheetNames
      * @return 
      */
-    @RequestMapping(value = "/mapsheets/geojson", produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET, value = "/mapsheets/geojson", produces = "application/json")
     String getMapsheetsGeoJson(
             @RequestParam(value = "topo50sheet") String[] topo50SheetNames, 
             @RequestParam(value = "qmapSheet") String[] qmapSheetNames)   {
