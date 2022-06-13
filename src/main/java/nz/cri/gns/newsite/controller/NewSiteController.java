@@ -70,23 +70,23 @@ public class NewSiteController {
     @Autowired
     MasterFileService masterFileService;
 
-    @RequestMapping("/sites/origsysid/{oid}")
+    @RequestMapping(value = "/sites/origsysid/{oid}", method = RequestMethod.GET)
     public List<SiteModel> getAllSites(@PathVariable int oid) {
         return newSiteService.findByOrigSystemId(oid);
     }
 
 
-    @RequestMapping("/sites/{id}")
+    @RequestMapping(value = "/sites/{id}", method = RequestMethod.GET)
     public SiteModel getSite(@PathVariable int id) {
         return newSiteService.find(id);
     }
 
-    @RequestMapping("/sites/{id}/details")
+    @RequestMapping(value = "/sites/{id}/details", method = RequestMethod.GET)
     public SiteDetailed getSiteDetails(@PathVariable int id) {
         return newSiteService.findDetails(id);
     }
     
-    @RequestMapping(method = RequestMethod.POST, value = "/site")
+    @RequestMapping(value = "/site", method = RequestMethod.POST)
     public SiteModel addSite(@RequestBody SiteModelInput siteInput, HttpServletResponse response) throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
         SiteModel site = siteInput.toSiteModel();
         site = newSiteService.insert(site);
@@ -113,7 +113,7 @@ public class NewSiteController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(method = RequestMethod.PUT, value = "/site/{id}")
+    @RequestMapping(value = "/site/{id}", method = RequestMethod.PUT)
     public SiteModel updateSite(@RequestBody SiteModelInput site, @PathVariable int id) throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
         final SiteModel siteById = newSiteService.find(id);        //find(id) will do a sql select to physically fetch the entity from db, which is not required when just updating
         //so, use getOne(id) which gets a referenceobject and does not fetch it from the db.
@@ -146,22 +146,20 @@ public class NewSiteController {
         return siteById;
     }
 
-    @RequestMapping(value = "/sites/format/{id}", method = {RequestMethod.GET}, produces = "application/json")
-    public String epsgInfo(@PathVariable int id) {
+    @RequestMapping(value = "/sites/format/{id}", method = RequestMethod.GET, produces = "application/json")
+    public String getEpsgInfo(@PathVariable int id) {
         SiteModel site = getSite(id);
         System.out.println("Site in JSON = " + site);
         return OrigCoord.getEpsgInfoJsonString(site.getOrigSystemId(), site.getOrigCoord());
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/site/{id}")
+    @RequestMapping(value = "/site/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable Integer id, HttpServletResponse response) {
         newSiteService.delete(id);
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
     
-    @RequestMapping(
-            value = "/site/{id}/masterfile", 
-            method = {RequestMethod.GET})
+    @RequestMapping(value = "/site/{id}/masterfile", method = RequestMethod.GET)
     public int getMasterFile(
             @PathVariable int id, 
             @RequestParam(value = "registrationAreaId") int registrationAreaId,
@@ -188,7 +186,7 @@ public class NewSiteController {
  * @throws TransformException
  * @throws JsonProcessingException 
  */
-    @RequestMapping("/sites/query/bbox")
+    @RequestMapping(value = "/sites/query/bbox",method = RequestMethod.GET)
     public List<Site> getAllSitesWithin(
             @RequestParam(value = "minNorth") double minNorth, 
             @RequestParam(value = "minEast") double minEast,
@@ -202,7 +200,7 @@ public class NewSiteController {
         return newSiteService.findWithinBounds(CoordinateConverter.convertBbox(minNorth, minEast, maxNorth, maxEast, epsg), (siteMode != null && siteMode.equals("complete") ? SiteMode.COMPLETE : SiteMode.ID_ONLY));
     }
     
-    @RequestMapping("/sites/query/mapsheets")
+    @RequestMapping(value = "/sites/query/mapsheets", method = RequestMethod.GET)
     List<Site> getAllSitesWithinMapSheets(
             @RequestParam(value = "topo50sheet", required=false) String[] topo50SheetNames, 
             @RequestParam(value = "qmapSheet", required=false) String[] qmapSheetNames,
@@ -224,7 +222,7 @@ public class NewSiteController {
         return result;
     }
     
-    @RequestMapping("/sites/query/mapsheets/qmap")
+    @RequestMapping(value = "/sites/query/mapsheets/qmap", method = RequestMethod.GET)
     List<Site> getAllSitesWithinQMapSheets( 
             @RequestParam(value = "qmapSheet") String[] qmapSheetNames, 
             @RequestParam(value = "siteMode", required=false) String siteMode)   {
@@ -238,7 +236,7 @@ public class NewSiteController {
         return result;
     }
     
-    @RequestMapping("/sites/query/mapsheets/topo50")
+    @RequestMapping(value = "/sites/query/mapsheets/topo50", method = RequestMethod.GET)
     List<Site> getAllSitesWithiTopo50Sheets(
             @RequestParam(value = "topo50sheet") String[] topo50SheetNames,
             @RequestParam(value = "siteMode", required=false) String siteMode)   {
@@ -258,7 +256,7 @@ public class NewSiteController {
      * @param qmapSheetNames
      * @return 
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/mapsheets/geojson", produces = "application/json")
+    @RequestMapping(value = "/mapsheets/geojson", method = RequestMethod.GET, produces = "application/json")
     String getMapsheetsGeoJson(
             @RequestParam(value = "topo50sheet") String[] topo50SheetNames, 
             @RequestParam(value = "qmapSheet") String[] qmapSheetNames)   {
@@ -283,7 +281,7 @@ public class NewSiteController {
  * @throws TransformException
  * @throws JsonProcessingException 
  */
-    @RequestMapping("/sites/closeto")
+    @RequestMapping(value = "/sites/closeto", method = RequestMethod.GET)
     public List<SiteProximity> getAllSitesClose(@RequestParam(value = "easting") double easting, @RequestParam(value = "northing") double northing,
             @RequestParam(value = "metres") double distance, @RequestParam(value = "EPSG") int epsg, HttpServletResponse response)
             throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
@@ -292,12 +290,12 @@ public class NewSiteController {
         return newSiteService.findCloseTo(point, distance);
     }
     
-    @RequestMapping(method = RequestMethod.GET, value = "/islands")
+    @RequestMapping(value = "/islands", method = RequestMethod.GET)
     public List<Island> findAllIslands() {
         return islandService.findAll();
     }
     
-    @RequestMapping(method = RequestMethod.GET, value = "/qmapsheets")
+    @RequestMapping(value = "/qmapsheets", method = RequestMethod.GET)
     public List<MapSheetPayload> findAllQmapSheets() {
         return qmapService.findAll();
     }
