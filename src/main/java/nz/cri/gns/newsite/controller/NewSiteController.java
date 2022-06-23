@@ -314,4 +314,9 @@ public class NewSiteController {
     public DatumMethod findMethod(@PathVariable int id) {
         return methodService.find(id);
     }
+    
+    @RequestMapping(value = "/methods/name/{name}", method = RequestMethod.GET)
+    public List<DatumMethod> findMethod(@PathVariable String name) {
+        return methodService.findByName(name);
+    }
 }

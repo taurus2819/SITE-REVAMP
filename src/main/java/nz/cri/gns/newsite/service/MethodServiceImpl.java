@@ -30,6 +30,10 @@ public class MethodServiceImpl implements MethodService    {
     
     @Override
     public List<DatumMethod> findByName(String methodName) {
+        List<DatumMethod> result = methodRepository.findByName(methodName);
+        if(result.isEmpty())    {
+           throw new ResourceMissingException(String.format("Method with name %s not found", methodName));
+        }
         return methodRepository.findByName(methodName);
     }
 
