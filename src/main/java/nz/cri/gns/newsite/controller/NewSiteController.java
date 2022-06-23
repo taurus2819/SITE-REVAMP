@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import nz.cri.gns.newsite.audits.AuditLog;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
+import nz.cri.gns.newsite.model.DatumMethod;
 import nz.cri.gns.newsite.model.Island;
 import nz.cri.gns.newsite.model.MapSheetPayload;
 import nz.cri.gns.newsite.model.Site;
@@ -35,6 +36,7 @@ import nz.cri.gns.newsite.model.SiteProximity;
 import nz.cri.gns.newsite.service.AuditLogService;
 import nz.cri.gns.newsite.service.IslandService;
 import nz.cri.gns.newsite.service.MasterFileService;
+import nz.cri.gns.newsite.service.MethodService;
 import nz.cri.gns.newsite.service.NewSiteService;
 import nz.cri.gns.newsite.service.QMAPService;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
@@ -66,6 +68,9 @@ public class NewSiteController {
     
     @Autowired
     QMAPService qmapService;
+    
+    @Autowired
+    MethodService methodService;
     
     @Autowired
     MasterFileService masterFileService;
@@ -298,5 +303,15 @@ public class NewSiteController {
     @RequestMapping(value = "/qmapsheets", method = RequestMethod.GET)
     public List<MapSheetPayload> findAllQmapSheets() {
         return qmapService.findAll();
+    }
+    
+    @RequestMapping(value = "/methods", method = RequestMethod.GET)
+    public List<DatumMethod> findAllMethods() {
+        return methodService.findAll();
+    }
+    
+    @RequestMapping(value = "/methods/{id}", method = RequestMethod.GET)
+    public DatumMethod findMethod(@PathVariable int id) {
+        return methodService.find(id);
     }
 }
