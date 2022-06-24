@@ -198,6 +198,10 @@ public class OrigCoord {
         result.put(74, new OrigCoordDetail(2998, "EN"));
         return Collections.unmodifiableMap(result);
     }
+    
+    public static OrigCoordDetail getOrigCoordDetails(int legacyId)  {
+        return ORIG_COORD_LIST.get(legacyId);
+    }
 
     /**
      * Convert a systemid and origcoord from the old site database in the new

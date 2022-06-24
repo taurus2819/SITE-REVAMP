@@ -41,6 +41,7 @@ import nz.cri.gns.newsite.service.NewSiteService;
 import nz.cri.gns.newsite.service.QMAPService;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
 import nz.cri.gns.newsite.utils.OrigCoord;
+import nz.cri.gns.newsite.utils.OrigCoord.OrigCoordDetail;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.locationtech.jts.geom.Point;
@@ -318,5 +319,10 @@ public class NewSiteController {
     @RequestMapping(value = "/methods/name/{name}", method = RequestMethod.GET)
     public List<DatumMethod> findMethod(@PathVariable String name) {
         return methodService.findByName(name);
+    }
+    
+    @RequestMapping(value = "/legacy/datum/{datumId}", method = RequestMethod.GET)
+    public OrigCoordDetail findCoordDetailsForLegacyDatum(@PathVariable Integer datumId) {
+        return OrigCoord.getOrigCoordDetails(datumId);
     }
 }

@@ -36,5 +36,5 @@ public class DatumMethod implements Serializable {
     
     @Column(name = "nom_accuracy_z")
     private final Float zAcc = -1F;
-  
+    
 }
