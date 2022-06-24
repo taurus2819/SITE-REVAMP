@@ -10,9 +10,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 import org.gbif.common.parsers.core.OccurrenceParseResult;
@@ -108,9 +111,10 @@ public class OrigCoord {
         }
         return outputPt;
     }
-
-    public static class OrigCoordDetail {
-
+    
+    @Getter @Setter
+    public static class OrigCoordDetail implements Serializable{
+        
         int epsg;
         String format;
 
