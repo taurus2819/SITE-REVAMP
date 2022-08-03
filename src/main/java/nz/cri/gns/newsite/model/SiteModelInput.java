@@ -162,12 +162,14 @@ public class SiteModelInput {
         if (format.equals("EN")) {
             inputPt.setLocation(easting,northing);
             latlng = OrigCoord.toWGS84(epsg, inputPt);
+            latlng = OrigCoord.parseLatLng(Double.toString(latlng.getX()), Double.toString(latlng.getY()));
         } else if (format.startsWith("D")) {
             latlng = OrigCoord.parseLatLng(latitude, longitude);
         } else if (format.equals("GRIDREF")) {
             // deal with grid ref
             inputPt = OrigCoord.parseGridRef(epsg,gridref);
             latlng = OrigCoord.toWGS84(epsg, inputPt);
+            latlng = OrigCoord.parseLatLng(Double.toString(latlng.getX()), Double.toString(latlng.getY()));
         } else {
             throw new InvalidOrigCoordinate("Not a valid format");
         }
