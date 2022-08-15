@@ -260,18 +260,18 @@
         </profile>
         <profile>
             <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <build.profile.id>dev</build.profile.id>
                 <profileActive>dev</profileActive>
             </properties>
         </profile>
         <profile>
-            <id>test</id>
+            <id>uat</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
-                <build.profile.id>test</build.profile.id>
+                <build.profile.id>uat</build.profile.id>
                 <profileActive>uat</profileActive>
             </properties>
         </profile>
