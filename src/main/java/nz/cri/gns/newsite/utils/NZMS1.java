@@ -10,7 +10,15 @@ import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
  */
 public class NZMS1 extends MapSheet{
 
-    public NZMS1() {
+   private static NZMS1 _instance; 
+    
+    private NZMS1(){};
+   
+    public static NZMS1 getInstance()  {
+        if(_instance == null)   {
+            _instance = new NZMS1();
+        }
+        return _instance;
     }
     
 /*
@@ -388,7 +396,7 @@ public class NZMS1 extends MapSheet{
      * @param truncNorth the 4-figure truncated northing value (3 figure truncated northings should be multiplied by 10 before passing to this routine)
      * @return a Point2D x,y containing the full easting and northings
      */
-    public static Point2D getFullCoordinates(int epsg, String mapsheet, int truncEast, int truncNorth) {
+    public Point2D getFullCoordinates(int epsg, String mapsheet, int truncEast, int truncNorth) {
         char island = mapsheet.charAt(0);
         int sheet;
         Point2D outputPt = new Point2D.Double();
@@ -447,4 +455,15 @@ public class NZMS1 extends MapSheet{
         outputPt.setLocation(east, north);
         return outputPt;
     }
+
+    @Override
+    public int getMapsheetLookupEPSG() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String lookupMapSheet(double easting, double northing) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+     
 }

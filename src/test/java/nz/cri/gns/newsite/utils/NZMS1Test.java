@@ -19,13 +19,13 @@ public class NZMS1Test {
     
     @Test
     public void testGetFullCoordinates() {
-        Point2D outputPt = NZMS1.getFullCoordinates(27291, "N108", 5789, 9883);
+        Point2D outputPt = NZMS1.getInstance().getFullCoordinates(27291, "N108", 5789, 9883);
         assertEquals(outputPt.getX(), 157890, 0.001);
         assertEquals(outputPt.getY(), 398830, 0.001);
-        outputPt = NZMS1.getFullCoordinates(27291, "N1", 1510, 4940);
+        outputPt = NZMS1.getInstance().getFullCoordinates(27291, "N1", 1510, 4940);
         assertEquals(outputPt.getX(), 15100, 0.001);
         assertEquals(outputPt.getY(), 949400, 0.001);
-        outputPt = NZMS1.getFullCoordinates(27292, "S33", 3340, 6400);
+        outputPt = NZMS1.getInstance().getFullCoordinates(27292, "S33", 3340, 6400);
         assertEquals(outputPt.getX(), 633400, 0.001);
         assertEquals(outputPt.getY(), 764000, 0.001);
     }

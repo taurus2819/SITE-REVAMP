@@ -1,12 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.cri.gns.newsite.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.awt.geom.Point2D;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 import nz.cri.gns.newsite.utils.OrigCoord;
@@ -18,8 +16,13 @@ import org.opengis.referencing.operation.TransformException;
  * This class is facade on the SiteModel used for convenience of client for POST and PUT
  * @author scaddenp
  */
+@Getter @Setter
 public class SiteModelInput {
+    
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private final SiteModel siteModel;
+    
     private int epsg;
     private String gridref;
     private Double easting;
@@ -66,7 +69,6 @@ public class SiteModelInput {
         this.siteModel.setSiteName(siteName);
     }
 
-
     public Integer getMethodId() {
         return siteModel.getMethodId();
     }
@@ -90,7 +92,6 @@ public class SiteModelInput {
     public void setDirections(String directions) {
         this.siteModel.setDirections(directions);
     }
-
     
     public Double getHeight() {
         return siteModel.getHeight();
@@ -140,70 +141,7 @@ public class SiteModelInput {
         this.siteModel.setOwnerId(OwnerId);
     }
     
-    public int getEpsg() {
-        return epsg;
-    }
-
-    public void setEpsg(int epsg) {
-        this.epsg = epsg;
-    }
-
-    public String getGridref() {
-        return gridref;
-    }
-
-    public void setGridref(String gridref) {
-        this.gridref = gridref;
-    }
-
-    public Double getEasting() {
-        return easting;
-    }
-
-    public void setEasting(Double easting) {
-        this.easting = easting;
-    }
-
-    public Double getNorthing() {
-        return northing;
-    }
-
-    public void setNorthing(Double northing) {
-        this.northing = northing;
-    }
-
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public String getAuditMsg() {
-        return auditMsg;
-    }
-
-    public void setAuditMsg(String auditMsg) {
-        this.auditMsg = auditMsg;
-    }
-    
+   
 /**
  * Perform all necessary transformations on the SiteModelInput object to emit a valid SiteModel
  * This involves creating the OrigCoord structure, and converting input coordinates into
@@ -224,12 +162,14 @@ public class SiteModelInput {
         if (format.equals("EN")) {
             inputPt.setLocation(easting,northing);
             latlng = OrigCoord.toWGS84(epsg, inputPt);
+            latlng = OrigCoord.parseLatLng(Double.toString(latlng.getX()), Double.toString(latlng.getY()));
         } else if (format.startsWith("D")) {
             latlng = OrigCoord.parseLatLng(latitude, longitude);
         } else if (format.equals("GRIDREF")) {
             // deal with grid ref
             inputPt = OrigCoord.parseGridRef(epsg,gridref);
             latlng = OrigCoord.toWGS84(epsg, inputPt);
+            latlng = OrigCoord.parseLatLng(Double.toString(latlng.getX()), Double.toString(latlng.getY()));
         } else {
             throw new InvalidOrigCoordinate("Not a valid format");
         }

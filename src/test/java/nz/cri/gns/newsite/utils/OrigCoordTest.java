@@ -99,8 +99,8 @@ public class OrigCoordTest {
             fail(ex.getMessage());
             return;
         }
-        assertEquals(outputPt.getX(), -34.32524701, 0.00001);
-        assertEquals(outputPt.getY(), 177.65067414, 0.00001);
+        assertEquals(outputPt.getX(), 177.65067414, 0.00001);
+        assertEquals(outputPt.getY(), -34.32524701 , 0.00001);
         inputPt.setLocation( 172.03277,-41.82246);
         try {
             outputPt = OrigCoord.toWGS84(4272, inputPt);
@@ -110,8 +110,8 @@ public class OrigCoordTest {
         }
         System.out.println("outputPt.getX() = " + outputPt.getX());
         System.out.println("outputPt.getY() = " + outputPt.getY());
-        assertEquals(outputPt.getX(), -41.82072455, 0.00005);
-        assertEquals(outputPt.getY(), 172.03292203, 0.00005);
+        assertEquals(outputPt.getX(), 172.03292203, 0.00005);
+        assertEquals(outputPt.getY(), -41.82072455, 0.00005);
         
         //NZTM full coordinates "epsg":2193,  "format":"EN",  "easting":"1528677.3 ",  "northing":"5413457.7"
         //When POSTed to site API Then stored latlong is 172.14641437,-41.42727092
@@ -127,8 +127,8 @@ public class OrigCoordTest {
 //        assertEquals(outputPt.getX(), 7.9688091254776054, 0.00005);
 //        assertEquals(outputPt.getY(), 138.17751493675618, 0.00005);
  
-        assertEquals(outputPt.getY(), 172.14641437, 0.00005);
-        assertEquals(outputPt.getX(), -41.42727085, 0.00005);
+        assertEquals(outputPt.getX(), 172.14641437, 0.00005);
+        assertEquals(outputPt.getY(), -41.42727085, 0.00005);
     }
     
     @Test
@@ -151,8 +151,8 @@ public class OrigCoordTest {
     public void testMakeLatLongPt(){
         try {
             Point2D testpt = OrigCoord.MakeLatLongPt(1625839.02,5575773.87,2193);
-            assertThat(testpt.getY()).isCloseTo(173.302600, Offset.offset(0.0005));
-            assertThat(testpt.getX()).isCloseTo(-39.967778, Offset.offset(0.0005));
+            assertThat(testpt.getX()).isCloseTo(173.302600, Offset.offset(0.0005));
+            assertThat(testpt.getY()).isCloseTo(-39.967778, Offset.offset(0.0005));
         } catch (Exception ex) {
             fail("Reason: " + ex.getMessage());
         }
