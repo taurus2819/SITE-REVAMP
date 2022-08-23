@@ -21,7 +21,7 @@ build:
     - docker
   stage: build
   except:
-    - main
+    - master
   script: |
     mvn $MAVEN_CLI_OPTS clean deploy
 
@@ -38,7 +38,7 @@ release:
     git config http.sslverify false
     git remote set-url --push origin "https://gitlab-project-token:$release_token@git.gns.cri.nz/$CI_PROJECT_PATH.git"
     git config pull.ff only
-    mvn $MAVEN_CLI_OPTS gitflow:release-start
+    mvn $MAVEN_CLI_OPTS -Pprod gitflow:release-start
     mvn $MAVEN_CLI_OPTS gitflow:release-finish
 
 deploy:
