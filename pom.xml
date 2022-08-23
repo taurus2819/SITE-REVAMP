@@ -266,10 +266,7 @@
             </properties>
         </profile>
         <profile>
-            <id>uat</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>uat</id>            
             <properties>
                 <build.profile.id>uat</build.profile.id>
                 <profileActive>uat</profileActive>
@@ -277,6 +274,9 @@
         </profile>
         <profile>
             <id>prod</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <build.profile.id>prod</build.profile.id>
                 <profileActive>prod</profileActive>
