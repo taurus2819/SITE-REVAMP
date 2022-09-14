@@ -1,10 +1,6 @@
 package nz.cri.gns.newsite.utils;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *

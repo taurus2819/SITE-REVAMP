@@ -1,7 +1,6 @@
 package nz.cri.gns.newsite.service;
 
 import java.util.List;
-import java.util.Optional;
 import nz.cri.gns.newsite.exception.ResourceMissingException;
 import nz.cri.gns.newsite.model.DatumMethod;
 import nz.cri.gns.newsite.repository.MethodRepository;

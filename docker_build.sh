@@ -41,7 +41,7 @@ then
 fi
 
 echo "Pulling jar file"
-mvn clean dependency:copy -Pdocker -s $settings_xml
+mvn clean dependency:copy -P docker -s $settings_xml
 
 echo "Building $IMAGE"
 

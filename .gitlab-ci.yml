@@ -41,7 +41,7 @@ release:
     mvn $MAVEN_CLI_OPTS -Pprod gitflow:release-start
     mvn $MAVEN_CLI_OPTS -Pprod gitflow:release-finish
 
-deploy:
+deploy-dev:
   tags:
     - linux
   stage: deploy
