@@ -34,11 +34,11 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <scm>
+<!--    <scm>
         <url>scm:git:git@git.gns.cri.nz:applications/SITE-REVAMP.git</url>
         <connection>scm:git:git@git.gns.cri.nz:applications/SITE-REVAMP.git</connection>
         <developerConnection>scm:git:git@git.gns.cri.nz:applications/SITE-REVAMP.git</developerConnection>
-    </scm>
+    </scm>-->
 
     <dependencies>
         <dependency>
@@ -187,10 +187,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-help-plugin</artifactId>
             </plugin>
-            <plugin>
+<!--            <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>com.amashchenko.maven.plugin</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
