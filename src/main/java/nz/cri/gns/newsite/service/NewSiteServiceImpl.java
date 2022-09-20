@@ -258,10 +258,30 @@ public class NewSiteServiceImpl implements NewSiteService {
     }
     
     /**
+     * Returns all sites within the Countries provided (logical OR)
+     * @param countryNames the names of the countries
+     * @param mode
+     * @return all sites within the countries, or an empty list if no matches exist
+     */
+    @Override
+    public List<Site> findWithinCountries(List<String> countryNames, SiteMode mode) {
+        if(countryNames == null || countryNames.isEmpty())  {
+            return new ArrayList<>();
+        }
+        
+        switch(mode)    {
+            case COMPLETE:
+                return newSiteRepository.findByCountryCodes(countryNames);
+            default:
+                return newSiteIdRepository.findByCountryCodes(countryNames);
+        } 
+    }
+    
+    /**
      * Returns all sites within the Islands provided (union of islands, logical OR)
      * @param islandNames the names of the islands
      * @param mode
-     * @return all sites within the islands, or an empty island if no matches exist
+     * @return all sites within the islands, or an empty list if no matches exist
      */
     @Override
     public List<Site> findWithinIslands(List<String> islandNames, SiteMode mode) {
@@ -297,20 +317,23 @@ public class NewSiteServiceImpl implements NewSiteService {
      * @param topo50Sheets
      * @param qmapSheets
      * @param nzmgSheets
+     * @param countries
      * @param islands
      * @return 
      */
     @Override
-    public List<Site> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets, List<String> nzmgSheets, List<String> islands, SiteMode mode) {
+    public List<Site> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets, List<String> nzmgSheets, List<String> countries, List<String> islands, SiteMode mode) {
         if((topo50Sheets == null || topo50Sheets.isEmpty())
         && (qmapSheets == null || qmapSheets.isEmpty())
         && (nzmgSheets == null || nzmgSheets.isEmpty())
+        && (countries == null || countries.isEmpty())
         && (islands == null || islands.isEmpty())){
             return null;
         }
         List<Site> topo50Matches = findWithinTopo50Sheets(topo50Sheets, mode);
         List<Site> qmapMatches = findWithinQMAPSheets(qmapSheets, mode);
         List<Site> nzmgMatches = findWithinNZMGSheets(nzmgSheets, mode);
+        List<Site> countryMatches = findWithinCountries(countries, mode);
         List<Site> islandMatches = findWithinIslands(islands, mode);
         
         List<Site> mixedAndMatched = new ArrayList<>();
@@ -345,6 +368,19 @@ public class NewSiteServiceImpl implements NewSiteService {
                     .filter(nzmgMatches::contains)
                     .collect(Collectors.toList());
             }    
+        }
+        
+        if(!countryMatches.isEmpty())    {
+            if(mixedAndMatched.isEmpty())   {   //no match yet
+                mixedAndMatched = countryMatches.stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+            } else {
+                mixedAndMatched = mixedAndMatched.stream()
+                    .distinct()
+                    .filter(countryMatches::contains)
+                    .collect(Collectors.toList());
+            }   
         }
         
         if(!islandMatches.isEmpty())    {
