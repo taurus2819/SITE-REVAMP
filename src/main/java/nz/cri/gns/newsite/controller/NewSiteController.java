@@ -211,7 +211,8 @@ public class NewSiteController {
             @RequestParam(value = "topo50sheet", required=false) String[] topo50SheetNames, 
             @RequestParam(value = "qmapSheet", required=false) String[] qmapSheetNames,
             @RequestParam(value = "nzmgSheet", required=false) String[] nzmgSheetNames,
-            @RequestParam(value = "island", required=false) String[] islandNames, 
+            @RequestParam(value = "countryCode", required=false) String[] countryCodes,
+            @RequestParam(value = "island", required=false) String[] islandNames,
             @RequestParam(value = "siteMode", required=false) String siteMode)   {
         
         long start = System.nanoTime();
@@ -219,6 +220,7 @@ public class NewSiteController {
                 topo50SheetNames != null ? Arrays.asList(topo50SheetNames) : new ArrayList<>(), 
                 qmapSheetNames != null ? Arrays.asList(qmapSheetNames) : new ArrayList<>(),
                 nzmgSheetNames != null ? Arrays.asList(nzmgSheetNames) : new ArrayList<>(),
+                countryCodes != null ? Arrays.asList(countryCodes) : new ArrayList<>(),
                 islandNames != null ? Arrays.asList(islandNames) : new ArrayList<>(),
                 (siteMode != null && siteMode.equals("complete") ? SiteMode.COMPLETE : SiteMode.ID_ONLY)); 
         long finish = System.nanoTime();

@@ -23,7 +23,8 @@ public interface NewSiteService {
 	List<Site> findWithinBounds(Geometry bounds, SiteMode mode);
 	List<SiteProximity> findCloseTo(Geometry Point, double distance);
 	List<SiteModel> listAllSites();
-        List<Site> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets, List<String> nzmgSheets, List<String> islands, SiteMode mode);
+        List<Site> findWithinMapSheets(List<String> topo50Sheets, List<String> qmapSheets, List<String> nzmgSheets, List<String> countries, List<String> islands, SiteMode mode);
+        List<Site> findWithinCountries(List<String> countryNames, SiteMode mode);
         List<Site> findWithinIslands(List<String> islandNames, SiteMode mode);
         List<Site> findWithinTopo50Sheets(List<String> sheetnames, SiteMode mode);
         List<Site> findWithinQMAPSheets(List<String> sheetnames, SiteMode mode);

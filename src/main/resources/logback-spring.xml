@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property resource="git.properties" />
+<!--    <property resource="git.properties" />-->
     <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="no name"/>
     <property scope="context" name="hostname" value="${HOSTNAME}" />
 

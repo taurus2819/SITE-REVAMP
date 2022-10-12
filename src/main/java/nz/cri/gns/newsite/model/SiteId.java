@@ -16,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 import org.locationtech.jts.geom.Geometry;
@@ -42,6 +43,11 @@ public class SiteId implements Site{
     @JsonIgnore
     @Column(name = "shape", columnDefinition = "Geometry")
     private Geometry shape;
+    
+    @JsonIgnore
+    @Getter @Setter
+    @Column(name = "country_code")
+    private String countryCode;
     
     public SiteId() {}
     

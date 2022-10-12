@@ -5,6 +5,7 @@ package nz.cri.gns.newsite.repository;
  * @author sorenh
  */
 
+import java.util.Collection;
 import java.util.List;
 import nz.cri.gns.newsite.model.Site;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,6 @@ public interface NewSiteIdRepository extends JpaRepository<SiteId, Integer>{
     @Query(value = "Select s from #{#entityName} s where within(s.shape, :bounds )= true")
     public List<Site> findWithinBounds(Geometry bounds);
     
+    @Query(value = "Select s from #{#entityName} s where s.countryCode IN :countryCodes")
+    public List<Site> findByCountryCodes(Collection<String> countryCodes);
 }
