@@ -8,6 +8,7 @@ package nz.cri.gns.newsite.controller;
 //import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -326,5 +327,29 @@ public class NewSiteController {
     @RequestMapping(value = "/legacy/datum/{datumId}", method = RequestMethod.GET)
     public OrigCoordDetail findCoordDetailsForLegacyDatum(@PathVariable Integer datumId) {
         return OrigCoord.getOrigCoordDetails(datumId);
+    }
+    
+    /**
+     * Utility for converting point location between arbitrary coordinate systems
+     * defined by EPSG codes.
+     * 
+     * @param east - the east coordinate. For lat/long systems, this is Longitude
+     * @param north - the north coordinate, for lat/long systems, this is latitude
+     * @param inEpsg - epsg no. of the input coordinate system
+     * @param outEpsg - epsg no. of the output coordinate system
+     * @return - a Point2D representation of the input point converted to outEPSG
+     * @throws FactoryException
+     * @throws MismatchedDimensionException
+     * @throws TransformException
+     */
+    @RequestMapping(value = "/util/convert", method = RequestMethod.GET)
+    public Point2D convertPoint(
+            @RequestParam(value = "east") double east,
+            @RequestParam(value = "north") double north,
+            @RequestParam(value = "inEpsg") int inEpsg,
+            @RequestParam(value = "outEpsg") int outEpsg
+        ) throws FactoryException, MismatchedDimensionException, TransformException {    
+        Point2D input = new Point2D.Double(east,north);
+        return OrigCoord.convertEpsg(inEpsg, outEpsg, input);
     }
 }
