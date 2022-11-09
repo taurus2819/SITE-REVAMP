@@ -157,24 +157,28 @@ public class SiteModelInput {
     public SiteModel toSiteModel() throws InvalidLatLonFormat,InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException{
         siteModel.setOrigCoord(OrigCoord.createOrigFormatJson(epsg,format,gridref,latitude,longitude, easting, northing));
         Point2D inputPt = new Point2D.Double();
-        Point2D latlng;
+        Point2D lnglat;
         format = format.toUpperCase();
         if (format.equals("EN")) {
             inputPt.setLocation(easting,northing);
-            latlng = OrigCoord.toWGS84(epsg, inputPt);
-            latlng = OrigCoord.parseLatLng(Double.toString(latlng.getX()), Double.toString(latlng.getY()));
+            lnglat = OrigCoord.toWGS84(epsg, inputPt);
+         //   lnglat = OrigCoord.parseLatLng(Double.toString(lnglat.getX()), Double.toString(lnglat.getY()));
         } else if (format.startsWith("D")) {
-            latlng = OrigCoord.parseLatLng(latitude, longitude);
+            lnglat = OrigCoord.parseLatLng(latitude, longitude);
+            if (epsg!=4326) {
+                inputPt.setLocation(lnglat.getX(),lnglat.getY());
+                lnglat = OrigCoord.toWGS84(epsg, inputPt);
+            }
         } else if (format.equals("GRIDREF")) {
             // deal with grid ref
             inputPt = OrigCoord.parseGridRef(epsg,gridref);
-            latlng = OrigCoord.toWGS84(epsg, inputPt);
-            latlng = OrigCoord.parseLatLng(Double.toString(latlng.getX()), Double.toString(latlng.getY()));
+            lnglat = OrigCoord.toWGS84(epsg, inputPt);
+            //lnglat = OrigCoord.parseLatLng(Double.toString(lnglat.getX()), Double.toString(lnglat.getY()));
         } else {
             throw new InvalidOrigCoordinate("Not a valid format");
         }
-        siteModel.setLat(latlng.getX());
-        siteModel.setLon(latlng.getY());
+        siteModel.setLat(lnglat.getY());
+        siteModel.setLon(lnglat.getX());
         siteModel.setAuditMsg(getAuditMsg());
         siteModel.setOwnerId(getOwnerId());
         return siteModel;
