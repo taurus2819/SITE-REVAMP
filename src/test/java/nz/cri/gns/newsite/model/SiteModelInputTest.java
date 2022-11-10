@@ -7,7 +7,7 @@ package nz.cri.gns.newsite.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.junit.Assert.assertEquals;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  * @author sitikond
  */
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
 public class SiteModelInputTest {
@@ -46,7 +46,29 @@ public class SiteModelInputTest {
         assertEquals(sm.getOrigCoord(),mapper.readTree("{\"epsg\":4326,\"format\":\"DD\",\"longitude\":\"173.1451122\",\"latitude\":\"-39.16630691\"}"));        
     }
     
+    @Test
+    public void testToSiteModelLLGD49() throws Exception {
+        SiteModelInput smi = new SiteModelInput("test1",3,null,"somewhere", 
+               null, null, 3.5, "NZ", "testing",1618,
+               4272, null, null, null, "-39.0","173.0" ,"DD", "Unit test");
+        SiteModel sm = smi.toSiteModel();
+        assertEquals(sm.getLat(), -38.99823, 0.0001);
+        assertEquals(sm.getLon(), 173.00020, 0.0001);
+        ObjectMapper mapper = new ObjectMapper();
+        assertEquals(sm.getOrigCoord(),mapper.readTree("{\"epsg\":4272,\"format\":\"DD\",\"longitude\":\"173.0\",\"latitude\":\"-39.0\"}"));        
+    }
     
+    @Test
+    public void testToSiteModelEN() throws Exception {
+        SiteModelInput smi = new SiteModelInput("test1",3,null,"somewhere", 
+               null, null, 3.5, "NZ", "testing",1618,
+               27200, null, 2920547.0, 6270637.0, null,null ,"EN", "Unit test");
+        SiteModel sm = smi.toSiteModel();
+        assertEquals(sm.getLat(), -38.67077204, 0.0001);
+        assertEquals(sm.getLon(), 177.71914878, 0.0001);
+        ObjectMapper mapper = new ObjectMapper();
+        assertEquals(sm.getOrigCoord(),mapper.readTree("{\"epsg\":27200,\"format\":\"EN\",\"easting\":2920547.0,\"northing\":6270637.0}"));        
+    }
 //    @Test
 //    public void testToSiteModel2() throws Exception {
 //        SiteModelInput smi = new SiteModelInput("test",3,null,"somewhere", 
