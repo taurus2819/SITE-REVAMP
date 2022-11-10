@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  * @author sitikond
  */
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
 public class SiteModelInputTest {
