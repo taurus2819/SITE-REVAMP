@@ -398,7 +398,7 @@ public class OrigCoord {
         Scenario: NZMG grid reference Given OrigCoords of: "origCoords":{"epsg":27200,"format":"gridref","gridReference":"U20/962872" } When POSTed to site API  Then stored latlong is 176.32694848,-39.47196732  
          */
         JsonNode origCoord = null;
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperWrapper.INSTANCE.get();
         String formatTest = format.toUpperCase();
         if (formatTest.equals("EN")) {
             String jsonString = "{\"epsg\":" + epsg + ",\"format\":\"EN\",\"easting\":" + easting + ",\"northing\":" + northing + " }";
