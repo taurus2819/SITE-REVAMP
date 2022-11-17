@@ -110,11 +110,18 @@ public class OrigCoord {
     public static class OrigCoordDetail implements Serializable{
         
         int epsg;
+        boolean nzOnly;
         String format;
 
+        private OrigCoordDetail(int epsg, String format, boolean nzOnly) {
+            this.epsg = epsg;
+            this.format = format;
+            this.nzOnly = nzOnly;
+        }
         private OrigCoordDetail(int epsg, String format) {
             this.epsg = epsg;
             this.format = format;
+            this.nzOnly = true;
         }
     }
 
@@ -190,15 +197,25 @@ public class OrigCoord {
         result.put(68, new OrigCoordDetail(3793, "EN"));
         result.put(69, new OrigCoordDetail(27291, "gridref"));
         result.put(70, new OrigCoordDetail(27291, "EN"));
-        result.put(73, new OrigCoordDetail(4326, "DD"));
+        result.put(73, new OrigCoordDetail(4326, "DD",false));
         result.put(71, new OrigCoordDetail(2193, "EN"));
         result.put(72, new OrigCoordDetail(2193, "gridref"));
-        result.put(74, new OrigCoordDetail(2998, "EN"));
+        result.put(74, new OrigCoordDetail(2998, "EN",false));
         return Collections.unmodifiableMap(result);
     }
     
     public static OrigCoordDetail getOrigCoordDetails(int legacyId)  {
         return ORIG_COORD_LIST.get(legacyId);
+    }
+    
+    public static boolean isNZCode(int epsg) {
+      for (Map.Entry<Integer, OrigCoordDetail> entry : ORIG_COORD_LIST.entrySet()) {
+            // Check if value matches with given value
+            if (entry.getValue().epsg == epsg) {
+                return entry.getValue().nzOnly;
+            }
+      }
+      return false;
     }
 
     /**

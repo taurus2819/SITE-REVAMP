@@ -6,8 +6,11 @@
 package nz.cri.gns.newsite.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 import nz.cri.gns.newsite.utils.ObjectMapperWrapper;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -73,6 +76,17 @@ public class SiteModelInputTest {
         ObjectMapper mapper = ObjectMapperWrapper.INSTANCE.get();
 
         assertEquals(sm.getOrigCoord(),mapper.readTree("{\"epsg\":27200,\"format\":\"EN\",\"easting\":2920547.0,\"northing\":6270637.0}"));        
+    }
+    
+    @Test
+    public void TestWrongCountrythrowsException() {
+        SiteModelInput smi = new SiteModelInput("test1",3,null,"somewhere", 
+               null, null, 3.5, "US", "testing",1618,
+               27200, null, 2920547.0, 6270637.0, null,null ,"EN", "Unit test");
+        Exception exception = assertThrows(InvalidOrigCoordinate.class, ()-> {
+            SiteModel sm = smi.toSiteModel();            
+        });
+        assertTrue(exception.getMessage().contains("NZ coordinate system used for a foreign locality"));        
     }
 //    @Test
 //    public void testToSiteModel2() throws Exception {
