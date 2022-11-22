@@ -135,7 +135,7 @@ public class OrigCoord {
         result.put(4, new OrigCoordDetail(2132, "EN"));
         result.put(5, new OrigCoordDetail(27217, "EN"));
         result.put(6, new OrigCoordDetail(2117, "EN"));
-        result.put(7, new OrigCoordDetail(3793, "EN"));
+        result.put(7, new OrigCoordDetail(5519, "EN"));
         result.put(8, new OrigCoordDetail(27214, "EN"));
         result.put(9, new OrigCoordDetail(2114, "EN"));
         result.put(10, new OrigCoordDetail(27105, "EN"));
@@ -158,7 +158,7 @@ public class OrigCoord {
         result.put(27, new OrigCoordDetail(2127, "EN"));
         result.put(28, new OrigCoordDetail(4167, "DD"));
         result.put(29, new OrigCoordDetail(4272, "DD"));
-        result.put(30, new OrigCoordDetail(4672, "DD"));
+        result.put(30, new OrigCoordDetail(4673, "DD"));
         result.put(31, new OrigCoordDetail(27220, "EN"));
         result.put(32, new OrigCoordDetail(2120, "EN"));
         result.put(33, new OrigCoordDetail(27292, "EN"));
@@ -194,13 +194,16 @@ public class OrigCoord {
         result.put(64, new OrigCoordDetail(27229, "EN"));
         result.put(65, new OrigCoordDetail(2129, "EN"));
         result.put(67, new OrigCoordDetail(3788, "EN"));
-        result.put(68, new OrigCoordDetail(3793, "EN"));
+        result.put(68, new OrigCoordDetail(32359, "EN"));
         result.put(69, new OrigCoordDetail(27291, "gridref"));
         result.put(70, new OrigCoordDetail(27291, "EN"));
         result.put(73, new OrigCoordDetail(4326, "DD",false));
         result.put(71, new OrigCoordDetail(2193, "EN"));
         result.put(72, new OrigCoordDetail(2193, "gridref"));
         result.put(74, new OrigCoordDetail(2998, "EN",false));
+        result.put(77, new OrigCoordDetail(3788, "EN",false));
+        result.put(78, new OrigCoordDetail(3789, "EN",false));
+        result.put(79, new OrigCoordDetail(3793, "EN",false));
         return Collections.unmodifiableMap(result);
     }
     
