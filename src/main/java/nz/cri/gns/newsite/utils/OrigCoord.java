@@ -110,11 +110,18 @@ public class OrigCoord {
     public static class OrigCoordDetail implements Serializable{
         
         int epsg;
+        boolean nzOnly;
         String format;
 
+        private OrigCoordDetail(int epsg, String format, boolean nzOnly) {
+            this.epsg = epsg;
+            this.format = format;
+            this.nzOnly = nzOnly;
+        }
         private OrigCoordDetail(int epsg, String format) {
             this.epsg = epsg;
             this.format = format;
+            this.nzOnly = true;
         }
     }
 
@@ -128,7 +135,7 @@ public class OrigCoord {
         result.put(4, new OrigCoordDetail(2132, "EN"));
         result.put(5, new OrigCoordDetail(27217, "EN"));
         result.put(6, new OrigCoordDetail(2117, "EN"));
-        result.put(7, new OrigCoordDetail(3793, "EN"));
+        result.put(7, new OrigCoordDetail(5519, "EN"));
         result.put(8, new OrigCoordDetail(27214, "EN"));
         result.put(9, new OrigCoordDetail(2114, "EN"));
         result.put(10, new OrigCoordDetail(27105, "EN"));
@@ -151,7 +158,7 @@ public class OrigCoord {
         result.put(27, new OrigCoordDetail(2127, "EN"));
         result.put(28, new OrigCoordDetail(4167, "DD"));
         result.put(29, new OrigCoordDetail(4272, "DD"));
-        result.put(30, new OrigCoordDetail(4672, "DD"));
+        result.put(30, new OrigCoordDetail(4673, "DD"));
         result.put(31, new OrigCoordDetail(27220, "EN"));
         result.put(32, new OrigCoordDetail(2120, "EN"));
         result.put(33, new OrigCoordDetail(27292, "EN"));
@@ -187,18 +194,31 @@ public class OrigCoord {
         result.put(64, new OrigCoordDetail(27229, "EN"));
         result.put(65, new OrigCoordDetail(2129, "EN"));
         result.put(67, new OrigCoordDetail(3788, "EN"));
-        result.put(68, new OrigCoordDetail(3793, "EN"));
+        result.put(68, new OrigCoordDetail(32359, "EN"));
         result.put(69, new OrigCoordDetail(27291, "gridref"));
         result.put(70, new OrigCoordDetail(27291, "EN"));
-        result.put(73, new OrigCoordDetail(4326, "DD"));
+        result.put(73, new OrigCoordDetail(4326, "DD",false));
         result.put(71, new OrigCoordDetail(2193, "EN"));
         result.put(72, new OrigCoordDetail(2193, "gridref"));
-        result.put(74, new OrigCoordDetail(2998, "EN"));
+        result.put(74, new OrigCoordDetail(2998, "EN",false));
+        result.put(77, new OrigCoordDetail(3788, "EN",false));
+        result.put(78, new OrigCoordDetail(3789, "EN",false));
+        result.put(79, new OrigCoordDetail(3793, "EN",false));
         return Collections.unmodifiableMap(result);
     }
     
     public static OrigCoordDetail getOrigCoordDetails(int legacyId)  {
         return ORIG_COORD_LIST.get(legacyId);
+    }
+    
+    public static boolean isNZCode(int epsg) {
+      for (Map.Entry<Integer, OrigCoordDetail> entry : ORIG_COORD_LIST.entrySet()) {
+            // Check if value matches with given value
+            if (entry.getValue().epsg == epsg) {
+                return entry.getValue().nzOnly;
+            }
+      }
+      return false;
     }
 
     /**
@@ -398,7 +418,7 @@ public class OrigCoord {
         Scenario: NZMG grid reference Given OrigCoords of: "origCoords":{"epsg":27200,"format":"gridref","gridReference":"U20/962872" } When POSTed to site API  Then stored latlong is 176.32694848,-39.47196732  
          */
         JsonNode origCoord = null;
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperWrapper.INSTANCE.get();
         String formatTest = format.toUpperCase();
         if (formatTest.equals("EN")) {
             String jsonString = "{\"epsg\":" + epsg + ",\"format\":\"EN\",\"easting\":" + easting + ",\"northing\":" + northing + " }";

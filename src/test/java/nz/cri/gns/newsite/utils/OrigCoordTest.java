@@ -139,7 +139,8 @@ public class OrigCoordTest {
         Scenario: NZTM full coordinates Given OrigCoords of: "origCoords":{"epsg":2193,"format":"EN","easting":"1528677.3","northing":"5413457.7" } When POSTed to site API  Then stored latlong is 172.14641437,-41.42727092
         Scenario: NZMG grid reference Given OrigCoords of: "origCoords":{"epsg":27200,"format":"gridref","gridReference":"U20/962872" } When POSTed to site API  Then stored latlong is 176.32694848,-39.47196732  
         */         
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperWrapper.INSTANCE.get();
+
 //        JsonNode jsonNode = OrigCoord.createOrigFormatJson(27200, "gridRef", "U20/962872", "", "", null, null);
 //        System.out.println("JSON NODE =  " + jsonNode);
         assert(OrigCoord.createOrigFormatJson(4326, "DD", "", "-45.5675", "172.44", null, null).equals(mapper.readTree("{\"epsg\":4326,\"format\":\"DD\",\"longitude\":\"172.44\",\"latitude\":\"-45.5675\"}")));

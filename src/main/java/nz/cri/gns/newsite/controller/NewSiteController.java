@@ -41,6 +41,7 @@ import nz.cri.gns.newsite.service.MethodService;
 import nz.cri.gns.newsite.service.NewSiteService;
 import nz.cri.gns.newsite.service.QMAPService;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
+import nz.cri.gns.newsite.utils.ObjectMapperWrapper;
 import nz.cri.gns.newsite.utils.OrigCoord;
 import nz.cri.gns.newsite.utils.OrigCoord.OrigCoordDetail;
 import org.json.JSONException;
@@ -114,7 +115,8 @@ public class NewSiteController {
         logTimestampMsg.put("info", site.getAuditMsg());
         logTimestampMsg.put("ownerId", site.getOwnerId());
         logTimestampMsg.put("before", siteinfoBefore);
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = ObjectMapperWrapper.INSTANCE.get();
+
         AuditLog newAuditLog = new AuditLog(createdOrModifiedSiteId, mapper.readTree(logTimestampMsg.toString())); //, site);
         return newAuditLog;
     }

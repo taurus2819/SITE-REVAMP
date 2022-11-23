@@ -177,8 +177,12 @@ public class SiteModelInput {
         } else {
             throw new InvalidOrigCoordinate("Not a valid format");
         }
+        if (!siteModel.getCountryCode().equals("NZ") && OrigCoord.isNZCode(epsg)) {
+            throw new InvalidOrigCoordinate("NZ coordinate system used for a foreign locality");
+        }
         siteModel.setLat(lnglat.getY());
-        siteModel.setLon(lnglat.getX());
+        double lon = lnglat.getX();
+        siteModel.setLon(lon);
         siteModel.setAuditMsg(getAuditMsg());
         siteModel.setOwnerId(getOwnerId());
         return siteModel;
