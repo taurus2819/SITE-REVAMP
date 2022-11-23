@@ -8,12 +8,17 @@ package nz.cri.gns.newsite.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.geom.Point2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.data.Offset;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Point;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -130,6 +135,8 @@ public class OrigCoordTest {
         assertEquals(outputPt.getX(), 172.14641437, 0.00005);
         assertEquals(outputPt.getY(), -41.42727085, 0.00005);
     }
+    
+    
     @Test
     public void testGetOrigCoordisNull() {
       assertEquals(OrigCoord.getOrigSystemId(3081, "DD"),null);    
@@ -173,6 +180,19 @@ public class OrigCoordTest {
             assertThat(testpt.getSRID()).isEqualTo(4326);
         } catch (Exception ex) {
             fail("Reason: " + ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testConvertAucklandIsGrid() {
+        Point2D testPt = new Point2D.Double(300000,700000);
+        try {
+            Point2D lnglat = OrigCoord.convertEpsg(210001, 4326, testPt);
+            assertThat(lnglat.getY()).isCloseTo(-50.6666667, Offset.offset(0.0005));
+            assertThat(lnglat.getX()).isCloseTo(166.1666667, Offset.offset(0.0005));
+        } catch (FactoryException | MismatchedDimensionException | TransformException ex) {
+            fail(ex.getMessage());
+            Logger.getLogger(OrigCoordTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
