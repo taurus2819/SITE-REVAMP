@@ -180,11 +180,13 @@ public class SiteModelInput {
         if (!siteModel.getCountryCode().equals("NZ") && OrigCoord.isNZCode(epsg)) {
             throw new InvalidOrigCoordinate("NZ coordinate system used for a foreign locality");
         }
+        
         siteModel.setLat(lnglat.getY());
         double lon = lnglat.getX();
         siteModel.setLon(lon);
         siteModel.setAuditMsg(getAuditMsg());
         siteModel.setOwnerId(getOwnerId());
+        siteModel.setOrigSystemId(OrigCoord.getOrigSystemId(epsg, format));
         return siteModel;
     }
 }

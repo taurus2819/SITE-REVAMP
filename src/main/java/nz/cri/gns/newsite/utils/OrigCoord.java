@@ -35,6 +35,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author scaddenp
  */
 public class OrigCoord {
+    // WKT for Auckland Is 1991 map
+     static final String WKT210001 = "PROJCS[\"WGS 84 / Auckland Is 1991\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",-50.66666667],PARAMETER[\"central_meridian\",166.166666667],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",300000],PARAMETER[\"false_northing\",700000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"210001\"]]";
 
     /**
      * Parse a general grid reference into full easting northing values in the
@@ -193,7 +195,7 @@ public class OrigCoord {
         result.put(63, new OrigCoordDetail(2113, "EN"));
         result.put(64, new OrigCoordDetail(27229, "EN"));
         result.put(65, new OrigCoordDetail(2129, "EN"));
-        result.put(67, new OrigCoordDetail(3788, "EN"));
+        result.put(67, new OrigCoordDetail(210001, "EN"));
         result.put(68, new OrigCoordDetail(32359, "EN"));
         result.put(69, new OrigCoordDetail(27291, "gridref"));
         result.put(70, new OrigCoordDetail(27291, "EN"));
@@ -207,6 +209,7 @@ public class OrigCoord {
         return Collections.unmodifiableMap(result);
     }
     
+    
     public static OrigCoordDetail getOrigCoordDetails(int legacyId)  {
         return ORIG_COORD_LIST.get(legacyId);
     }
@@ -219,6 +222,25 @@ public class OrigCoord {
             }
       }
       return false;
+    }
+    /**
+     * Attempt to match the epsg and format to an old OrigSystemId code
+     * @param epsg - EPGS code to search for
+     * @param format - Format type to search for (matching format in ORIG_COORD_LIST
+     * @return matching system id if found, otherwise null
+     */
+    
+    public static Integer getOrigSystemId(int epsg, String format) {
+      if (format.equalsIgnoreCase("DMS")) {
+          format = "DD";
+      }
+      for (Map.Entry<Integer, OrigCoordDetail> entry : ORIG_COORD_LIST.entrySet()) {
+            // Check if value matches with given value
+            if (entry.getValue().epsg == epsg && entry.getValue().format.equalsIgnoreCase(format)) {
+                return entry.getKey();
+            }
+      }        
+      return null;
     }
 
     /**
@@ -387,11 +409,20 @@ public class OrigCoord {
         return convertEpsg(epsg, 4326, inputPt);
     }
     
+    private static CoordinateReferenceSystem getCRS(int epsg) throws FactoryException {
+        CoordinateReferenceSystem crs;
+        if (epsg != 210001) {
+         crs = CRS.decode(String.format("EPSG:%04d", epsg, true));  //always EAST_NORTH / X_Y        
+        } else {
+            crs = CRS.parseWKT(WKT210001);
+        }
+        return crs;
+    }
+    
     public static Point2D convertEpsg(int inputEpsg, int outputEpsg, Point2D inputPt) throws FactoryException, MismatchedDimensionException, TransformException {
-
-        CoordinateReferenceSystem inputCrs = CRS.decode(String.format("EPSG:%04d", inputEpsg, true));  //always EAST_NORTH / X_Y
-        CoordinateReferenceSystem outputCrs = CRS.decode(String.format("EPSG:%04d", outputEpsg, true)); //always EAST_NORTH / X_Y
-
+        
+        CoordinateReferenceSystem inputCrs = getCRS(inputEpsg);  //always EAST_NORTH / X_Y
+        CoordinateReferenceSystem outputCrs = getCRS(outputEpsg); //always EAST_NORTH / X_Y
         MathTransform transform = CRS.findMathTransform(inputCrs, outputCrs, true);
         DirectPosition2D outputDp = new DirectPosition2D();
         DirectPosition2D inputDp;
