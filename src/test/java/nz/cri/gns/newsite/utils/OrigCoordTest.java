@@ -194,6 +194,17 @@ public class OrigCoordTest {
             fail(ex.getMessage());
             Logger.getLogger(OrigCoordTest.class.getName()).log(Level.SEVERE, null, ex);
         }
+        // test inverse
+        testPt.setLocation(165.0 + 53.0/60.0,-50 - 55.0/60.0);
+        try {
+            Point2D lnglat = OrigCoord.convertEpsg(4326,210001,  testPt);
+            assertThat(lnglat.getY()).isCloseTo(672162, Offset.offset(0.9));
+            assertThat(lnglat.getX()).isCloseTo(280083, Offset.offset(1.0));
+        } catch (FactoryException | MismatchedDimensionException | TransformException ex) {
+            fail(ex.getMessage());
+            Logger.getLogger(OrigCoordTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
     
 
