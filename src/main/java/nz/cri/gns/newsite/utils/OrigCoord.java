@@ -193,7 +193,7 @@ public class OrigCoord {
         result.put(63, new OrigCoordDetail(2113, "EN"));
         result.put(64, new OrigCoordDetail(27229, "EN"));
         result.put(65, new OrigCoordDetail(2129, "EN"));
-        result.put(67, new OrigCoordDetail(3788, "EN"));
+        result.put(67, new OrigCoordDetail(210001, "EN"));
         result.put(68, new OrigCoordDetail(32359, "EN"));
         result.put(69, new OrigCoordDetail(27291, "gridref"));
         result.put(70, new OrigCoordDetail(27291, "EN"));
@@ -207,6 +207,7 @@ public class OrigCoord {
         return Collections.unmodifiableMap(result);
     }
     
+    
     public static OrigCoordDetail getOrigCoordDetails(int legacyId)  {
         return ORIG_COORD_LIST.get(legacyId);
     }
@@ -219,6 +220,25 @@ public class OrigCoord {
             }
       }
       return false;
+    }
+    /**
+     * Attempt to match the epsg and format to an old OrigSystemId code
+     * @param epsg - EPGS code to search for
+     * @param format - Format type to search for (matching format in ORIG_COORD_LIST
+     * @return matching system id if found, otherwise null
+     */
+    
+    public static Integer getOrigSystemId(int epsg, String format) {
+      if (format.equalsIgnoreCase("DMS")) {
+          format = "DD";
+      }
+      for (Map.Entry<Integer, OrigCoordDetail> entry : ORIG_COORD_LIST.entrySet()) {
+            // Check if value matches with given value
+            if (entry.getValue().epsg == epsg && entry.getValue().format.equalsIgnoreCase(format)) {
+                return entry.getKey();
+            }
+      }        
+      return null;
     }
 
     /**

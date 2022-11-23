@@ -130,6 +130,11 @@ public class OrigCoordTest {
         assertEquals(outputPt.getX(), 172.14641437, 0.00005);
         assertEquals(outputPt.getY(), -41.42727085, 0.00005);
     }
+    @Test
+    public void testGetOrigCoordisNull() {
+      assertEquals(OrigCoord.getOrigSystemId(3081, "DD"),null);    
+      assertEquals(OrigCoord.getOrigSystemId(3793, "GRIDREF"),null);    
+    }
     
     @Test
     public void testConvertToJson() throws JsonProcessingException {
