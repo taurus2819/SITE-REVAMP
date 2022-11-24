@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class OrigCoord {
     // WKT for Auckland Is 1991 map
-     static final String WKT210001 = "PROJCS[\"WGS 84 / Auckland Is 1991\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",-50.66666667],PARAMETER[\"central_meridian\",166.166666667],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",300000],PARAMETER[\"false_northing\",700000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"210001\"]]";
+     static final String WKT210001 = "PROJCS[\"Int24/ Auckland Is 1991\",GEOGCS[\"NZGD49\",DATUM[\"New_Zealand_Geodetic_Datum_1949\",SPHEROID[\"International 1924\",6378388,297]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4272\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",-50.66666667],PARAMETER[\"central_meridian\",166.166666667],PARAMETER[\"scale_factor\",1.0],PARAMETER[\"false_easting\",300000],PARAMETER[\"false_northing\",700000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"210001\"]]";
 
     /**
      * Parse a general grid reference into full easting northing values in the
@@ -202,7 +202,7 @@ public class OrigCoord {
         result.put(73, new OrigCoordDetail(4326, "DD",false));
         result.put(71, new OrigCoordDetail(2193, "EN"));
         result.put(72, new OrigCoordDetail(2193, "gridref"));
-        result.put(74, new OrigCoordDetail(2998, "EN",false));
+        result.put(74, new OrigCoordDetail(2982, "EN",false));
         result.put(77, new OrigCoordDetail(3788, "EN",false));
         result.put(78, new OrigCoordDetail(3789, "EN",false));
         result.put(79, new OrigCoordDetail(3793, "EN",false));
