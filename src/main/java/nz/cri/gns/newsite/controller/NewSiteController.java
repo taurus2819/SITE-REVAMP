@@ -331,6 +331,13 @@ public class NewSiteController {
         return OrigCoord.getOrigCoordDetails(datumId);
     }
     
+    @RequestMapping(value = "/legacy/origsystemid/", method = RequestMethod.GET)
+    public Integer findOrigSystemId(@RequestParam(value = "epsg") int epsg,
+                                                  @RequestParam(value = "format") String format) {
+        return OrigCoord.getOrigSystemId(epsg,format);
+    }
+
+    
     /**
      * Utility for converting point location between arbitrary coordinate systems
      * defined by EPSG codes.
