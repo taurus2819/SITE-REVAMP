@@ -1,4 +1,4 @@
- /*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -49,26 +49,26 @@ public class OrigCoordTest {
 
     @Test
     public void testParseGridref() {
-        Point2D outputPt = OrigCoord.parseGridRef(27291,"N108/57899883");
+        Point2D outputPt = OrigCoord.parseGridRef(27291, "N108/57899883");
         assertEquals(outputPt.getX(), 157890, 0.001);
         assertEquals(outputPt.getY(), 398830, 0.001);
-        outputPt = OrigCoord.parseGridRef(27291,"N1 151494");
+        outputPt = OrigCoord.parseGridRef(27291, "N1 151494");
         assertEquals(outputPt.getX(), 15100, 0.001);
         assertEquals(outputPt.getY(), 949400, 0.001);
-        outputPt = OrigCoord.parseGridRef(27292,"S33/334640");
+        outputPt = OrigCoord.parseGridRef(27292, "S33/334640");
         assertEquals(outputPt.getX(), 633400, 0.001);
         assertEquals(outputPt.getY(), 764000, 0.001);
-        outputPt = OrigCoord.parseGridRef(2193,"CC13/01518053");
+        outputPt = OrigCoord.parseGridRef(2193, "CC13/01518053");
         assertEquals(outputPt.getX(), 1301510, 0.001);
         assertEquals(outputPt.getY(), 4980530, 0.001);
-        outputPt = OrigCoord.parseGridRef(27200,"U20/967978");
+        outputPt = OrigCoord.parseGridRef(27200, "U20/967978");
         assertEquals(outputPt.getX(), 2796700, 0.001);
         assertEquals(outputPt.getY(), 6197800, 0.001);
-        outputPt = OrigCoord.parseGridRef(27200,"D49/23252591");
+        outputPt = OrigCoord.parseGridRef(27200, "D49/23252591");
         assertEquals(outputPt.getX(), 2123250, 0.001);
         assertEquals(outputPt.getY(), 5325910, 0.001);
     }
-    
+
     @Test
     public void testParseLatLng() {
         assertDMS("2°49'N", "131°47'E", 2.816667d, 131.783333d);
@@ -105,8 +105,8 @@ public class OrigCoordTest {
             return;
         }
         assertEquals(outputPt.getX(), 177.65067414, 0.00001);
-        assertEquals(outputPt.getY(), -34.32524701 , 0.00001);
-        inputPt.setLocation( 172.03277,-41.82246);
+        assertEquals(outputPt.getY(), -34.32524701, 0.00001);
+        inputPt.setLocation(172.03277, -41.82246);
         try {
             outputPt = OrigCoord.toWGS84(4272, inputPt);
         } catch (Exception ex) {
@@ -117,7 +117,7 @@ public class OrigCoordTest {
         System.out.println("outputPt.getY() = " + outputPt.getY());
         assertEquals(outputPt.getX(), 172.03292203, 0.00005);
         assertEquals(outputPt.getY(), -41.82072455, 0.00005);
-        
+
         //NZTM full coordinates "epsg":2193,  "format":"EN",  "easting":"1528677.3 ",  "northing":"5413457.7"
         //When POSTed to site API Then stored latlong is 172.14641437,-41.42727092
         inputPt.setLocation(1528677.3, 5413457.7);
@@ -131,18 +131,17 @@ public class OrigCoordTest {
         System.out.println("outputPt.getY()2 = " + outputPt.getY());
 //        assertEquals(outputPt.getX(), 7.9688091254776054, 0.00005);
 //        assertEquals(outputPt.getY(), 138.17751493675618, 0.00005);
- 
+
         assertEquals(outputPt.getX(), 172.14641437, 0.00005);
         assertEquals(outputPt.getY(), -41.42727085, 0.00005);
     }
-    
-    
+
     @Test
     public void testGetOrigCoordisNull() {
-      assertEquals(OrigCoord.getOrigSystemId(3081, "DD"),null);    
-      assertEquals(OrigCoord.getOrigSystemId(3793, "GRIDREF"),null);    
+        assertEquals(OrigCoord.getOrigSystemId(3081, "DD"), null);
+        assertEquals(OrigCoord.getOrigSystemId(3793, "GRIDREF"), null);
     }
-    
+
     @Test
     public void testConvertToJson() throws JsonProcessingException {
         /*
@@ -150,31 +149,31 @@ public class OrigCoordTest {
         Scenario: WGS84 latlong in DD Given OrigCoords of: "origCoords":{"epsg":4326,"format":"DD","longitude":"172.44","latitude":"-45.5675" } When POSTed to site API  Then stored latlong is 172.44,-45.5675
         Scenario: NZTM full coordinates Given OrigCoords of: "origCoords":{"epsg":2193,"format":"EN","easting":"1528677.3","northing":"5413457.7" } When POSTed to site API  Then stored latlong is 172.14641437,-41.42727092
         Scenario: NZMG grid reference Given OrigCoords of: "origCoords":{"epsg":27200,"format":"gridref","gridReference":"U20/962872" } When POSTed to site API  Then stored latlong is 176.32694848,-39.47196732  
-        */         
+         */
         ObjectMapper mapper = ObjectMapperWrapper.INSTANCE.get();
 
 //        JsonNode jsonNode = OrigCoord.createOrigFormatJson(27200, "gridRef", "U20/962872", "", "", null, null);
 //        System.out.println("JSON NODE =  " + jsonNode);
-        assert(OrigCoord.createOrigFormatJson(4326, "DD", "", "-45.5675", "172.44", null, null).equals(mapper.readTree("{\"epsg\":4326,\"format\":\"DD\",\"longitude\":\"172.44\",\"latitude\":\"-45.5675\"}")));
-        assert(OrigCoord.createOrigFormatJson(2193, "EN", "", "", "", 1528677.3, 5413457.7).equals(mapper.readTree("{\"epsg\":2193,\"format\":\"EN\",\"easting\":1528677.3,\"northing\":5413457.7}")));
-        assert(OrigCoord.createOrigFormatJson(27200, "gridRef", "U20/962872", "", "", null, null).equals(mapper.readTree("{\"epsg\":27200,\"format\":\"gridRef\",\"gridReference\":\"U20/962872\"}")));
+        assert (OrigCoord.createOrigFormatJson(4326, "DD", "", "-45.5675", "172.44", null, null).equals(mapper.readTree("{\"epsg\":4326,\"format\":\"DD\",\"longitude\":\"172.44\",\"latitude\":\"-45.5675\"}")));
+        assert (OrigCoord.createOrigFormatJson(2193, "EN", "", "", "", 1528677.3, 5413457.7).equals(mapper.readTree("{\"epsg\":2193,\"format\":\"EN\",\"easting\":1528677.3,\"northing\":5413457.7}")));
+        assert (OrigCoord.createOrigFormatJson(27200, "gridRef", "U20/962872", "", "", null, null).equals(mapper.readTree("{\"epsg\":27200,\"format\":\"gridRef\",\"gridReference\":\"U20/962872\"}")));
     }
-    
+
     @Test
-    public void testMakeLatLongPt(){
+    public void testMakeLatLongPt() {
         try {
-            Point2D testpt = OrigCoord.MakeLatLongPt(1625839.02,5575773.87,2193);
+            Point2D testpt = OrigCoord.MakeLatLongPt(1625839.02, 5575773.87, 2193);
             assertThat(testpt.getX()).isCloseTo(173.302600, Offset.offset(0.0005));
             assertThat(testpt.getY()).isCloseTo(-39.967778, Offset.offset(0.0005));
         } catch (Exception ex) {
             fail("Reason: " + ex.getMessage());
         }
     }
-    
+
     @Test
-    public void testMakeGeomPt(){
+    public void testMakeGeomPt() {
         try {
-            Point testpt = OrigCoord.MakeGeomPt(2535853.07,6137531.28,27200);
+            Point testpt = OrigCoord.MakeGeomPt(2535853.07, 6137531.28, 27200);
             assertThat(testpt.getX()).isCloseTo(173.302600, Offset.offset(0.0005));
             assertThat(testpt.getY()).isCloseTo(-39.967778, Offset.offset(0.0005));
             assertThat(testpt.getSRID()).isEqualTo(4326);
@@ -182,10 +181,27 @@ public class OrigCoordTest {
             fail("Reason: " + ex.getMessage());
         }
     }
-    
+
+    @Test
+    void testConvertOrigCoordtoWGS() {
+        try {
+            Point2D outputPt = OrigCoord.convertOrigCoordToWGS(27291, "gridref", "N108/57899883", "");
+            assertEquals(outputPt.getX(), 174.00023869, 0.0001);
+            assertEquals(outputPt.getY(), -38.99822554, 0.0001);
+            outputPt = OrigCoord.convertOrigCoordToWGS(27292, "gridref", "S33/334640", "");
+            assertEquals(outputPt.getX(), 172.96819153, 0.0001);
+            assertEquals(outputPt.getY(), -41.81595237, 0.0001);
+            Point2D lnglat = OrigCoord.convertOrigCoordToWGS(210001, "EN", "300000", "700000");
+            assertThat(lnglat.getY()).isCloseTo(-50.6666667, Offset.offset(0.0005));
+            assertThat(lnglat.getX()).isCloseTo(166.1666667, Offset.offset(0.0005));
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
     @Test
     public void testConvertAucklandIsGrid() {
-        Point2D testPt = new Point2D.Double(300000,700000);
+        Point2D testPt = new Point2D.Double(300000, 700000);
         try {
             Point2D lnglat = OrigCoord.convertEpsg(210001, 4326, testPt);
             assertThat(lnglat.getY()).isCloseTo(-50.6666667, Offset.offset(0.0005));
@@ -195,17 +211,16 @@ public class OrigCoordTest {
             Logger.getLogger(OrigCoordTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         // test inverse
-        testPt.setLocation(165.0 + 53.0/60.0,-50 - 55.0/60.0);
+        testPt.setLocation(165.0 + 53.0 / 60.0, -50 - 55.0 / 60.0);
         try {
-            Point2D lnglat = OrigCoord.convertEpsg(4326,210001,  testPt);
+            Point2D lnglat = OrigCoord.convertEpsg(4326, 210001, testPt);
             assertThat(lnglat.getY()).isCloseTo(672149, Offset.offset(0.9));
             assertThat(lnglat.getX()).isCloseTo(280074, Offset.offset(1.0));
         } catch (FactoryException | MismatchedDimensionException | TransformException ex) {
             fail(ex.getMessage());
             Logger.getLogger(OrigCoordTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
 
 }
