@@ -108,6 +108,7 @@ public class OrigCoord {
         return outputPt;
     }
     
+        
     @Getter @Setter
     public static class OrigCoordDetail implements Serializable{
         
@@ -439,6 +440,31 @@ public class OrigCoord {
         } else {
             return new Point2D.Double(p2d.getY(), p2d.getX());  //need to swap coordinates
         }
+    }
+    
+    public static Point2D convertOrigCoordToWGS(int epsg, String format, String easting, String northing) throws FactoryException, MismatchedDimensionException, TransformException, NumberFormatException {
+        Point2D inputPt = new Point2D.Double();
+        Point2D lnglat;
+        format = format.toUpperCase();
+        if (format.equals("EN")) {
+            inputPt.setLocation(Double.parseDouble(easting),Double.parseDouble(northing));
+            lnglat = OrigCoord.toWGS84(epsg, inputPt);
+         //   lnglat = OrigCoord.parseLatLng(Double.toString(lnglat.getX()), Double.toString(lnglat.getY()));
+        } else if (format.startsWith("D")) {
+            lnglat = OrigCoord.parseLatLng(northing, easting);
+            if (epsg!=4326) {
+                inputPt.setLocation(lnglat.getX(),lnglat.getY());
+                lnglat = OrigCoord.toWGS84(epsg, inputPt);
+            }
+        } else if (format.equals("GRIDREF")) {
+            // deal with grid ref
+            inputPt = OrigCoord.parseGridRef(epsg,easting);
+            lnglat = OrigCoord.toWGS84(epsg, inputPt);
+            //lnglat = OrigCoord.parseLatLng(Double.toString(lnglat.getX()), Double.toString(lnglat.getY()));
+        } else {
+            throw new InvalidOrigCoordinate("Not a valid format");
+        }
+        return lnglat;
     }
 
     public static JsonNode createOrigFormatJson(int epsg, String format, String gridRef, String latitude, String longitude, Double easting, Double northing) throws JsonProcessingException {
