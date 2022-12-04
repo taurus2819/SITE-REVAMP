@@ -21,6 +21,7 @@ import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 import nz.cri.gns.newsite.model.*;
 import nz.cri.gns.newsite.model.Site.SiteMode;
+import nz.cri.gns.newsite.model.SiteDetailed;
 
 import nz.cri.gns.newsite.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import nz.cri.gns.newsite.model.SiteModel;
+import nz.cri.gns.newsite.model.SiteModelInput;
+import nz.cri.gns.newsite.model.SiteProximity;
+import nz.cri.gns.newsite.service.AuditLogService;
+import nz.cri.gns.newsite.service.IslandService;
+import nz.cri.gns.newsite.service.MasterFileService;
+import nz.cri.gns.newsite.service.MethodService;
+import nz.cri.gns.newsite.service.NewSiteService;
+import nz.cri.gns.newsite.service.QMAPService;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
 import nz.cri.gns.newsite.utils.ObjectMapperWrapper;
 import nz.cri.gns.newsite.utils.OrigCoord;
@@ -59,7 +69,7 @@ public class NewSiteController {
 
     @Autowired
     SiteUsageService siteUsageService;
-    
+
     @Autowired
     IslandService islandService;
     
@@ -98,9 +108,6 @@ public class NewSiteController {
         AuditLog newAuditLog = auditLogCreator(site, newlyCreatedSiteId, siteinfoBefore);
         site.addAuditLog(newAuditLog);
         auditLogService.insert(newAuditLog);
-//        SiteUsage siteUser = new SiteUsage(newlyCreatedSiteId, site.getClientUser());
-//        site.addSiteUsage(siteUser);
-//        siteUsageService.registerUsage(siteUser);
         response.setStatus(HttpServletResponse.SC_CREATED);
         return site;
     }
@@ -359,7 +366,7 @@ public class NewSiteController {
         return OrigCoord.convertEpsg(inEpsg, outEpsg, input);
     }
 /**
- * 
+ *
  * @param epsg  - EPSG of original coordinate system
  * @param format - Format of original coordinate system (either gridref, DD, DMS, or EN)
  * @param easting - String holding easting or longitude or full gridref
@@ -372,7 +379,7 @@ public class NewSiteController {
             @RequestParam(value = "format") String format,
             @RequestParam(value = "easting") String easting,
             @RequestParam(value = "northing") String northing
-        )  {    
+        )  {
         String message = "";
         Point2D lnglat = new Point2D.Double();
         try {
@@ -389,8 +396,8 @@ public class NewSiteController {
             message = "EPSG " + epsg +" is not valid: " + ex.getMessage();
         } catch (NumberFormatException ex) {
             message = "Format specified is invalid. Could not convert to numeric";
-        }        
+        }
         return new OrigCoordCheckResult(message,lnglat);
     }
-    
+
 }

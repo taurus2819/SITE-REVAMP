@@ -109,7 +109,6 @@ public class OrigCoord {
         return outputPt;
     }
     
-        
     @Getter @Setter
     public static class OrigCoordDetail implements Serializable{
         
@@ -348,7 +347,7 @@ public class OrigCoord {
         Point2D lnglat = new Point2D.Double(ll.getPayload().getLng(), ll.getPayload().getLat());
         if (ll.getIssues().contains(OccurrenceIssue.PRESUMED_SWAPPED_COORDINATE)) {
             throw new InvalidLatLonFormat("Swapped lat/long");
-        }            
+        }
        return lnglat;
     }
 
@@ -445,7 +444,7 @@ public class OrigCoord {
             return new Point2D.Double(p2d.getY(), p2d.getX());  //need to swap coordinates
         }
     }
-    
+
     public static Point2D convertOrigCoordToWGS(int epsg, String format, String easting, String northing) throws FactoryException, MismatchedDimensionException, TransformException, NumberFormatException,InvalidOrigCoordinate,InvalidLatLonFormat {
         Point2D inputPt = new Point2D.Double();
         Point2D lnglat;
@@ -457,7 +456,7 @@ public class OrigCoord {
         } else if (format.startsWith("D")) {
             lnglat = OrigCoord.parseLatLng(northing, easting);
             inputPt.setLocation(lnglat.getX(),lnglat.getY());
-            lnglat = OrigCoord.toWGS84(epsg, inputPt);            
+            lnglat = OrigCoord.toWGS84(epsg, inputPt);
         } else if (format.equals("GRIDREF")) {
             // deal with grid ref
             inputPt = OrigCoord.parseGridRef(epsg,easting);
