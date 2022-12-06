@@ -109,6 +109,7 @@ public class OrigCoord {
         return outputPt;
     }
     
+        
     @Getter @Setter
     public static class OrigCoordDetail implements Serializable{
         
@@ -339,7 +340,7 @@ public class OrigCoord {
      * @param longitude Character representation of longitude ( W 175 46.4345 )
      * @return A point2D with decimal latitude (y) and longitude (x)
      */
-    public static Point2D parseLatLng(String latitude, String longitude) throws InvalidLatLonFormat,InvalidOrigCoordinate{
+    public static Point2D parseLatLng(String latitude, String longitude) {
         OccurrenceParseResult<LatLng> ll = CoordinateParseUtils.parseLatLng(latitude, longitude);
         if (ll.getConfidence() != ParseResult.CONFIDENCE.DEFINITE && ll.getConfidence() != ParseResult.CONFIDENCE.PROBABLE) {
             throw new InvalidLatLonFormat("Invalid lat/lon format" + ll.getConfidence().toString());
@@ -444,7 +445,7 @@ public class OrigCoord {
             return new Point2D.Double(p2d.getY(), p2d.getX());  //need to swap coordinates
         }
     }
-
+    
     public static Point2D convertOrigCoordToWGS(int epsg, String format, String easting, String northing) throws FactoryException, MismatchedDimensionException, TransformException, NumberFormatException,InvalidOrigCoordinate,InvalidLatLonFormat {
         Point2D inputPt = new Point2D.Double();
         Point2D lnglat;
