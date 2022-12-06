@@ -383,12 +383,16 @@ public class NewSiteController {
         Point2D lnglat = new Point2D.Double();
         try {
             lnglat = OrigCoord.convertOrigCoordToWGS(epsg, format, easting, northing);
+        } catch (InvalidLatLonFormat ex) {
+            message = "Invalid lat/lon format: " + ex.getMessage();
+        } catch (InvalidOrigCoordinate ex) {
+            message = "Invalid format: " + ex.getMessage();
         } catch (FactoryException ex) {
             message = "EPSG " + epsg +" is not valid";
         } catch (MismatchedDimensionException ex) {
             message = "Invalid coordinate format";
         } catch (TransformException ex) {
-            message = "EPSG " + epsg +" is not valid";
+            message = "EPSG " + epsg +" is not valid: " + ex.getMessage();
         } catch (NumberFormatException ex) {
             message = "Format specified is invalid. Could not convert to numeric";
         }        

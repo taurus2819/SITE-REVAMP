@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
+import org.gbif.api.vocabulary.OccurrenceIssue;
 import org.gbif.common.parsers.core.OccurrenceParseResult;
 import org.gbif.common.parsers.core.ParseResult;
 import org.gbif.common.parsers.geospatial.CoordinateParseUtils;
@@ -339,13 +340,16 @@ public class OrigCoord {
      * @param longitude Character representation of longitude ( W 175 46.4345 )
      * @return A point2D with decimal latitude (y) and longitude (x)
      */
-    public static Point2D parseLatLng(String latitude, String longitude) {
+    public static Point2D parseLatLng(String latitude, String longitude) throws InvalidLatLonFormat,InvalidOrigCoordinate{
         OccurrenceParseResult<LatLng> ll = CoordinateParseUtils.parseLatLng(latitude, longitude);
         if (ll.getConfidence() != ParseResult.CONFIDENCE.DEFINITE && ll.getConfidence() != ParseResult.CONFIDENCE.PROBABLE) {
             throw new InvalidLatLonFormat("Invalid lat/lon format" + ll.getConfidence().toString());
         }
-        Point2D latlng = new Point2D.Double(ll.getPayload().getLng(), ll.getPayload().getLat());
-        return latlng;
+        Point2D lnglat = new Point2D.Double(ll.getPayload().getLng(), ll.getPayload().getLat());
+        if (ll.getIssues().contains(OccurrenceIssue.PRESUMED_SWAPPED_COORDINATE)) {
+            throw new InvalidLatLonFormat("Swapped lat/long");
+        }            
+       return lnglat;
     }
 
     /**
@@ -442,7 +446,7 @@ public class OrigCoord {
         }
     }
     
-    public static Point2D convertOrigCoordToWGS(int epsg, String format, String easting, String northing) throws FactoryException, MismatchedDimensionException, TransformException, NumberFormatException {
+    public static Point2D convertOrigCoordToWGS(int epsg, String format, String easting, String northing) throws FactoryException, MismatchedDimensionException, TransformException, NumberFormatException,InvalidOrigCoordinate,InvalidLatLonFormat {
         Point2D inputPt = new Point2D.Double();
         Point2D lnglat;
         format = format.toUpperCase();
@@ -452,10 +456,8 @@ public class OrigCoord {
          //   lnglat = OrigCoord.parseLatLng(Double.toString(lnglat.getX()), Double.toString(lnglat.getY()));
         } else if (format.startsWith("D")) {
             lnglat = OrigCoord.parseLatLng(northing, easting);
-            if (epsg!=4326) {
-                inputPt.setLocation(lnglat.getX(),lnglat.getY());
-                lnglat = OrigCoord.toWGS84(epsg, inputPt);
-            }
+            inputPt.setLocation(lnglat.getX(),lnglat.getY());
+            lnglat = OrigCoord.toWGS84(epsg, inputPt);            
         } else if (format.equals("GRIDREF")) {
             // deal with grid ref
             inputPt = OrigCoord.parseGridRef(epsg,easting);
