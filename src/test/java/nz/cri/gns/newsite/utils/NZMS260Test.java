@@ -34,5 +34,13 @@ public class NZMS260Test {
         });
         assertEquals("Not within the valid mapsheet list for epsg: 27200", iocException.getMessage());
     }
-    
+
+
+    @Test
+    public void testLookUpMapsheet(){
+//        String mapSheet = NZMS260.getInstance().lookupMapSheet(27104387.3694, 37217941.5166);
+        String mapSheet = NZMS260.getInstance().lookupMapSheet(2710438.73694, 3721794.15166);
+        System.out.println(mapSheet);
+
+    }
 }

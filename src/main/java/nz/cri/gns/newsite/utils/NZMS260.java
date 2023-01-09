@@ -110,6 +110,16 @@ public class NZMS260 extends MapSheet {
      */
     @Override
     public String lookupMapSheet(double easting, double northing) {
+        Double eastn = Double.valueOf(easting);
+        Double northn = Double.valueOf(northing);
+        String[] eastingSplitter = eastn.toString().split("\\.");
+        String[] northingSplitter = northn.toString().split("\\.");
+        if(eastingSplitter[0].length() > 7){              //for Antarctic long/lat values using epsg wgs84, the length of the numeric values of the double value exceeds 7 digits; and
+            easting = easting / 10;                       //this causes some gibberish value for the mapsheet - jira AS-640
+        }
+        if(northingSplitter[0].length() > 7){
+            northing = northing /10;
+        }
         int i = (int)((easting-1930000)/40000);
         int j = (int)((6820000-northing)/30000);
         

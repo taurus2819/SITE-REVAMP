@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
@@ -33,20 +34,34 @@ abstract class MapSheet {
    
     public String getMapsheet(Geometry inputLocation) {
         Geometry convertedLocation;
+        double easting = 0;
+        double northing = 0;
 
         if (inputLocation.getSRID() != getMapsheetLookupEPSG()) {
             try {
                 convertedLocation = CoordinateConverter.convertGeometryCoordinates(inputLocation, CoordinateConverter.STANDARD_EPSG_4326, getMapsheetLookupEPSG());
+                Point p = convertedLocation.getInteriorPoint();
+                Double xVal = Double.valueOf(p.getX());
+                Double yVal = Double.valueOf(p.getY());
+                if(xVal.toString().endsWith("E7")){    //for Antarctic long/lat values using epsg wgs84, the length of the numeric values of the double value exceeds 7 digits; and
+                    easting = p.getX()/10;              //this causes some gibberish value for the mapsheet - jira AS-640
+                }else{
+                    easting = convertedLocation.getCoordinate().x;
+                }
+                if(yVal.toString().endsWith("E7")){
+                    northing = p.getY()/10;
+                }else{
+                    northing = convertedLocation.getCoordinate().y;
+                }
             } catch (TransformException | FactoryException ex) {
                 Logger.getLogger(Topo50.class.getName()).log(Level.SEVERE, null, ex);
                 return "Error";
             }
         } else {
             convertedLocation = inputLocation;
+            easting = convertedLocation.getCoordinate().x;
+            northing = convertedLocation.getCoordinate().y;
         }
-
-        double easting = convertedLocation.getCoordinate().x;
-        double northing = convertedLocation.getCoordinate().y;
         return lookupMapSheet(easting, northing);
     }
 
