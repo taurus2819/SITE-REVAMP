@@ -32,13 +32,15 @@ public class SiteModelInput {
     private String format;
     private String auditMsg;
 
+    private String clientUser;
+
     public SiteModelInput() {
         this.siteModel = new SiteModel();
     }
 
     public SiteModelInput(String siteName, Integer methodId, Double accuracy, String Directions, 
                Double height, Integer heightMethodId, Double heightAccuracy, String countyCode, String comment, Integer ownerId,
-               int epsg, String gridref, Double easting, Double northing, String latitude, String longitude, String format, String auditMsg) {
+               int epsg, String gridref, Double easting, Double northing, String latitude, String longitude, String format, String auditMsg, String clientUser) {
         this.siteModel = new SiteModel();
         this.siteModel.setSiteName(siteName);
         this.siteModel.setMethodId(methodId);
@@ -50,6 +52,7 @@ public class SiteModelInput {
         this.siteModel.setCountryCode(countyCode);
         this.siteModel.setComment(comment);
         this.siteModel.setOwnerId(ownerId);
+        this.siteModel.setClientUser(clientUser);
         this.epsg = epsg;
         this.gridref = gridref;
         this.easting = easting;
@@ -185,6 +188,7 @@ public class SiteModelInput {
         double lon = lnglat.getX();
         siteModel.setLon(lon);
         siteModel.setAuditMsg(getAuditMsg());
+        siteModel.setClientUser(getClientUser());
         siteModel.setOwnerId(getOwnerId());
         siteModel.setOrigSystemId(OrigCoord.getOrigSystemId(epsg, format));
         return siteModel;
