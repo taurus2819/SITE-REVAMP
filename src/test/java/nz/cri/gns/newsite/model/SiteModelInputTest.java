@@ -30,7 +30,7 @@ public class SiteModelInputTest {
     public void testToSiteModel() throws Exception {
         SiteModelInput smi = new SiteModelInput("test",3,null,"somewhere", 
                null, null, 3.5, "NZ", "testing",1618,
-               27200, "U20/967978", null, null, null, null,"GridRef", "Unit test");
+               27200, "U20/967978", null, null, null, null,"GridRef", "Unit test", "FRED");
         SiteModel sm = smi.toSiteModel();
         assertEquals(sm.getLat(), -39.37637937, 0.0001);
         assertEquals(sm.getLon(), 176.32814751, 0.0001);
@@ -45,7 +45,7 @@ public class SiteModelInputTest {
     public void testToSiteModelLL() throws Exception {
         SiteModelInput smi = new SiteModelInput("test1",3,null,"somewhere", 
                null, null, 3.5, "NZ", "testing",1618,
-               4326, null, null, null, "-39.16630691","173.1451122" ,"DD", "Unit test");
+               4326, null, null, null, "-39.16630691","173.1451122" ,"DD", "Unit test", "FRED");
         SiteModel sm = smi.toSiteModel();
         assertEquals(sm.getLat(), -39.16630691, 0.0001);
         assertEquals(sm.getLon(), 173.1451122, 0.0001);
@@ -60,7 +60,7 @@ public class SiteModelInputTest {
     public void testToSiteModelLLGD49() throws Exception {
         SiteModelInput smi = new SiteModelInput("test1",3,null,"somewhere", 
                null, null, 3.5, "NZ", "testing",1618,
-               4272, null, null, null, "-39.0","173.0" ,"DD", "Unit test");
+               4272, null, null, null, "-39.0","173.0" ,"DD", "Unit test", "FRED");
         SiteModel sm = smi.toSiteModel();
         assertEquals(sm.getLat(), -38.99823, 0.0001);
         assertEquals(sm.getLon(), 173.00020, 0.0001);
@@ -75,7 +75,7 @@ public class SiteModelInputTest {
     public void testToSiteModelEN() throws Exception {
         SiteModelInput smi = new SiteModelInput("test1",3,null,"somewhere", 
                null, null, 3.5, "NZ", "testing",1618,
-               27200, null, 2920547.0, 6270637.0, null,null ,"EN", "Unit test");
+               27200, null, 2920547.0, 6270637.0, null,null ,"EN", "Unit test", "FRED");
         SiteModel sm = smi.toSiteModel();
         assertEquals(sm.getLat(), -38.67077204, 0.0001);
         assertEquals(sm.getLon(), 177.71914878, 0.0001);
@@ -90,7 +90,7 @@ public class SiteModelInputTest {
     public void TestWrongCountrythrowsException() {
         SiteModelInput smi = new SiteModelInput("test1",3,null,"somewhere", 
                null, null, 3.5, "US", "testing",1618,
-               27200, null, 2920547.0, 6270637.0, null,null ,"EN", "Unit test");
+               27200, null, 2920547.0, 6270637.0, null,null ,"EN", "Unit test", "FRED");
         Exception exception = assertThrows(InvalidOrigCoordinate.class, ()-> {
             SiteModel sm = smi.toSiteModel();            
         });

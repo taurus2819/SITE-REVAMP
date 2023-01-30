@@ -137,16 +137,21 @@ public class SiteModel implements Site{
     
     @OneToMany(targetEntity=SiteUsage.class, mappedBy="siteId", fetch=FetchType.LAZY)
     @JsonIgnore
-    private List<SiteUsage> users;
+    private List<SiteUsage> users = new ArrayList<>();
    
     @JsonIgnore
     @Transient
     @Getter @Setter
     private String auditMsg;
+
+    @JsonIgnore
+    @Transient
+    @Getter @Setter
+    private String clientUser;
     
     public SiteModel(String siteName, double lat, double lon, Integer methodId, Double accuracy,
             String directions, Integer origSystemId, JsonNode origCoord, Double height, Integer heightMethodId,
-            Double heightAccuracy, String countryCode, Integer flag, String comment, Integer ownerId, String auditMsg ){  //   /*, String shape*/, String auditlogInfoMsg) {
+            Double heightAccuracy, String countryCode, Integer flag, String comment, Integer ownerId, String auditMsg, String clientUser ){  //   /*, String shape*/, String auditlogInfoMsg) {
         super();
         this.siteName = siteName;
         this.lat = lat;
@@ -165,6 +170,7 @@ public class SiteModel implements Site{
 //        this.shape = shape;
         this.ownerId = ownerId;
         this.auditMsg = auditMsg;
+        this.clientUser = clientUser;
     }
     
     /**
@@ -232,7 +238,7 @@ public class SiteModel implements Site{
                 .append("lon", this.getLon())
                 .append("OrigSysId", this.getOrigSystemId())
                 .append("OrigCoord", this.getOrigCoord())
-//                .append("Shape", this.getShape())
+                .append("User", this.getClientUser())
                 .toString();
     }
 
@@ -256,5 +262,9 @@ public class SiteModel implements Site{
         }
         final SiteModel other = (SiteModel) obj;
         return Objects.equals(this.siteId, other.siteId);
+    }
+
+    public void addSiteUsage(SiteUsage siteUser) {
+        users.add(siteUser);
     }
 }
