@@ -17,13 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 import nz.cri.gns.newsite.audits.AuditLog;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
-import nz.cri.gns.newsite.model.DatumMethod;
-import nz.cri.gns.newsite.model.Island;
-import nz.cri.gns.newsite.model.MapSheetPayload;
-import nz.cri.gns.newsite.model.Site;
+import nz.cri.gns.newsite.model.*;
 import nz.cri.gns.newsite.model.Site.SiteMode;
-import nz.cri.gns.newsite.model.SiteDetailed;
 
+import nz.cri.gns.newsite.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,15 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import nz.cri.gns.newsite.model.SiteModel;
-import nz.cri.gns.newsite.model.SiteModelInput;
-import nz.cri.gns.newsite.model.SiteProximity;
-import nz.cri.gns.newsite.service.AuditLogService;
-import nz.cri.gns.newsite.service.IslandService;
-import nz.cri.gns.newsite.service.MasterFileService;
-import nz.cri.gns.newsite.service.MethodService;
-import nz.cri.gns.newsite.service.NewSiteService;
-import nz.cri.gns.newsite.service.QMAPService;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
 import nz.cri.gns.newsite.utils.ObjectMapperWrapper;
 import nz.cri.gns.newsite.utils.OrigCoord;
@@ -65,6 +53,9 @@ public class NewSiteController {
 
     @Autowired
     AuditLogService auditLogService;
+
+    @Autowired
+    SiteUsageService siteUsageService;
     
     @Autowired
     IslandService islandService;
@@ -104,6 +95,9 @@ public class NewSiteController {
         AuditLog newAuditLog = auditLogCreator(site, newlyCreatedSiteId, siteinfoBefore);
         site.addAuditLog(newAuditLog);
         auditLogService.insert(newAuditLog);
+//        SiteUsage siteUser = new SiteUsage(newlyCreatedSiteId, site.getClientUser());
+//        site.addSiteUsage(siteUser);
+//        siteUsageService.registerUsage(siteUser);
         response.setStatus(HttpServletResponse.SC_CREATED);
         return site;
     }

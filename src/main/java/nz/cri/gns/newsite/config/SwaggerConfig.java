@@ -16,7 +16,7 @@ public class SwaggerConfig {
     @Bean
     public Docket productApi() {
       return new Docket(DocumentationType.SWAGGER_2).select()
-         .apis(RequestHandlerSelectors.basePackage("nz.cri.gns.newsite")).build();
+         .apis(RequestHandlerSelectors.basePackage("nz.cri.gns.newsite.controller")).build();
     }
     
 }
