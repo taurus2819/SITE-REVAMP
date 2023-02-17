@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import nz.cri.gns.newsite.audits.AuditLog;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import nz.cri.gns.newsite.utils.CoordinateConverter;
 import nz.cri.gns.newsite.utils.ObjectMapperWrapper;
 import nz.cri.gns.newsite.utils.OrigCoord;
+import nz.cri.gns.newsite.utils.OrigCoordCheckResult;
 import nz.cri.gns.newsite.utils.OrigCoord.OrigCoordDetail;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -325,6 +328,13 @@ public class NewSiteController {
         return OrigCoord.getOrigCoordDetails(datumId);
     }
     
+    @RequestMapping(value = "/legacy/origsystemid/", method = RequestMethod.GET)
+    public Integer findOrigSystemId(@RequestParam(value = "epsg") int epsg,
+                                                  @RequestParam(value = "format") String format) {
+        return OrigCoord.getOrigSystemId(epsg,format);
+    }
+
+    
     /**
      * Utility for converting point location between arbitrary coordinate systems
      * defined by EPSG codes.
@@ -348,4 +358,39 @@ public class NewSiteController {
         Point2D input = new Point2D.Double(east,north);
         return OrigCoord.convertEpsg(inEpsg, outEpsg, input);
     }
+/**
+ *
+ * @param epsg  - EPSG of original coordinate system
+ * @param format - Format of original coordinate system (either gridref, DD, DMS, or EN)
+ * @param easting - String holding easting or longitude or full gridref
+ * @param northing - String holding northing or latitude, blacnk for a gridref
+ * @return - message (for errors) and point converted to WGS84 lnglat
+ */
+    @RequestMapping(value = "/util/validCoord", method = RequestMethod.GET)
+    public OrigCoordCheckResult validOrigCoordinateCheck(
+            @RequestParam(value = "epsg") int epsg,
+            @RequestParam(value = "format") String format,
+            @RequestParam(value = "easting") String easting,
+            @RequestParam(value = "northing") String northing
+        )  {
+        String message = "";
+        Point2D lnglat = new Point2D.Double();
+        try {
+            lnglat = OrigCoord.convertOrigCoordToWGS(epsg, format, easting, northing);
+        } catch (InvalidLatLonFormat ex) {
+            message = "Invalid lat/lon format: " + ex.getMessage();
+        } catch (InvalidOrigCoordinate ex) {
+            message = "Invalid format: " + ex.getMessage();
+        } catch (FactoryException ex) {
+            message = "EPSG " + epsg +" is not valid";
+        } catch (MismatchedDimensionException ex) {
+            message = "Invalid coordinate format";
+        } catch (TransformException ex) {
+            message = "EPSG " + epsg +" is not valid: " + ex.getMessage();
+        } catch (NumberFormatException ex) {
+            message = "Format specified is invalid. Could not convert to numeric";
+        }
+        return new OrigCoordCheckResult(message,lnglat);
+    }
+
 }

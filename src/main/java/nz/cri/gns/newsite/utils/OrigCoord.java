@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
+import org.gbif.api.vocabulary.OccurrenceIssue;
 import org.gbif.common.parsers.core.OccurrenceParseResult;
 import org.gbif.common.parsers.core.ParseResult;
 import org.gbif.common.parsers.geospatial.CoordinateParseUtils;
@@ -36,7 +37,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class OrigCoord {
     // WKT for Auckland Is 1991 map
-     static final String WKT210001 = "PROJCS[\"WGS 84 / Auckland Is 1991\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",-50.66666667],PARAMETER[\"central_meridian\",166.166666667],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",300000],PARAMETER[\"false_northing\",700000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"210001\"]]";
+     static final String WKT210001 = "PROJCS[\"Int24/ Auckland Is 1991\",GEOGCS[\"NZGD49\",DATUM[\"New_Zealand_Geodetic_Datum_1949\",SPHEROID[\"International 1924\",6378388,297]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4272\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",-50.66666667],PARAMETER[\"central_meridian\",166.166666667],PARAMETER[\"scale_factor\",1.0],PARAMETER[\"false_easting\",300000],PARAMETER[\"false_northing\",700000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"210001\"]]";
 
     /**
      * Parse a general grid reference into full easting northing values in the
@@ -108,6 +109,7 @@ public class OrigCoord {
         return outputPt;
     }
     
+        
     @Getter @Setter
     public static class OrigCoordDetail implements Serializable{
         
@@ -202,7 +204,7 @@ public class OrigCoord {
         result.put(73, new OrigCoordDetail(4326, "DD",false));
         result.put(71, new OrigCoordDetail(2193, "EN"));
         result.put(72, new OrigCoordDetail(2193, "gridref"));
-        result.put(74, new OrigCoordDetail(2998, "EN",false));
+        result.put(74, new OrigCoordDetail(2982, "EN",false));
         result.put(77, new OrigCoordDetail(3788, "EN",false));
         result.put(78, new OrigCoordDetail(3789, "EN",false));
         result.put(79, new OrigCoordDetail(3793, "EN",false));
@@ -343,8 +345,11 @@ public class OrigCoord {
         if (ll.getConfidence() != ParseResult.CONFIDENCE.DEFINITE && ll.getConfidence() != ParseResult.CONFIDENCE.PROBABLE) {
             throw new InvalidLatLonFormat("Invalid lat/lon format" + ll.getConfidence().toString());
         }
-        Point2D latlng = new Point2D.Double(ll.getPayload().getLng(), ll.getPayload().getLat());
-        return latlng;
+        Point2D lnglat = new Point2D.Double(ll.getPayload().getLng(), ll.getPayload().getLat());
+        if (ll.getIssues().contains(OccurrenceIssue.PRESUMED_SWAPPED_COORDINATE)) {
+            throw new InvalidLatLonFormat("Swapped lat/long");
+        }
+       return lnglat;
     }
 
     /**
@@ -439,6 +444,29 @@ public class OrigCoord {
         } else {
             return new Point2D.Double(p2d.getY(), p2d.getX());  //need to swap coordinates
         }
+    }
+    
+    public static Point2D convertOrigCoordToWGS(int epsg, String format, String easting, String northing) throws FactoryException, MismatchedDimensionException, TransformException, NumberFormatException,InvalidOrigCoordinate,InvalidLatLonFormat {
+        Point2D inputPt = new Point2D.Double();
+        Point2D lnglat;
+        format = format.toUpperCase();
+        if (format.equals("EN")) {
+            inputPt.setLocation(Double.parseDouble(easting),Double.parseDouble(northing));
+            lnglat = OrigCoord.toWGS84(epsg, inputPt);
+         //   lnglat = OrigCoord.parseLatLng(Double.toString(lnglat.getX()), Double.toString(lnglat.getY()));
+        } else if (format.startsWith("D")) {
+            lnglat = OrigCoord.parseLatLng(northing, easting);
+            inputPt.setLocation(lnglat.getX(),lnglat.getY());
+            lnglat = OrigCoord.toWGS84(epsg, inputPt);
+        } else if (format.equals("GRIDREF")) {
+            // deal with grid ref
+            inputPt = OrigCoord.parseGridRef(epsg,easting);
+            lnglat = OrigCoord.toWGS84(epsg, inputPt);
+            //lnglat = OrigCoord.parseLatLng(Double.toString(lnglat.getX()), Double.toString(lnglat.getY()));
+        } else {
+            throw new InvalidOrigCoordinate("Not a valid format");
+        }
+        return lnglat;
     }
 
     public static JsonNode createOrigFormatJson(int epsg, String format, String gridRef, String latitude, String longitude, Double easting, Double northing) throws JsonProcessingException {
