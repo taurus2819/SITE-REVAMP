@@ -119,9 +119,9 @@ public class NZMS260 extends MapSheet {
         Double eastingVal = Double.valueOf(easting);
         Double northingVal = Double.valueOf(northing);
         if(eastingVal.toString().endsWith("E7") && !northingVal.toString().endsWith("E7")){
-            result = "RS" + abs(j);
+            result = "RS";
         }else if(northingVal.toString().endsWith("E7") && eastingVal.toString().endsWith("E7")){
-            result = "RS" + abs(i);
+            result = "RS";
         }else {
             result = String.format("%s%s%d", Character.toString((char) ('A' + i - 1)), j < 10 ? "0" : "", j > i ? i : j);
         }
