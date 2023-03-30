@@ -123,7 +123,7 @@ public class NZMS260 extends MapSheet {
         }else if(northingVal.toString().endsWith("E7") && eastingVal.toString().endsWith("E7")){
             result = "RS";
         }else {
-            result = String.format("%s%s%d", Character.toString((char) ('A' + i - 1)), j < 10 ? "0" : "", j > i ? i : j);
+            result = String.format("%s%s%d", Character.toString((char) ('A' + i - 1)), j < 10 ? "0" : "", j > i ? j : i);
         }
         return result;
     }
