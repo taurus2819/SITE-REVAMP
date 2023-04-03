@@ -8,6 +8,8 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
 
+import static java.lang.Math.abs;
+
 /**
  * Utility class for converting NZMS260 (New Zealand Map Grid, NZMG, EPSG 27200)
  * gridrefs into full Easting northing
@@ -110,20 +112,19 @@ public class NZMS260 extends MapSheet {
      */
     @Override
     public String lookupMapSheet(double easting, double northing) {
-        Double eastn = Double.valueOf(easting);
-        Double northn = Double.valueOf(northing);
-        String[] eastingSplitter = eastn.toString().split("\\.");
-        String[] northingSplitter = northn.toString().split("\\.");
-        if(eastingSplitter[0].length() > 7){              //for Antarctic long/lat values using epsg wgs84, the length of the numeric values of the double value exceeds 7 digits; and
-            easting = easting / 10;                       //this causes some gibberish value for the mapsheet - jira AS-640
-        }
-        if(northingSplitter[0].length() > 7){
-            northing = northing /10;
-        }
         int i = (int)((easting-1930000)/40000);
         int j = (int)((6820000-northing)/30000);
-        
-        String result = String.format("%s%s%d", Character.toString((char)('A' + i - 1)), j<10?"0":"", j);
+
+        String result = null;
+        Double eastingVal = Double.valueOf(easting);
+        Double northingVal = Double.valueOf(northing);
+        if(eastingVal.toString().endsWith("E7") && !northingVal.toString().endsWith("E7")){
+            result = "RS";
+        }else if(northingVal.toString().endsWith("E7") && eastingVal.toString().endsWith("E7")){
+            result = "RS";
+        }else {
+            result = String.format("%s%s%d", Character.toString((char) ('A' + i - 1)), j < 10 ? "0" : "", j > i ? j : i);
+        }
         return result;
     }
     
