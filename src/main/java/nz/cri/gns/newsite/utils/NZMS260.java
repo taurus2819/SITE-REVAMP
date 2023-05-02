@@ -116,14 +116,9 @@ public class NZMS260 extends MapSheet {
         int j = (int)((6820000-northing)/30000);
 
         String result = null;
-        Double eastingVal = Double.valueOf(easting);
-        Double northingVal = Double.valueOf(northing);
-        if(eastingVal.toString().endsWith("E7") && !northingVal.toString().endsWith("E7")){
-            result = "RS";
-        }else if(northingVal.toString().endsWith("E7") && eastingVal.toString().endsWith("E7")){
-            result = "RS";
-        }else {
-            result = String.format("%s%s%d", Character.toString((char) ('A' + i - 1)), j < 10 ? "0" : "", j > i ? j : i);
+        result = String.format("%s%s%d", Character.toString((char) ('A' + i - 1)), j < 10 ? "0" : "", j > i ? j : i);
+        if(!isValidMapSheet(result)){
+            result = "invalid";
         }
         return result;
     }
