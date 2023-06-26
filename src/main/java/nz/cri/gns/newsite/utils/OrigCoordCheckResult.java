@@ -13,7 +13,11 @@ import java.awt.geom.Point2D;
 public class OrigCoordCheckResult {
     private String message;
     private Point2D lnglat;
-
+    
+    public OrigCoordCheckResult() {
+        super();
+    }
+    
     public OrigCoordCheckResult(String message, Point2D lnglat) {
         this.message = message;
         this.lnglat = lnglat;
