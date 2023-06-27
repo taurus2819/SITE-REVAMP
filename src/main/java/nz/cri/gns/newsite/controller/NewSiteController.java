@@ -374,9 +374,9 @@ public class NewSiteController {
             @RequestParam(value = "northing") String northing
         )  {
         String message = "";
-        Point2D lnglat = new Point2D.Double();
+        Point2D.Double lnglat = new Point2D.Double();
         try {
-            lnglat = OrigCoord.convertOrigCoordToWGS(epsg, format, easting, northing);
+            lnglat = (Point2D.Double) OrigCoord.convertOrigCoordToWGS(epsg, format, easting, northing);
         } catch (InvalidLatLonFormat ex) {
             message = "Invalid lat/lon format: " + ex.getMessage();
         } catch (InvalidOrigCoordinate ex) {
