@@ -5,6 +5,8 @@ package nz.cri.gns.newsite.service;
  * @author sitikond
  */
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -137,6 +139,7 @@ public class NewSiteServiceImpl implements NewSiteService {
                 SiteProximity sp = new SiteProximity(s,proximity);
                 proximities.add(sp);
             }
+            Collections.sort(proximities);
             return proximities;
         } catch (FactoryException ex) {
             java.util.logging.Logger.getLogger(NewSiteServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
