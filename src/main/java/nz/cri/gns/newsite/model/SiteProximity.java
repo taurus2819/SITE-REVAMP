@@ -5,6 +5,7 @@
  */
 package nz.cri.gns.newsite.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,57 +15,131 @@ import java.util.List;
  * points.
  *
  */
-public class SiteProximity {
+public class SiteProximity implements Serializable,Comparable {
 
-    private final SiteModel siteModel;
-    private final double proximity;
+    private double proximity;
+    private Integer siteId;
+    private String siteName;
+    private Double accuracy;
+    private Double height;
+    private String directions;
+    private String comment;
+    private Double latitude;
+    private Double longitude;
+    private String origCoord;
+    private  List<String> users;
 
-    public SiteProximity(SiteModel siteModel, double proximity) {
-        this.siteModel = siteModel;
-        this.proximity = proximity;
+    public SiteProximity() {
+        super();
     }
 
-    public long getSiteId() {
-        return siteModel.getSiteId();
+    public SiteProximity(SiteModel siteModel, double proximity) {
+        this.proximity = proximity;
+        this.siteId = siteModel.getSiteId();
+        this.siteName = siteModel.getSiteName();
+        this.accuracy = siteModel.getAccuracy();
+        this.height = siteModel.getHeight();
+        this.directions = siteModel.getDirections();
+        this.comment = siteModel.getComment();
+        this.latitude = siteModel.getLat();
+        this.longitude = siteModel.getLon();
+        this.origCoord = siteModel.getOrigCoord().toString();
+        this.users = siteModel.getUsers();        
     }
 
     public double getProximity() {
         return proximity;
     }
 
+    public void setProximity(double proximity) {
+        this.proximity = proximity;
+    }
+
+    public Integer getSiteid() {
+        return siteId;
+    }
+
+    public void setSiteid(Integer siteid) {
+        this.siteId = siteid;
+    }
+
     public String getSiteName() {
-        return siteModel.getSiteName();
+        return siteName;
+    }
+
+    public void setSiteName(String siteName) {
+        this.siteName = siteName;
     }
 
     public Double getAccuracy() {
-        return siteModel.getAccuracy();
+        return accuracy;
     }
 
-    public String getDirections() {
-        return siteModel.getDirections();
+    public void setAccuracy(Double accuracy) {
+        this.accuracy = accuracy;
     }
 
     public Double getHeight() {
-        return siteModel.getHeight();
+        return height;
+    }
+
+    public void setHeight(Double height) {
+        this.height = height;
+    }
+
+    public String getDirections() {
+        return directions;
+    }
+
+    public void setDirections(String directions) {
+        this.directions = directions;
     }
 
     public String getComment() {
-        return siteModel.getComment();
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public Double getLatitude() {
-        return siteModel.getLat();
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 
     public Double getLongitude() {
-        return siteModel.getLon();
+        return longitude;
     }
 
-    public String getOrigCoord() {
-        return siteModel.getOrigCoord().toString();
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
-    
+
+    public String getOrigCoords() {
+        return origCoord;
+    }
+
+    public void setOrigCoords(String origCoords) {
+        this.origCoord = origCoords;
+    }
+
     public List<String> getUsers() {
-        return siteModel.getUsers();
+        return users;
     }
+
+    public void setUsers(List<String> users) {
+        this.users = users;
+    }
+
+    @Override
+    public int compareTo(Object sp) {
+        double dist = ((SiteProximity)sp).getProximity();
+        return (int) ( this.proximity - dist);
+    }
+
+    
 }
