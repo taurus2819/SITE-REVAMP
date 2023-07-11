@@ -55,11 +55,11 @@ public class SiteProximity implements Serializable,Comparable {
         this.proximity = proximity;
     }
 
-    public Integer getSiteid() {
+    public Integer getSiteId() {
         return siteId;
     }
 
-    public void setSiteid(Integer siteid) {
+    public void setSiteId(Integer siteid) {
         this.siteId = siteid;
     }
 
