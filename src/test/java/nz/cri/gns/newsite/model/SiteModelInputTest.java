@@ -30,7 +30,7 @@ public class SiteModelInputTest {
     public void testToSiteModel() throws Exception {
         SiteModelInput smi = new SiteModelInput("test",3,null,"somewhere", 
                null, null, 3.5, "NZ", "testing",1618,
-               27200, "U20/967978", null, null, null, null,"GridRef", "Unit test", "FRED");
+               27200, "U20/967978", null, null, null, null,"GridRef", "Unit test", "FRED.FEATURE");
         SiteModel sm = smi.toSiteModel();
         assertEquals(sm.getLat(), -39.37637937, 0.0001);
         assertEquals(sm.getLon(), 176.32814751, 0.0001);
@@ -38,7 +38,8 @@ public class SiteModelInputTest {
         assertEquals(origId,16);
         ObjectMapper mapper = ObjectMapperWrapper.INSTANCE.get();
 
-        assertEquals(sm.getOrigCoord(),mapper.readTree("{\"epsg\":27200, \"format\":\"gridRef\", \"gridReference\":\"U20/967978\"}"));        
+        assertEquals(sm.getOrigCoord(),mapper.readTree("{\"epsg\":27200, \"format\":\"gridRef\", \"gridReference\":\"U20/967978\"}"));
+        assertEquals(sm.getClientUser(), "FRED.FEATURE");
     }
 
     @Test

@@ -31,7 +31,6 @@ public class SiteModelInput {
     private String longitude;
     private String format;
     private String auditMsg;
-
     private String clientUser;
 
     public SiteModelInput() {
@@ -143,8 +142,7 @@ public class SiteModelInput {
     public void setOwnerId(Integer OwnerId){
         this.siteModel.setOwnerId(OwnerId);
     }
-    
-   
+
 /**
  * Perform all necessary transformations on the SiteModelInput object to emit a valid SiteModel
  * This involves creating the OrigCoord structure, and converting input coordinates into
@@ -188,7 +186,7 @@ public class SiteModelInput {
         double lon = lnglat.getX();
         siteModel.setLon(lon);
         siteModel.setAuditMsg(getAuditMsg());
-        siteModel.setClientUser(getClientUser());
+//        siteModel.setClientUser(getClientUser());
         siteModel.setOwnerId(getOwnerId());
         siteModel.setOrigSystemId(OrigCoord.getOrigSystemId(epsg, format));
         return siteModel;
