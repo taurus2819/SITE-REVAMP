@@ -98,7 +98,7 @@ public class NewSiteController {
         AuditLog newAuditLog = auditLogCreator(site, newlyCreatedSiteId, siteinfoBefore);
         site.addAuditLog(newAuditLog);
         auditLogService.insert(newAuditLog);
-        SiteUsage siteUser = new SiteUsage(newlyCreatedSiteId, site.getClientUser());
+        SiteUsage siteUser = new SiteUsage(newlyCreatedSiteId, siteInput.getClientUser());
         site.addSiteUsage(siteUser);
         siteUsageService.registerUsage(siteUser);
         response.setStatus(HttpServletResponse.SC_CREATED);
