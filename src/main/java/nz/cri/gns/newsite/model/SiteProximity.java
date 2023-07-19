@@ -119,11 +119,11 @@ public class SiteProximity implements Serializable,Comparable {
         this.longitude = longitude;
     }
 
-    public String getOrigCoords() {
+    public String getOrigCoord() {
         return origCoord;
     }
 
-    public void setOrigCoords(String origCoords) {
+    public void setOrigCoord(String origCoords) {
         this.origCoord = origCoords;
     }
 
