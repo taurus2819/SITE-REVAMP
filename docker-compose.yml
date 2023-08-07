@@ -1,0 +1,17 @@
+version: "3"
+# Set node.role==manager to force service to run on the Avalon node, near
+# the postgres DB it uses to reduce query latency.
+services:
+  siteapi:
+    image: 'artifactory.gns.cri.nz/gns/new-site-api:0.0.26'
+    networks:
+      - proxy
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
+      
+      
+networks:
+  proxy:
+    external: true
