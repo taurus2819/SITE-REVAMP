@@ -4,6 +4,8 @@ variables:
   SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
   GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
   GIT_STRATEGY: clone
+  APP_PORTS: "8040 7040"
+  GITURL_CICD: "https://user:$release_token@git.gns.cri.nz/applications/cicdutils.git"
 
 image: maven:3-openjdk-11
 
@@ -11,6 +13,7 @@ stages:
   - build
   - deploy
   - image
+  - deploy-prod
 
 default:
   before_script:
@@ -45,16 +48,59 @@ deploy-dev:
   tags:
     - linux
   stage: deploy
+  when: manual
   script: |
-    NAME="$( echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:artifactId/text()' | xmllint --shell pom.xml | grep -v "^/")"
-    VERSION="$( echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:version/text()' | xmllint --shell pom.xml | grep -v "^/")"
-    IMAGE="$(echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:properties/x:image.name/text()' | xmllint --shell pom.xml | grep -v "^/" \
-    | sed 's/${project.artifactId}/'"$NAME"'/' \
-    | sed 's/${project.version}/'"$VERSION"'/')"
-    APP_NAME="$(echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:properties/x:application.name/text()' | xmllint --shell pom.xml | grep -v "^/")"
+    git clone $GITURL_CICD
+    export NAME="$( ./cicdutils/pom_artifact.sh )"
+    export VERSION="$( ./cicdutils/pom_version.sh )"
+    IMAGE="${NAME}:${VERSION}"
+    APP_NAME="$( ./cicdutils/pom_app_name.sh)"
     APP_SERVER="Applications Development"
-    TEAM="GGW"
+    TEAM="Applications"
     DOCKER_CONFIG=(HostConfig:='{ "PortBindings": { "8080/tcp": [{ "HostPort": "9010" }] }, "NetworkMode": "reverseproxy-nw", "RestartPolicy": {"Name":"always" } }' )
-    ./docker_build.sh -i "$IMAGE"
-    ./docker_deploy.sh -i "$IMAGE" -a "$APP_NAME" -s "$APP_SERVER" -t "$TEAM" -d "$DOCKER_CONFIG"
+    cp src/main/resources/application-dev.properties src/main/resources/application.properties
+    mvn clean dependency:copy -P docker
+    ./cicdutils/docker_build_deploy.sh -i "$IMAGE" -a "$APP_NAME" -s "$APP_SERVER" -t "$TEAM" -d "$DOCKER_CONFIG"
 
+deploy-staging:
+  tags:
+    - linux
+  stage: deploy
+  when: manual
+  script: |
+    git clone $GITURL_CICD
+    export NAME="$( ./cicdutils/pom_artifact.sh )"
+    export VERSION="$( ./cicdutils/pom_version.sh )"
+    IMAGE="${NAME}:${VERSION}"
+    APP_NAME="$( ./cicdutils/pom_app_name.sh)"
+    APP_SERVER="GNS Web Application Staging"
+    TEAM="Applications"
+    cp src/main/resources/application-dev.properties src/main/resources/application.properties
+    mvn clean dependency:copy -P docker
+    DOCKER_CONFIG=(HostConfig:='{ "PortBindings": { "8080/tcp": [{ "HostPort": "8040" }] }, "NetworkMode": "reverseproxy-nw", "RestartPolicy": {"Name":"always" } }' )
+    ./cicdutils/docker_build_deploy.sh -i "$IMAGE" -a "$APP_NAME" -s "$APP_SERVER" -t "$TEAM" -d "$DOCKER_CONFIG"
+
+deploy-live:
+  tags:
+    - linux
+  stage: deploy-prod
+  when: manual
+  script: |
+    export APP_SERVER="GNS Web Applications"
+    export APP_HOST="webapp.gns.cri.nz"
+    git clone $GITURL_CICD
+    export NAME="$( ./cicdutils/pom_artifact.sh )"
+    mkdir target
+    export VERSION=$( ./cicdutils/get_version.sh newsite/new-site-api -o target/siteapp.jar --version latest )
+    IMAGE="$( ./cicdutils/pom_image_name.sh )"
+    export APP_NAME="$( ./cicdutils/pom_app_name.sh)"
+    export TEAM="Applications"
+    ./cicdutils/docker_build.sh -i "$IMAGE"   
+    ./cicdutils/available_tomcat_port.sh $APP_HOST $APP_PORTS
+    port=$(./cicdutils/available_tomcat_port.sh $APP_HOST $APP_PORTS)
+    container="$APP_NAME-$port"  
+    export DOCKER_CONFIG=(HostConfig:="{ \"PortBindings\": { \"8080/tcp\": [ { \"HostPort\": \"${port}\" } ] }, \"NetworkMode\": \"reverseproxy-nw\", \"RestartPolicy\": {\"Name\":\"always\" } }" )  
+    ./cicdutils/docker_deploy.sh -i "$IMAGE" -a "$container" -s "$APP_SERVER" -t "$TEAM" -d "$DOCKER_CONFIG"   
+    ./cicdutils/wait_for_tomcat.sh $APP_HOST $port site/api/v1/islands
+    ./cicdutils/notify_teams.sh $teams_webhook "Site API ${VERSION} deployed to production"
+    ./cicdutils/remove_old_tomcat.sh $port $APP_PORTS
