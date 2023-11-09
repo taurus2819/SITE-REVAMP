@@ -1,4 +1,5 @@
 FROM openjdk:11-jre-slim
+LABEL Name=New_Site_Api
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 RUN addgroup --gid 20000 spring && useradd --uid 20000 --no-log-init -M -g spring spring
