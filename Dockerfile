@@ -1,6 +1,12 @@
 FROM openjdk:11-jre-slim
 LABEL Name=New_Site_Api
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update \
+  && apt-get install -y vim \
+  && apt-get install -y less \
+  && apt-get install -y nano \
+  && apt-get install -y curl \  
+  && apt-get clean
 
 RUN addgroup --gid 20000 spring && useradd --uid 20000 --no-log-init -M -g spring spring
 USER spring:spring
