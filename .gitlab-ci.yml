@@ -28,7 +28,6 @@ build:
   script: |
     mvn $MAVEN_CLI_OPTS clean deploy
 
-
 release:
   tags:
     - docker
@@ -49,8 +48,12 @@ deploy-dev:
     - linux
   stage: deploy
   when: manual
+  before_script:
+      - git clone $GITURL_CICD
+  after_script:
+      - rm -rf cicdutils
+      - git clean -fdX    
   script: |
-    git clone $GITURL_CICD
     export NAME="$( ./cicdutils/pom_artifact.sh )"
     export VERSION="$( ./cicdutils/pom_version.sh )"
     IMAGE="${NAME}:${VERSION}"
@@ -67,8 +70,12 @@ deploy-staging:
     - linux
   stage: deploy
   when: manual
+  before_script:
+      - git clone $GITURL_CICD
+  after_script:
+      - rm -rf cicdutils
+      - git clean -fdX      
   script: |
-    git clone $GITURL_CICD
     export NAME="$( ./cicdutils/pom_artifact.sh )"
     export VERSION="$( ./cicdutils/pom_version.sh )"
     IMAGE="${NAME}:${VERSION}"
@@ -85,10 +92,14 @@ deploy-live:
     - linux
   stage: deploy-prod
   when: manual
+  before_script:
+      - git clone $GITURL_CICD
+  after_script:
+      - rm -rf cicdutils
+      - git clean -fdX     
   script: |
     export APP_SERVER="GNS Web Applications"
     export APP_HOST="webapp.gns.cri.nz"
-    git clone $GITURL_CICD
     export NAME="$( ./cicdutils/pom_artifact.sh )"
     mkdir target
     export VERSION=$( ./cicdutils/get_version.sh newsite/new-site-api -o target/siteapp.jar --version latest )
