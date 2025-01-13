@@ -10,18 +10,7 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -110,6 +99,12 @@ public class SiteModel implements Site{
     @Column(name = "country_code")
     @Getter @Setter
     private String countryCode;		//NZ
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="country_code", insertable = false, updatable = false)
+    //@Getter @Setter
+    @JsonIgnore
+    private Country country;
 
     @Column(name = "flag")
     @Getter @Setter
@@ -223,7 +218,13 @@ public class SiteModel implements Site{
         });
         return usedby;
     }
-    
+
+    public String getCountryName()    {
+        if(country != null) {
+            return country.getCountryName();
+        }
+        return null;
+    }
     
     @Override
     public String toString(){

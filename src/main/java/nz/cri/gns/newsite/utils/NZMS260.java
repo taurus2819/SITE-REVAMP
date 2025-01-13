@@ -112,11 +112,11 @@ public class NZMS260 extends MapSheet {
      */
     @Override
     public String lookupMapSheet(double easting, double northing) {
-        int i = (int)((easting-1930000)/40000);
+        int i = (int)((easting-1970000)/40000);
         int j = (int)((6820000-northing)/30000);
 
         String result = null;
-        result = String.format("%s%s%d", Character.toString((char) ('A' + i - 1)), j < 10 ? "0" : "", j > i ? j : i);
+        result = String.format("%s%s%d", Character.toString((char) ('A' + i )), j < 10 ? "0" : "", j);
         if(!isValidMapSheet(result)){
             result = "invalid";
         }
