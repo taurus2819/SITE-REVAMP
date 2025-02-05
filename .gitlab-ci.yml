@@ -98,8 +98,8 @@ deploy-live:
       - rm -rf cicdutils
       - git clean -fdX     
   script: |
-    export APP_SERVER="GNS Web Applications"
-    export APP_HOST="webapp.gns.cri.nz"
+    export APP_SERVER="GNS Web Applications Internal"
+    export APP_HOST="webapp-internal.gns.cri.nz"
     export NAME="$( ./cicdutils/pom_artifact.sh )"
     mkdir target
     export VERSION=$( ./cicdutils/get_version.sh newsite/new-site-api -o target/siteapp.jar --version latest )
