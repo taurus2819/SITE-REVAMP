@@ -12,7 +12,12 @@ Builds a docker image from the current branches source, then creates a container
 
 ## Production deployment
 Does a blue-green deployment to ensure the end users are not affected, via the following steps: 
-- Creates a docker image containing the latest version of site service from the gns-libs-release maven repository
+- Creates a docker image containing the version of site service specified in .gitlab-ci.yml
 - Creates a New_Site_Api-xxxx (where xxxx is a port number) container from that image in the GNS Web Applications portainer environment
 - Waits until the site service is accessible in the new container
 - Removes the previous New_Site_Api-xxxx container (if it exists)
+
+To initiate a production deployment:
+1. On your bugfix/feature branch, set VERSION="x.y.z" under __deploy-prod__ in .gitlab-ci.yml, where x.y.z is the new version number that will be created when your branch is merged into master.
+1. Merge your bugfix/feature branch into master by the usual process.
+1. After the release has been created and pushed to Artifactory, run the __deploy-prod__ build job
