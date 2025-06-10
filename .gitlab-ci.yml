@@ -6,6 +6,7 @@ variables:
   GIT_STRATEGY: clone
   APP_PORTS: "8040 7040"
   GITURL_CICD: "https://user:$release_token@git.gns.cri.nz/applications/cicdutils.git"
+  TEAM: "Applications"
 
 image: maven:3-openjdk-11
 
@@ -18,6 +19,17 @@ stages:
 default:
   before_script:
     - cp $settings_xml ~/.m2/settings.xml
+
+.deploy_template:
+  tags:
+    - linux
+  when: manual
+  before_script:
+      - git clone $GITURL_CICD
+      - export APP_NAME="$( ./cicdutils/pom_app_name.sh)"
+  after_script:
+      - rm -rf cicdutils
+      - git clean -fdX 
 
 build:
   tags:
@@ -44,74 +56,53 @@ release:
     mvn $MAVEN_CLI_OPTS -Pprod gitflow:release-finish
 
 deploy-dev:
-  tags:
-    - linux
   stage: deploy
-  when: manual
-  before_script:
-      - git clone $GITURL_CICD
-  after_script:
-      - rm -rf cicdutils
-      - git clean -fdX    
+  extends: .deploy_template    
   script: |
-    export NAME="$( ./cicdutils/pom_artifact.sh )"
-    export VERSION="$( ./cicdutils/pom_version.sh )"
-    IMAGE="${NAME}:${VERSION}"
-    APP_NAME="$( ./cicdutils/pom_app_name.sh)"
-    APP_SERVER="Applications Development"
-    TEAM="Applications"
-    DOCKER_CONFIG=(HostConfig:='{ "PortBindings": { "8080/tcp": [{ "HostPort": "9010" }] }, "NetworkMode": "reverseproxy-nw", "RestartPolicy": {"Name":"always" } }' )
-    cp src/main/resources/application-dev.properties src/main/resources/application.properties
-    mvn clean dependency:copy -P docker
-    ./cicdutils/docker_build_deploy.sh -i "$IMAGE" -a "$APP_NAME" -s "$APP_SERVER" -t "$TEAM" -d "$DOCKER_CONFIG"
+    export VERSION="current"
+    export APP_SERVER="Applications Development"
+    appName="$APP_NAME"
+    volSuffix="-dev"
+    port=8040
+    ./deploy.sh "$appName" "$port" "$volSuffix" "staging" "gns-libs-snapshot"
 
 deploy-staging:
-  tags:
-    - linux
   stage: deploy
-  when: manual
-  before_script:
-      - git clone $GITURL_CICD
-  after_script:
-      - rm -rf cicdutils
-      - git clean -fdX      
+  extends: .deploy_template     
   script: |
-    export NAME="$( ./cicdutils/pom_artifact.sh )"
-    export VERSION="$( ./cicdutils/pom_version.sh )"
-    IMAGE="${NAME}:${VERSION}"
-    APP_NAME="$( ./cicdutils/pom_app_name.sh)"
-    APP_SERVER="GNS Web Application Staging"
-    TEAM="Applications"
-    cp src/main/resources/application-dev.properties src/main/resources/application.properties
-    mvn clean dependency:copy -P docker
-    DOCKER_CONFIG=(HostConfig:='{ "PortBindings": { "8080/tcp": [{ "HostPort": "8040" }] }, "NetworkMode": "reverseproxy-nw", "RestartPolicy": {"Name":"always" } }' )
-    ./cicdutils/docker_build_deploy.sh -i "$IMAGE" -a "$APP_NAME" -s "$APP_SERVER" -t "$TEAM" -d "$DOCKER_CONFIG"
+    export VERSION="current"
+    export APP_SERVER="GNS Web Application Staging"
+    appName="$APP_NAME-dev" 
+    volSuffix="-dev"
+    port=8040
+    ./deploy.sh "$appName" "$port" "$volSuffix" "staging" "gns-libs-snapshot"
 
-deploy-live:
-  tags:
-    - linux
-  stage: deploy-prod
-  when: manual
-  before_script:
-      - git clone $GITURL_CICD
-  after_script:
-      - rm -rf cicdutils
-      - git clean -fdX     
+
+# Set DEFAULT_SITE_API_URL=https://online-[your username].gns.cri.nz/site/api/v1 in 
+# your FRED/petlab's context-dev.xml to have it use your personal site service
+deploy-staging-personal:
+  stage: deploy
+  extends: .deploy_template    
   script: |
+    export VERSION="current"
+    export APP_SERVER="GNS Web Application Staging"
+    appName="${APP_NAME}-${GITLAB_USER_LOGIN}"
+    varName="port_prefix_${GITLAB_USER_LOGIN}"
+    port="${!varName}040"  
+    volSuffix="-${GITLAB_USER_LOGIN}"    
+    ./deploy.sh "$appName" "$port" "$volSuffix" "staging" "gns-libs-snapshot"
+
+deploy-prod:
+  stage: deploy-prod
+  only:
+    - master    
+  extends: .deploy_template       
+  script: |
+    export VERSION="0.0.34"
     export APP_SERVER="GNS Web Applications Internal"
     export APP_HOST="webapp-internal.gns.cri.nz"
-    export NAME="$( ./cicdutils/pom_artifact.sh )"
-    mkdir target
-    export VERSION=$( ./cicdutils/get_version.sh newsite/new-site-api -o target/siteapp.jar --version latest )
-    IMAGE="$( ./cicdutils/pom_image_name.sh )"
-    export APP_NAME="$( ./cicdutils/pom_app_name.sh)"
-    export TEAM="Applications"
-    ./cicdutils/docker_build.sh -i "$IMAGE"   
-    ./cicdutils/available_tomcat_port.sh $APP_HOST $APP_PORTS
+
     port=$(./cicdutils/available_tomcat_port.sh $APP_HOST $APP_PORTS)
-    container="$APP_NAME-$port"  
-    export DOCKER_CONFIG=(HostConfig:="{ \"PortBindings\": { \"8080/tcp\": [ { \"HostPort\": \"${port}\" } ] }, \"NetworkMode\": \"reverseproxy-nw\", \"RestartPolicy\": {\"Name\":\"always\" } }" )  
-    ./cicdutils/docker_deploy.sh -i "$IMAGE" -a "$container" -s "$APP_SERVER" -t "$TEAM" -d "$DOCKER_CONFIG"   
-    ./cicdutils/wait_for_tomcat.sh $APP_HOST $port site/api/v1/islands
-    ./cicdutils/notify_teams.sh $teams_webhook "Site API ${VERSION} deployed to production"
-    ./cicdutils/remove_old_tomcat.sh $port $APP_PORTS
+    appName="$APP_NAME-$port"  
+    volSuffix=""
+    ./deploy.sh "$appName" "$port" "$volSuffix" "prod" "gns-libs-release"
