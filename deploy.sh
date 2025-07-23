@@ -25,5 +25,6 @@ export DOCKER_CONFIG=(HostConfig:="{ \"PortBindings\": { \"8080/tcp\": [ { \"Hos
 if [[ "$buildEnv" == "prod" ]]; then
     ./cicdutils/wait_for_tomcat.sh $APP_HOST $port site/api/v1/islands
     ./cicdutils/notify_teams.sh $teams_webhook "Site API ${version} deployed to production"
+    ./cicdutils/notify_zendesk_springboot.sh
     ./cicdutils/remove_old_tomcat.sh $port $APP_PORTS
 fi
