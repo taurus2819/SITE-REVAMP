@@ -167,6 +167,19 @@ public class SiteModel implements Site{
         this.auditMsg = auditMsg;
         this.clientUser = clientUser;
     }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="orig_system_id", insertable = false, updatable = false)
+    //@Getter @Setter
+    @JsonIgnore
+    private OrigSysId origSysId;
+
+    public String getOrigSysIdTitle(){
+        if(origSystemId != null){
+            return origSysId.getHumanName();
+        }
+        return null;
+    }
     
     /**
      * Moved here from application (PET): "Lat/Long:" : "Grid Ref"
