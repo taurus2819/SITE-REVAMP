@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import nz.cri.gns.newsite.audits.AuditLog;
 import nz.cri.gns.newsite.exception.InvalidLatLonFormat;
@@ -23,6 +22,8 @@ import nz.cri.gns.newsite.model.*;
 import nz.cri.gns.newsite.model.Site.SiteMode;
 
 import nz.cri.gns.newsite.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,6 +73,8 @@ public class NewSiteController {
     @Autowired
     MasterFileService masterFileService;
 
+    private static final Logger log = LoggerFactory.getLogger(NewSiteController.class);
+
     @RequestMapping(value = "/sites/origsysid/{oid}", method = RequestMethod.GET)
     public List<SiteModel> getAllSites(@PathVariable int oid) {
         return newSiteService.findByOrigSystemId(oid);
@@ -90,6 +93,10 @@ public class NewSiteController {
     
     @RequestMapping(value = "/site", method = RequestMethod.POST)
     public SiteModel addSite(@RequestBody SiteModelInput siteInput, HttpServletResponse response) throws InvalidLatLonFormat, InvalidOrigCoordinate, FactoryException, MismatchedDimensionException, TransformException, JsonProcessingException {
+        if (siteInput == null) {
+            throw new IllegalArgumentException("siteInput is null!");
+        }
+        log.info("Received siteInput: {}", siteInput);
         SiteModel site = siteInput.toSiteModel();
         site = newSiteService.insert(site);
         int newlyCreatedSiteId = site.getSiteId();

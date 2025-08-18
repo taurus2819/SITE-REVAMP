@@ -109,5 +109,19 @@ public class SiteModelInputTest {
 
 //        assertEquals(sm.getOrigCoord(),mapper.readTree("{\"epsg\":27200, \"format\":\"gridRef\", \"gridReference\":\"U20/967978\"}"));        
 //    }
+
+    @Test
+    public void testToSiteModelCoordinateisNull() throws Exception {
+        SiteModelInput smi = new SiteModelInput("null island",3,null,"Directionless site",
+                null, null, 3.5, null, "testing for a null site",1618,
+                4326, null, null, null, null, null,null, "Unit test for null sites", "FRED.FEATURE");
+        SiteModel sm = smi.toSiteModel();
+        assertEquals(sm.getLat(), 0.0, 0.0);
+        assertEquals(sm.getLon(), 0.0, 0.0);
+        ObjectMapper mapper = ObjectMapperWrapper.INSTANCE.get();
+
+        assertEquals(sm.getOrigCoord(),mapper.readTree("{}"));
+        assertEquals(sm.getClientUser(), "FRED.FEATURE");
+    }
     
 }

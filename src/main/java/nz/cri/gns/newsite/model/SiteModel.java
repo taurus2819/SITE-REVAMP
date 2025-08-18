@@ -48,12 +48,10 @@ public class SiteModel implements Site{
     private String siteName;  //GNS Physical Location Site, Dunedin
 
     @Column(name = "latitude")
-    @NotNull
     @Getter @Setter
     private double lat;		//-45.864369921
 
     @Column(name = "longitude")
-    @NotNull
     @Getter @Setter
     private double lon;		//170.513135754
 

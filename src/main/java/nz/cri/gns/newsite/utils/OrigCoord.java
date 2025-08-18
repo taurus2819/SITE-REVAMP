@@ -478,22 +478,33 @@ public class OrigCoord {
          */
         JsonNode origCoord = null;
         ObjectMapper mapper = ObjectMapperWrapper.INSTANCE.get();
+
+        // Check if all required fields are null
+        if (format == null && latitude == null && longitude == null && gridRef == null) {
+            return mapper.createObjectNode(); // Returns empty JSON object
+        }
+
         String formatTest = format.toUpperCase();
-        if (formatTest.equals("EN")) {
-            String jsonString = "{\"epsg\":" + epsg + ",\"format\":\"EN\",\"easting\":" + easting + ",\"northing\":" + northing + " }";
-            origCoord = mapper.readTree(jsonString);
-        } else if (formatTest.startsWith("DD")) {
-            String jsonString = "{\"epsg\":" + epsg + ",\"format\":\"DD\",\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\" }";
-            origCoord = mapper.readTree(jsonString);
-        } else if (formatTest.startsWith("DMS")) {
-            String jsonString = "{\"epsg\":" + epsg + ",\"format\":\"DMS\",\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\" }";
-            origCoord = mapper.readTree(jsonString);
-        } else if (formatTest.equals("GRIDREF")) {
-            // deal with grid ref
-            String jsonString = "{\"epsg\":" + epsg + ",\"format\":\"gridRef\",\"gridReference\":\"" + gridRef + "\"}";
-            origCoord = mapper.readTree(jsonString);
-        } else {
-            throw new InvalidOrigCoordinate("Not a valid format");
+        String jsonString;
+        switch (formatTest) {
+            case "EN":
+                jsonString = "{\"epsg\":" + epsg + ",\"format\":\"EN\",\"easting\":" + easting + ",\"northing\":" + northing + " }";
+                origCoord = mapper.readTree(jsonString);
+                break;
+            case "DD":
+                jsonString = "{\"epsg\":" + epsg + ",\"format\":\"DD\",\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\" }";
+                origCoord = mapper.readTree(jsonString);
+                break;
+            case "DMS":
+                jsonString = "{\"epsg\":" + epsg + ",\"format\":\"DMS\",\"longitude\":\"" + longitude + "\",\"latitude\":\"" + latitude + "\" }";
+                origCoord = mapper.readTree(jsonString);
+                break;
+            case "GRIDREF":
+                jsonString = "{\"epsg\":" + epsg + ",\"format\":\"gridRef\",\"gridReference\":\"" + gridRef + "\"}";
+                origCoord = mapper.readTree(jsonString);
+                break;
+            default:
+                throw new InvalidOrigCoordinate("Not a valid format");
         }
         return origCoord;
     }
