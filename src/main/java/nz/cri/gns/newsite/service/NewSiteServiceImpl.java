@@ -61,8 +61,15 @@ public class NewSiteServiceImpl implements NewSiteService {
 
     @Override
     public SiteModel insert(SiteModel s) {
-        SiteModel newSite = newSiteRepository.save(s);
-        logger.info("NewSite = " + newSite.toString());
+        SiteModel newSite = null;
+        try{
+            newSite = newSiteRepository.save(s);
+            logger.info("NewSite = " + newSite.toString());
+            System.out.println("NewSite = " + newSite.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return newSite;
     }
 

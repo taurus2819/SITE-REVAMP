@@ -23,7 +23,7 @@ public class SiteModelInput {
     @Setter(AccessLevel.NONE)
     private final SiteModel siteModel;
     
-    private int epsg;
+    private Integer epsg;
     private String gridref;
     private Double easting;
     private Double northing;
@@ -39,7 +39,7 @@ public class SiteModelInput {
 
     public SiteModelInput(String siteName, Integer methodId, Double accuracy, String Directions, 
                Double height, Integer heightMethodId, Double heightAccuracy, String countyCode, String comment, Integer ownerId,
-               int epsg, String gridref, Double easting, Double northing, String latitude, String longitude, String format, String auditMsg, String clientUser) {
+               Integer epsg, String gridref, Double easting, Double northing, String latitude, String longitude, String format, String auditMsg, String clientUser) {
         this.siteModel = new SiteModel();
         this.siteModel.setSiteName(siteName);
         this.siteModel.setMethodId(methodId);
@@ -192,12 +192,12 @@ public class SiteModelInput {
             siteModel.setOwnerId(getOwnerId());
             siteModel.setOrigSystemId(OrigCoord.getOrigSystemId(epsg, format));
         } else{
-            siteModel.setLat(0.0);   //set to null island
-            siteModel.setLon(0.0);
+            siteModel.setLat(null);   //set to null island
+            siteModel.setLon(null);
             siteModel.setAuditMsg(getAuditMsg());
 //        siteModel.setClientUser(getClientUser());
             siteModel.setOwnerId(getOwnerId());
-            siteModel.setOrigSystemId(OrigCoord.getOrigSystemId(4326, "DD"));  //set to WGS84
+            siteModel.setOrigSystemId(null);  //set to WGS84
         }
         return siteModel;
     }

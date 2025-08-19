@@ -49,11 +49,11 @@ public class SiteModel implements Site{
 
     @Column(name = "latitude")
     @Getter @Setter
-    private double lat;		//-45.864369921
+    private Double lat;		//-45.864369921
 
     @Column(name = "longitude")
     @Getter @Setter
-    private double lon;		//170.513135754
+    private Double lon;		//170.513135754
 
     @Column(name = "method_id")
     @Getter @Setter
@@ -278,5 +278,9 @@ public class SiteModel implements Site{
 
     public void addSiteUsage(SiteUsage siteUser) {
         users.add(siteUser);
+    }
+
+    public void setSiteId(int i) {
+        this.siteId = i;
     }
 }
