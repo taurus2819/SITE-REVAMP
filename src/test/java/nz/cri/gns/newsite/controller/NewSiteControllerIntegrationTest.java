@@ -1,32 +1,18 @@
 package nz.cri.gns.newsite.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import nz.cri.gns.newsite.audits.AuditLog;
-import nz.cri.gns.newsite.model.Island;
-import nz.cri.gns.newsite.model.SiteModel;
+import com.fasterxml.jackson.databind.JsonNode;
 import nz.cri.gns.newsite.model.SiteModelInput;
-import nz.cri.gns.newsite.model.SiteUsage;
 import nz.cri.gns.newsite.service.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.Point;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,12 +21,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest  // loads the full app context
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Transactional
 public class NewSiteControllerIntegrationTest extends BaseNewSiteControllerTest{
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private NewSiteService newSiteService;
 
     @MockBean
@@ -72,10 +59,18 @@ public class NewSiteControllerIntegrationTest extends BaseNewSiteControllerTest{
     @Test
     void addSite_withRealDb_assignsGeneratedId() throws Exception {
         SiteModelInput input = createValidSiteInput();
+        String inputSiteModel = objectMapper.writeValueAsString(input);
+        JsonNode node = objectMapper.readTree(inputSiteModel);
+
+        // Mock the service save method
+        //[SiteModel@485a5c9 id = [null], site_name = 'test', lat = -39.376384849016404, lon = 176.3281475819097, OrigSysId = 16, OrigCoord = {"epsg":27200,"format":"gridRef","gridReference":"U20/967978"}, User = [null]]
+//        when(newSiteService.insert(any(SiteModel.class))).thenReturn(output);
 
         mockMvc.perform(post("/site/api/v1/site")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(input)))
-                .andExpect(jsonPath("$.siteName").value("test")); // Hibernate assigns real ID
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputSiteModel))
+                        .andDo(print())
+                        .andExpect(status().isCreated())
+                        .andExpect(jsonPath("siteName").value("controller_integration_test")); // Hibernate assigns real ID
     }
 }

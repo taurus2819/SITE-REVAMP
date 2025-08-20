@@ -10,6 +10,7 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
@@ -122,7 +123,7 @@ public class SiteModel implements Site{
     @Getter @Setter
     private Integer ownerId;
     
-    //@JsonIgnore
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, targetEntity=AuditLog.class, orphanRemoval = true)      //mappedBy = "sitemodel",
     @JoinColumn(name = "site_id")
     @Getter @Setter
@@ -140,7 +141,7 @@ public class SiteModel implements Site{
     @JsonIgnore
     @Transient
     @Getter @Setter
-    private String clientUser;
+    private String clientUser = "NA";
     
     public SiteModel(String siteName, double lat, double lon, Integer methodId, Double accuracy,
             String directions, Integer origSystemId, JsonNode origCoord, Double height, Integer heightMethodId,
@@ -168,15 +169,13 @@ public class SiteModel implements Site{
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="orig_system_id", insertable = false, updatable = false)
-    //@Getter @Setter
-    @JsonIgnore
+
     private OrigSysId origSysId;
 
     public String getOrigSysIdTitle(){
-        if(origSystemId != null){
-            return origSysId.getHumanName();
-        }
-        return null;
+        return Optional.ofNullable(origSysId)
+                .map(OrigSysId::getHumanName)
+                .orElse(null);
     }
     
     /**

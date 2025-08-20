@@ -65,9 +65,9 @@ public class NewSiteServiceImpl implements NewSiteService {
         try{
             newSite = newSiteRepository.save(s);
             logger.info("NewSite = " + newSite.toString());
-            System.out.println("NewSite = " + newSite.toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error inserting site", e); // full stacktrace in logs
+            throw e; // rethrow so test sees actual cause
         }
 
         return newSite;
