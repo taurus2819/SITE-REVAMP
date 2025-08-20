@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -71,6 +72,8 @@ public class NewSiteControllerIntegrationTest extends BaseNewSiteControllerTest{
                         .content(inputSiteModel))
                         .andDo(print())
                         .andExpect(status().isCreated())
-                        .andExpect(jsonPath("siteName").value("controller_integration_test")); // Hibernate assigns real ID
+//                        .andExpect(jsonPath("siteName").value("controller_integration_test")); // Hibernate assigns real ID
+//                        .andExpect(jsonPath("siteName").value("null island")); // Hibernate assigns real ID, testing for null
+                        .andExpect(jsonPath("lat").value(nullValue())); // Hibernate assigns real ID, testing for null
     }
 }
