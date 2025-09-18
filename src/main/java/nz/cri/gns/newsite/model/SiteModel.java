@@ -184,7 +184,7 @@ public class SiteModel implements Site{
      */
     public String getOrigSystemCategoryTitle()  {
         if(origCoord == null || origCoord.get("format") == null)    {
-            return "unknown";
+            return null;
         }
         switch(origCoord.get("format").asText())   {
             case "DD":
