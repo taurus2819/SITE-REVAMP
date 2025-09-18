@@ -444,9 +444,11 @@ public class NewSiteServiceImpl implements NewSiteService {
             return null;
         }
         SiteDetailed sd = new SiteDetailed(sm);
-        
-        List<Island> islandsAtLocation = islandService.findByLocation((Point)sm.getShape());
-        sd.setIsland(islandsAtLocation.isEmpty()? null : islandsAtLocation.get(0));
+
+        if(sm.getShape() != null) {
+            List<Island> islandsAtLocation = islandService.findByLocation((Point) sm.getShape());
+            sd.setIsland(islandsAtLocation.isEmpty() ? null : islandsAtLocation.get(0));
+        }
         
         return sd;
     }
