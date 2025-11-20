@@ -8,8 +8,8 @@ package nz.cri.gns.newsite.model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 import nz.cri.gns.newsite.utils.ObjectMapperWrapper;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -109,5 +109,19 @@ public class SiteModelInputTest {
 
 //        assertEquals(sm.getOrigCoord(),mapper.readTree("{\"epsg\":27200, \"format\":\"gridRef\", \"gridReference\":\"U20/967978\"}"));        
 //    }
+
+    @Test
+    public void testToSiteModelCoordinateisNull() throws Exception {
+        SiteModelInput smi = new SiteModelInput("null island",3,null,"Directionless site",
+                null, null, 3.5, null, "testing for a null site",1618,
+                null, null, null, null, null, null,null, "Unit test for null sites", "FRED.FEATURE");
+        SiteModel sm = smi.toSiteModel();
+        assertNull(sm.getLat());
+        assertNull(sm.getLon());
+        ObjectMapper mapper = ObjectMapperWrapper.INSTANCE.get();
+
+        assertEquals(sm.getOrigCoord(),mapper.readTree("{}"));
+        assertEquals(sm.getClientUser(), "FRED.FEATURE");
+    }
     
 }

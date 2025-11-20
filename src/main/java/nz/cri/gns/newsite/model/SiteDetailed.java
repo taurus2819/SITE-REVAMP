@@ -24,21 +24,21 @@ public class SiteDetailed {
     
     public String getTopo50Sheet()    {
         Topo50 topo50 = Topo50.getInstance();
-        return topo50.getMapsheet(model.getShape());
+        return ((model.getShape() != null) ? topo50.getMapsheet(model.getShape()): null);
     }
     
     public String getQMAPSheet()    {
         QMAPSheet qmapSheet = QMAPSheet.getInstance();
-        return qmapSheet.getMapsheet(model.getShape());
+        return ((model.getShape() != null) ? qmapSheet.getMapsheet(model.getShape()) : null);
     }
     
     public String getNZMS260Sheet()    {
         NZMS260 nzms260Sheet = NZMS260.getInstance();
-        return nzms260Sheet.getMapsheet(model.getShape());
+        return ((model.getShape() != null) ? nzms260Sheet.getMapsheet(model.getShape()) : null) ;
     }
     
     public String getNZMS262Sheet()    {
         NZMS262 nzmg262Sheet = NZMS262.getInstance();
-        return nzmg262Sheet.getMapsheet(model.getShape());
+        return ((model.getShape() != null) ? nzmg262Sheet.getMapsheet(model.getShape()) : null);
     }
 }

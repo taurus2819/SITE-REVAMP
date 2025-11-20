@@ -61,8 +61,15 @@ public class NewSiteServiceImpl implements NewSiteService {
 
     @Override
     public SiteModel insert(SiteModel s) {
-        SiteModel newSite = newSiteRepository.save(s);
-        logger.info("NewSite = " + newSite.toString());
+        SiteModel newSite = null;
+        try{
+            newSite = newSiteRepository.save(s);
+            logger.info("NewSite = " + newSite.toString());
+        } catch (Exception e) {
+            logger.error("Error inserting site", e); // full stacktrace in logs
+            throw e; // rethrow so test sees actual cause
+        }
+
         return newSite;
     }
 
@@ -437,9 +444,11 @@ public class NewSiteServiceImpl implements NewSiteService {
             return null;
         }
         SiteDetailed sd = new SiteDetailed(sm);
-        
-        List<Island> islandsAtLocation = islandService.findByLocation((Point)sm.getShape());
-        sd.setIsland(islandsAtLocation.isEmpty()? null : islandsAtLocation.get(0));
+
+        if(sm.getShape() != null) {
+            List<Island> islandsAtLocation = islandService.findByLocation((Point) sm.getShape());
+            sd.setIsland(islandsAtLocation.isEmpty() ? null : islandsAtLocation.get(0));
+        }
         
         return sd;
     }

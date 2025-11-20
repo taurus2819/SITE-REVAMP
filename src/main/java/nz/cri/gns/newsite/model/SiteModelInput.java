@@ -23,7 +23,7 @@ public class SiteModelInput {
     @Setter(AccessLevel.NONE)
     private final SiteModel siteModel;
     
-    private int epsg;
+    private Integer epsg;
     private String gridref;
     private Double easting;
     private Double northing;
@@ -39,7 +39,7 @@ public class SiteModelInput {
 
     public SiteModelInput(String siteName, Integer methodId, Double accuracy, String Directions, 
                Double height, Integer heightMethodId, Double heightAccuracy, String countyCode, String comment, Integer ownerId,
-               int epsg, String gridref, Double easting, Double northing, String latitude, String longitude, String format, String auditMsg, String clientUser) {
+               Integer epsg, String gridref, Double easting, Double northing, String latitude, String longitude, String format, String auditMsg, String clientUser) {
         this.siteModel = new SiteModel();
         this.siteModel.setSiteName(siteName);
         this.siteModel.setMethodId(methodId);
@@ -159,36 +159,46 @@ public class SiteModelInput {
         siteModel.setOrigCoord(OrigCoord.createOrigFormatJson(epsg,format,gridref,latitude,longitude, easting, northing));
         Point2D inputPt = new Point2D.Double();
         Point2D lnglat;
-        format = format.toUpperCase();
-        if (format.equals("EN")) {
-            inputPt.setLocation(easting,northing);
-            lnglat = OrigCoord.toWGS84(epsg, inputPt);
-         //   lnglat = OrigCoord.parseLatLng(Double.toString(lnglat.getX()), Double.toString(lnglat.getY()));
-        } else if (format.startsWith("D")) {
-            lnglat = OrigCoord.parseLatLng(latitude, longitude);
-            if (epsg!=4326) {
-                inputPt.setLocation(lnglat.getX(),lnglat.getY());
+
+        if(format != null) {
+            format = format.toUpperCase();
+            if (format.equals("EN")) {
+                inputPt.setLocation(easting, northing);
                 lnglat = OrigCoord.toWGS84(epsg, inputPt);
+                //   lnglat = OrigCoord.parseLatLng(Double.toString(lnglat.getX()), Double.toString(lnglat.getY()));
+            } else if (format.startsWith("D")) {
+                lnglat = OrigCoord.parseLatLng(latitude, longitude);
+                if (epsg != 4326) {
+                    inputPt.setLocation(lnglat.getX(), lnglat.getY());
+                    lnglat = OrigCoord.toWGS84(epsg, inputPt);
+                }
+            } else if (format.equals("GRIDREF")) {
+                // deal with grid ref
+                inputPt = OrigCoord.parseGridRef(epsg, gridref);
+                lnglat = OrigCoord.toWGS84(epsg, inputPt);
+                //lnglat = OrigCoord.parseLatLng(Double.toString(lnglat.getX()), Double.toString(lnglat.getY()));
+            } else {
+                throw new InvalidOrigCoordinate("Not a valid format");
             }
-        } else if (format.equals("GRIDREF")) {
-            // deal with grid ref
-            inputPt = OrigCoord.parseGridRef(epsg,gridref);
-            lnglat = OrigCoord.toWGS84(epsg, inputPt);
-            //lnglat = OrigCoord.parseLatLng(Double.toString(lnglat.getX()), Double.toString(lnglat.getY()));
-        } else {
-            throw new InvalidOrigCoordinate("Not a valid format");
-        }
-        if (!siteModel.getCountryCode().equals("NZ") && OrigCoord.isNZCode(epsg)) {
-            throw new InvalidOrigCoordinate("NZ coordinate system used for a foreign locality");
-        }
-        
-        siteModel.setLat(lnglat.getY());
-        double lon = lnglat.getX();
-        siteModel.setLon(lon);
-        siteModel.setAuditMsg(getAuditMsg());
+            if (!siteModel.getCountryCode().equals("NZ") && OrigCoord.isNZCode(epsg)) {
+                throw new InvalidOrigCoordinate("NZ coordinate system used for a foreign locality");
+            }
+
+            siteModel.setLat(lnglat.getY());
+            double lon = lnglat.getX();
+            siteModel.setLon(lon);
+            siteModel.setAuditMsg(getAuditMsg());
 //        siteModel.setClientUser(getClientUser());
-        siteModel.setOwnerId(getOwnerId());
-        siteModel.setOrigSystemId(OrigCoord.getOrigSystemId(epsg, format));
+            siteModel.setOwnerId(getOwnerId());
+            siteModel.setOrigSystemId(OrigCoord.getOrigSystemId(epsg, format));
+        } else{
+            siteModel.setLat(null);   //set to null island
+            siteModel.setLon(null);
+            siteModel.setAuditMsg(getAuditMsg());
+//        siteModel.setClientUser(getClientUser());
+            siteModel.setOwnerId(getOwnerId());
+            siteModel.setOrigSystemId(null);  //set to WGS84
+        }
         return siteModel;
     }
 }
