@@ -1,12 +1,13 @@
-FROM openjdk:11-jre-slim
+# FROM openjdk:11-jre-slim
+FROM eclipse-temurin:11.0.29_7-jre-ubi9-minimal
 LABEL Name=New_Site_Api
 
-RUN apt-get update \
-  && apt-get install -y vim \
-  && apt-get install -y less \
-  && apt-get install -y nano \
-  && apt-get install -y curl \  
-  && apt-get clean
+# RUN apt-get update \
+#   && apt-get install -y vim \
+#   && apt-get install -y less \
+#   && apt-get install -y nano \
+#   && apt-get install -y curl \  
+#   && apt-get clean
 
 RUN addgroup --gid 20000 spring && useradd --uid 20000 --no-log-init -M -g spring spring
 USER spring:spring
