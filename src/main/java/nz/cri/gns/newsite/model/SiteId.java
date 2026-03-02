@@ -7,25 +7,25 @@ package nz.cri.gns.newsite.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.*;
+//import javax.persistence.Entity;
+//import javax.persistence.GeneratedValue;
+//import javax.persistence.GenerationType;
+//import javax.persistence.Id;
+//import javax.persistence.SequenceGenerator;
+//import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
+//import org.hibernate.annotations.TypeDef;
+//import org.hibernate.annotations.TypeDefs;
 import org.locationtech.jts.geom.Geometry;
 
 @Entity
 @Table(name = "site_proposed", schema = "sc")
-@TypeDefs({
-    @TypeDef(name = "json", typeClass = JsonBinaryType.class)
-})
+//@TypeDefs({
+//    @TypeDef(name = "json", typeClass = JsonBinaryType.class)
+//})
 @Getter
 public class SiteId implements Site{
     

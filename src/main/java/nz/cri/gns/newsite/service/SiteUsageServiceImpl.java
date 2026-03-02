@@ -6,7 +6,7 @@
 package nz.cri.gns.newsite.service;
 
 import java.util.List;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import nz.cri.gns.newsite.model.SiteUsage;
 import nz.cri.gns.newsite.repository.SiteUsageRespository;
 import org.slf4j.Logger;

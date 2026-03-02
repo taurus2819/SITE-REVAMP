@@ -11,24 +11,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nz.cri.gns.newsite.audits.AuditLog;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
+//import org.hibernate.annotations.Type;
+//import org.hibernate.annotations.TypeDef;
+//import org.hibernate.annotations.TypeDefs;
 import org.locationtech.jts.geom.Geometry;
 
 import org.springframework.core.style.ToStringCreator;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+
+
 
 @Entity
 @Table(name = "site_proposed", schema = "sc")
-@TypeDefs({
-    @TypeDef(name = "json", typeClass = JsonBinaryType.class)
-})
+//@TypeDefs({
+//    @TypeDef(name = "json", typeClass = JsonBinaryType.class)
+//})
 @NoArgsConstructor
 public class SiteModel implements Site{
     
@@ -78,7 +83,8 @@ public class SiteModel implements Site{
     Scenario: NZTM full coordinates Given OrigCoords of: "origCoords":{"epsg":2193,"format":"EN","easting":"1528677.3","northing":"5413457.7" } 
     Scenario: NZMG grid reference Given OrigCoords of: "origCoords":{"epsg":27200,"format":"gridref","gridReference":"U20/962872" } 
     */
-    @Type(type = "json")
+    //@Type(type = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "orig_coord", columnDefinition = "json")
     @Getter @Setter
     private JsonNode origCoord;	

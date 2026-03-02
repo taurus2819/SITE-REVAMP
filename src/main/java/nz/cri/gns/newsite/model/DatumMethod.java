@@ -2,14 +2,14 @@ package nz.cri.gns.newsite.model;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+//import javax.persistence.Column;
+//import javax.persistence.Entity;
+//import javax.persistence.Id;
+import jakarta.persistence.*;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
+//import org.hibernate.annotations.TypeDef;
+//import org.hibernate.annotations.TypeDefs;
 
 /**
  *
@@ -17,9 +17,9 @@ import org.hibernate.annotations.TypeDefs;
  */
 @Entity
 @Table(name = "method", schema = "sc")
-@TypeDefs({
-    @TypeDef(name = "json", typeClass = JsonBinaryType.class)
-})
+//@TypeDefs({
+//    @TypeDef(name = "json", typeClass = JsonBinaryType.class)
+//})
 @Getter
 public class DatumMethod implements Serializable {
     

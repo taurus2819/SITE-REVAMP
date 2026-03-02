@@ -5,21 +5,25 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.*;
+//import javax.persistence.Entity;
+//import javax.persistence.FetchType;
+//import javax.persistence.GeneratedValue;
+//import javax.persistence.GenerationType;
+//import javax.persistence.Id;
+//import javax.persistence.JoinColumn;
+//import javax.persistence.ManyToOne;
+//import javax.persistence.SequenceGenerator;
+//import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import nz.cri.gns.newsite.model.SiteModel;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
+//import org.hibernate.annotations.Type;
+//import org.hibernate.annotations.TypeDef;
+//import org.hibernate.annotations.TypeDefs;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 
 /**
  *
@@ -27,9 +31,9 @@ import org.hibernate.annotations.TypeDefs;
  */
 @Entity
 @Table(name = "audit_log", schema = "sc")
-@TypeDefs({
-    @TypeDef(name = "json", typeClass = JsonBinaryType.class)
-})
+//@TypeDefs({
+//    @TypeDef(name = "json", typeClass = JsonBinaryType.class)
+//})
 public class AuditLog implements Serializable{
     
     private static final long serialVersionUID = 1L;
@@ -45,7 +49,8 @@ public class AuditLog implements Serializable{
     @Column(name = "site_id")
     private Integer auditSiteId;
     
-    @Type(type = "json")
+    //@Type(type = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "log_info", columnDefinition = "json")
     private JsonNode logInfo;	    //example value  {"timestamp": "20200810", "loginfo":"Site updatd to new coords"}
     
