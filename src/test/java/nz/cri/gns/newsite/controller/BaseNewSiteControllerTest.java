@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class BaseNewSiteControllerTest {
 
-    @Autowired
-    protected ObjectMapper objectMapper;
+    //@Autowired
+    //protected ObjectMapper objectMapper;
 //    @BeforeEach
 //    void setUp() {
 //        objectMapper = new ObjectMapper();
