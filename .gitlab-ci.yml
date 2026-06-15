@@ -8,7 +8,8 @@ variables:
   GITURL_CICD: "https://user:$release_token@git.gns.cri.nz/applications/cicdutils.git"
   TEAM: "Applications"
 
-image: maven:3-openjdk-11
+#image: maven:3-openjdk-11
+image: maven:3.9.11-eclipse-temurin-25-noble
 
 stages:
   - build
@@ -38,7 +39,7 @@ build:
   except:
     - master
   script: |
-    mvn $MAVEN_CLI_OPTS clean deploy
+    mvn $MAVEN_CLI_OPTS -Pdev clean deploy
 
 release:
   tags:
