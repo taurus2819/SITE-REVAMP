@@ -1,5 +1,6 @@
 # FROM openjdk:11-jre-slim
-FROM eclipse-temurin:11-jre-noble
+#FROM eclipse-temurin:11-jre-noble
+FROM maven:3.9.11-eclipse-temurin-25-noble
 LABEL Name=New_Site_Api
 
 RUN apt-get update \
