@@ -8,7 +8,9 @@ variables:
   GITURL_CICD: "https://user:$release_token@git.gns.cri.nz/applications/cicdutils.git"
   TEAM: "Applications"
 
-image: maven:3-openjdk-11
+#image: maven:3-openjdk-11
+#image: maven:3.9.11-eclipse-temurin-25-noble
+image: ${AWS_SHARED_SERVICES_ECR}/cicd-images-ecr-repo:jdk25-awscli2
 
 stages:
   - build
@@ -18,7 +20,10 @@ stages:
 
 default:
   before_script:
-    - cp $settings_xml ~/.m2/settings.xml
+    #- cp $settings_xml ~/.m2/settings.xml
+    - cp $codeartifact_settings_xml ~/.m2/settings.xml
+    - cp $codeartifact_env_sh ~/codeartifact_env.sh
+    - source ~/codeartifact_env.sh
 
 .deploy_template:
   tags:
@@ -38,7 +43,7 @@ build:
   except:
     - master
   script: |
-    mvn $MAVEN_CLI_OPTS clean deploy
+    mvn $MAVEN_CLI_OPTS -Pdev clean deploy
 
 release:
   tags:

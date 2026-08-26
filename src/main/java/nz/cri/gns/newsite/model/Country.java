@@ -2,7 +2,7 @@ package nz.cri.gns.newsite.model;
 
 import lombok.Getter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 

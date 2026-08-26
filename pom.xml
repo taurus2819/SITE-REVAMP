@@ -5,7 +5,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.4.RELEASE</version>
+        <!--<version>2.3.4.RELEASE</version>-->
+        <version>4.0.3</version>
     </parent>
     <groupId>nz.cri.gns.newsite</groupId>
     <artifactId>new-site-api</artifactId>
@@ -14,14 +15,14 @@
     <description>New Site API</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <geotools.version>26.1.01</geotools.version>
         <application.name>New_Site_Api</application.name>
         <image.name>artifactory.gns.cri.nz/gns/${project.artifactId}:${project.version}</image.name>
     </properties>
 
-    <distributionManagement>
+    <!--<distributionManagement>
         <repository>
             <id>central</id>
             <name>GNS Private Repository</name>
@@ -31,6 +32,19 @@
             <id>snapshots</id>
             <name>libs-snapshots</name>
             <url>https://artifactory.gns.cri.nz/artifactory/gns-libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>-->
+
+    <distributionManagement>
+        <repository>
+            <id>maven-releases</id>
+            <name>GNS Private Repository</name>
+            <url>https://esnz-artifacts-120569622645.d.codeartifact.ap-southeast-2.amazonaws.com/maven/applications-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-snapshots</id>
+            <name>libs-snapshots</name>
+            <url>https://esnz-artifacts-120569622645.d.codeartifact.ap-southeast-2.amazonaws.com/maven/applications-snapshot/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -58,11 +72,11 @@
             <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.oracle.ojdbc</groupId>
             <artifactId>ojdbc8</artifactId>
             <scope>runtime</scope>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -72,6 +86,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <!--<artifactId>spring-boot-starter-test-classic</artifactId>-->
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -111,11 +126,20 @@
             <artifactId>hibernate-types-52</artifactId>
             <version>2.3.4</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-spatial</artifactId>
             <version>5.4.22.Final</version>
+        </dependency> -->
+
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-spatial</artifactId>
+            <version>7.2.5.Final</version>
+            <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -151,6 +175,7 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -160,7 +185,17 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.4.0</version>
-         </dependency>
+         </dependency>-->
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>3.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+
         <!-- Logging -->
         <dependency>
             <groupId>net.logstash.logback</groupId>
@@ -168,17 +203,43 @@
             <version>6.4</version>
         </dependency>
         
-        <!-- Code generation -->
+        <!-- Code generation 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.22</version>
             <scope>provided</scope>
-	</dependency>
+	    </dependency>-->
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.42</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>1.18.42</version>
+                            </path>                              
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

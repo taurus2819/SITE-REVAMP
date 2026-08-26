@@ -23,11 +23,16 @@ public interface NewSiteRepository extends JpaRepository<SiteModel, Integer>{
 //    @Query("select s from site_proposed s where s.orig_system_id = 16")
     public List<SiteModel> findAllByOrigSystemId(int oid) ;
 
-    @Query(value = "Select s from #{#entityName} s where within(s.shape, :bounds )= true")
+    //@Query(value = "Select s from #{#entityName} s where within(s.shape, :bounds )= true")
+    @Query(value = "Select s from #{#entityName} s where CAST(within(s.shape, :bounds ) AS string) = 'true'")
     public List<Site> findWithinBounds(Geometry bounds);
     
-    @Query(value = "Select s from #{#entityName} s where dwithin(s.shape, :point, :distance) = true AND EXISTS( select su.siteId from SiteUsage su where su.siteId = s.siteId)")
+    //@Query(value = "Select s from #{#entityName} s where dwithin(s.shape, :point, :distance) = true AND EXISTS( select su.siteId from SiteUsage su where su.siteId = s.siteId)")
+    @Query(value = "Select s from #{#entityName} s where CAST(dwithin(s.shape, :point, :distance) AS string) = 'true' AND EXISTS( select su.siteId from SiteUsage su where su.siteId = s.siteId)")
     public List<SiteModel> findCloseTo(Geometry point, double distance);
+
+    //@Query("Select s from SiteModel s where CAST(dwithin(s.shape:point:distance) AS string) = 'true' ...")
+
 
     @Query(value = "Select s from #{#entityName} s where s.countryCode IN :countryCodes")
     public List<Site> findByCountryCodes(Collection<String> countryCodes);
