@@ -1,6 +1,8 @@
 # FROM openjdk:11-jre-slim
 #FROM eclipse-temurin:11-jre-noble
-FROM maven:3.9.11-eclipse-temurin-25-noble
+#FROM maven:3.9.11-eclipse-temurin-25-noble
+
+FROM ${AWS_SHARED_SERVICES_ECR}/cicd-images-ecr-repo:jdk25-awscli2
 #LABEL Name=New_Site_Api
 LABEL Name=new-site-api
 

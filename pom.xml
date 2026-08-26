@@ -22,7 +22,7 @@
         <image.name>artifactory.gns.cri.nz/gns/${project.artifactId}:${project.version}</image.name>
     </properties>
 
-    <distributionManagement>
+    <!--<distributionManagement>
         <repository>
             <id>central</id>
             <name>GNS Private Repository</name>
@@ -32,6 +32,19 @@
             <id>snapshots</id>
             <name>libs-snapshots</name>
             <url>https://artifactory.gns.cri.nz/artifactory/gns-libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>-->
+
+    <distributionManagement>
+        <repository>
+            <id>maven-releases</id>
+            <name>GNS Private Repository</name>
+            <url>https://esnz-artifacts-120569622645.d.codeartifact.ap-southeast-2.amazonaws.com/maven/applications-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-snapshots</id>
+            <name>libs-snapshots</name>
+            <url>https://esnz-artifacts-120569622645.d.codeartifact.ap-southeast-2.amazonaws.com/maven/applications-snapshot/</url>
         </snapshotRepository>
     </distributionManagement>
 
