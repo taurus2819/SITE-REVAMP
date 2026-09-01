@@ -103,7 +103,7 @@ deploy-prod:
     - master    
   extends: .deploy_template       
   script: |
-    export VERSION="0.0.42"
+    export VERSION="5.0.0"
     export APP_SERVER="GNS Web Applications Internal"
     export APP_HOST="webapp-internal.gns.cri.nz"
 
