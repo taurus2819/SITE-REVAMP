@@ -7,6 +7,7 @@ variables:
   APP_PORTS: "8040 7040"
   GITURL_CICD: "https://user:$release_token@git.gns.cri.nz/applications/cicdutils.git"
   TEAM: "Applications"
+  VERSION: "5.0.0"
 
 #image: maven:3-openjdk-11
 #image: maven:3.9.11-eclipse-temurin-25-noble
@@ -27,11 +28,13 @@ default:
 
 .deploy_template:
   tags:
-    - linux
+    - docker
+  image: ${AWS_SHARED_SERVICES_ECR}/cicd-images-ecr-repo:jdk25-awscli2-docker
   when: manual
   before_script:
-      - git clone $GITURL_CICD
-      - export APP_NAME="$( ./cicdutils/pom_app_name.sh)"
+      - !reference [default, before_script]
+      - git -c http.sslVerify=false clone $GITURL_CICD
+      - export APP_NAME="$( ./cicdutils/pom_app_name.sh)" 
   after_script:
       - rm -rf cicdutils
       - git clean -fdX 
@@ -75,12 +78,11 @@ deploy-staging:
   stage: deploy
   extends: .deploy_template     
   script: |
-    export VERSION="current"
     export APP_SERVER="GNS Web Application Staging"
     appName="$APP_NAME-dev" 
     volSuffix="-dev"
     port=8040
-    ./deploy.sh "$appName" "$port" "$volSuffix" "staging" "gns-libs-snapshot"
+    ./deploy.sh "$appName" "$port" "$volSuffix" "staging" "gns-libs-release"
 
 
 # Set DEFAULT_SITE_API_URL=https://online-[your username].gns.cri.nz/site/api/v1 in 
@@ -103,7 +105,6 @@ deploy-prod:
     - master    
   extends: .deploy_template       
   script: |
-    export VERSION="5.0.0"
     export APP_SERVER="GNS Web Applications Internal"
     export APP_HOST="webapp-internal.gns.cri.nz"
 
