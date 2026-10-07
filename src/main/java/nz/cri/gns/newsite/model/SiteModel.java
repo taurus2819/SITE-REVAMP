@@ -18,6 +18,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nz.cri.gns.newsite.audits.AuditLog;
+import nz.cri.gns.newsite.utils.Jackson2JsonNodeSerializer;
+import tools.jackson.databind.annotation.JsonSerialize;
 
 import org.springframework.core.style.ToStringCreator;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -86,7 +88,8 @@ public class SiteModel implements Site{
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "orig_coord", columnDefinition = "json")
     @Getter @Setter
-    private JsonNode origCoord;	
+    @JsonSerialize(using = Jackson2JsonNodeSerializer.class)
+    private JsonNode origCoord;
     
     @Column(name = "height")
     @Getter @Setter
