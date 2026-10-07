@@ -3,7 +3,6 @@ package nz.cri.gns.newsite.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.Collections;
@@ -295,7 +294,6 @@ public class OrigCoord {
 
     //data received from postgres
     public static String getEpsgInfoJsonString(int system_id, JsonNode origCoord) {
-        Gson gson = new Gson();
         if (ORIG_COORD_LIST.containsKey(system_id)) {
             OrigCoordDetail ocd = ORIG_COORD_LIST.get(system_id);
             String js = "{\"epsg\":" + ocd.epsg + ", \"format\":\"" + ocd.format + "\", ";

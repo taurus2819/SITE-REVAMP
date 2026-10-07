@@ -3,7 +3,7 @@ package nz.cri.gns.newsite.model;
 import lombok.Getter;
 
 import jakarta.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity

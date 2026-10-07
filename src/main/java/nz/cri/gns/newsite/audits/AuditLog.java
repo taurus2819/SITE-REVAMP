@@ -2,7 +2,6 @@ package nz.cri.gns.newsite.audits;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.io.Serializable;
 import java.util.Objects;
 import jakarta.persistence.*;
@@ -15,7 +14,7 @@ import jakarta.persistence.*;
 //import javax.persistence.ManyToOne;
 //import javax.persistence.SequenceGenerator;
 //import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import nz.cri.gns.newsite.model.SiteModel;
 //import org.hibernate.annotations.Type;
 //import org.hibernate.annotations.TypeDef;

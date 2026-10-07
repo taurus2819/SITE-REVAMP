@@ -5,16 +5,9 @@ package nz.cri.gns.newsite.model;
  * @author sorenh
  */
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.util.Objects;
 import jakarta.persistence.*;
-//import javax.persistence.Entity;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.GenerationType;
-//import javax.persistence.Id;
-//import javax.persistence.SequenceGenerator;
-//import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 //import org.hibernate.annotations.TypeDef;
@@ -22,7 +15,7 @@ import lombok.Setter;
 import org.locationtech.jts.geom.Geometry;
 
 @Entity
-@Table(name = "site_proposed", schema = "sc")
+@Table(name = "site", schema = "sc")
 //@TypeDefs({
 //    @TypeDef(name = "json", typeClass = JsonBinaryType.class)
 //})

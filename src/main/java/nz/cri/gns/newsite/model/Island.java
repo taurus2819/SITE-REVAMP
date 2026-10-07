@@ -1,13 +1,12 @@
 package nz.cri.gns.newsite.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.io.Serializable;
 import jakarta.persistence.*;
 //import javax.persistence.Entity;
 //import javax.persistence.Id;
 //import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 //import org.hibernate.annotations.TypeDef;
 //import org.hibernate.annotations.TypeDefs;

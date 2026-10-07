@@ -6,31 +6,30 @@ package nz.cri.gns.newsite.model;
  */
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import jakarta.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nz.cri.gns.newsite.audits.AuditLog;
-//import org.hibernate.annotations.Type;
-//import org.hibernate.annotations.TypeDef;
-//import org.hibernate.annotations.TypeDefs;
-import org.locationtech.jts.geom.Geometry;
 
 import org.springframework.core.style.ToStringCreator;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import org.locationtech.jts.geom.Geometry;
+
 
 
 
 @Entity
-@Table(name = "site_proposed", schema = "sc")
+@Table(name = "site", schema = "sc")
 //@TypeDefs({
 //    @TypeDef(name = "json", typeClass = JsonBinaryType.class)
 //})
@@ -210,11 +209,15 @@ public class SiteModel implements Site{
     }
     
     public String getPrettyOrigSystemCoordinates()  {
-        return getOrigCoord().toPrettyString(); //TODO
+        return Optional.ofNullable(getOrigCoord())
+                .map(JsonNode::toPrettyString)
+                .orElse(null);
     }
 
     public void setShape(Geometry shape) {
-        shape.setSRID(4326);
+        if (shape != null) {
+            shape.setSRID(SITE_EPSG);
+        }
         this.shape = shape;
     }
     

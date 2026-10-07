@@ -1,15 +1,9 @@
 package nz.cri.gns.newsite.model;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.io.Serializable;
-//import javax.persistence.Column;
-//import javax.persistence.Entity;
-//import javax.persistence.Id;
 import jakarta.persistence.*;
-import javax.validation.constraints.NotNull;
-import lombok.Getter;
-//import org.hibernate.annotations.TypeDef;
-//import org.hibernate.annotations.TypeDefs;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;;
 
 /**
  *
