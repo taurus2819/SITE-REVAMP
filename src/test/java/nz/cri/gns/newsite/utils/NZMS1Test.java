@@ -7,7 +7,7 @@ package nz.cri.gns.newsite.utils;
 
 import java.awt.geom.Point2D;
 import org.junit.jupiter.api.Test;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**

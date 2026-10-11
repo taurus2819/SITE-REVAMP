@@ -12,33 +12,32 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.data.Offset;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Point;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
-import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  *
  * @author scaddenp
  */
-@SpringBootTest
 public class OrigCoordTest {
 
     @Test
     public void testGetJsonString() {
-        assert (OrigCoord.getJsonString(75, "2696700|5953800") == null);
+        assertNull(OrigCoord.getJsonString(75, "2696700|5953800"));
         System.out.println(OrigCoord.getJsonString(38, "2696700|5953800"));
         System.out.println(OrigCoord.getJsonString(16, "D50|9610|1630"));
         System.out.println(OrigCoord.getJsonString(16, "C40|8612|5642"));
         System.out.println(OrigCoord.getJsonString(28, "-39.08102037777|174.52428614166"));
-        assert (OrigCoord.getJsonString(38, "2696700|5953800").equals("{\"epsg\":27200, \"format\":\"EN\", \"easting\":2696700, \"northing\":5953800}"));
-        assert (OrigCoord.getJsonString(16, "D50|9610|1630").equals("{\"epsg\":27200, \"format\":\"gridref\", \"gridReference\":\"D50/961163\"}"));
-        assert (OrigCoord.getJsonString(16, "C40|8612|5642").equals("{\"epsg\":27200, \"format\":\"gridref\", \"gridReference\":\"C40/86125642\"}"));
-        assert (OrigCoord.getJsonString(28, "-39.08102037777|174.52428614166").equals("{\"epsg\":4167, \"format\":\"DD\", \"latitude\":\"-39.08102037777\", \"longitude\":\"174.52428614166\"}"));
+        assertEquals("{\"epsg\":27200, \"format\":\"EN\", \"easting\":2696700, \"northing\":5953800}", OrigCoord.getJsonString(38, "2696700|5953800"));
+        assertEquals("{\"epsg\":27200, \"format\":\"gridref\", \"gridReference\":\"D50/961163\"}", OrigCoord.getJsonString(16, "D50|9610|1630"));
+        assertEquals("{\"epsg\":27200, \"format\":\"gridref\", \"gridReference\":\"C40/86125642\"}", OrigCoord.getJsonString(16, "C40|8612|5642"));
+        assertEquals("{\"epsg\":4167, \"format\":\"DD\", \"latitude\":\"-39.08102037777\", \"longitude\":\"174.52428614166\"}", OrigCoord.getJsonString(28, "-39.08102037777|174.52428614166"));
     }
 
     private void assertDMS(String lat, String lon, double eLat, double eLon) {
@@ -138,8 +137,8 @@ public class OrigCoordTest {
 
     @Test
     public void testGetOrigCoordisNull() {
-        assertEquals(OrigCoord.getOrigSystemId(3081, "DD"), null);
-        assertEquals(OrigCoord.getOrigSystemId(3793, "GRIDREF"), null);
+        assertNull(OrigCoord.getOrigSystemId(3081, "DD"));
+        assertNull(OrigCoord.getOrigSystemId(3793, "GRIDREF"));
     }
 
     @Test
@@ -154,9 +153,9 @@ public class OrigCoordTest {
 
 //        JsonNode jsonNode = OrigCoord.createOrigFormatJson(27200, "gridRef", "U20/962872", "", "", null, null);
 //        System.out.println("JSON NODE =  " + jsonNode);
-        assert (OrigCoord.createOrigFormatJson(4326, "DD", "", "-45.5675", "172.44", null, null).equals(mapper.readTree("{\"epsg\":4326,\"format\":\"DD\",\"longitude\":\"172.44\",\"latitude\":\"-45.5675\"}")));
-        assert (OrigCoord.createOrigFormatJson(2193, "EN", "", "", "", 1528677.3, 5413457.7).equals(mapper.readTree("{\"epsg\":2193,\"format\":\"EN\",\"easting\":1528677.3,\"northing\":5413457.7}")));
-        assert (OrigCoord.createOrigFormatJson(27200, "gridRef", "U20/962872", "", "", null, null).equals(mapper.readTree("{\"epsg\":27200,\"format\":\"gridRef\",\"gridReference\":\"U20/962872\"}")));
+        assertEquals(mapper.readTree("{\"epsg\":4326,\"format\":\"DD\",\"longitude\":\"172.44\",\"latitude\":\"-45.5675\"}"), OrigCoord.createOrigFormatJson(4326, "DD", "", "-45.5675", "172.44", null, null));
+        assertEquals(mapper.readTree("{\"epsg\":2193,\"format\":\"EN\",\"easting\":1528677.3,\"northing\":5413457.7}"), OrigCoord.createOrigFormatJson(2193, "EN", "", "", "", 1528677.3, 5413457.7));
+        assertEquals(mapper.readTree("{\"epsg\":27200,\"format\":\"gridRef\",\"gridReference\":\"U20/962872\"}"), OrigCoord.createOrigFormatJson(27200, "gridRef", "U20/962872", "", "", null, null));
     }
 
     @Test

@@ -1,17 +1,15 @@
 package nz.cri.gns.newsite.utils;
 
 import nz.cri.gns.newsite.model.MapSheetPayload;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 public class QmapSheetTest {
 
     @Test
@@ -45,7 +43,7 @@ public class QmapSheetTest {
         assertTrue(geoJson.contains("coordinates"));
     }
 
-    @Ignore
+    @Disabled
     public void testLookupMapSheetByCoordinates() {
         QMAPSheet sheet = QMAPSheet.getInstance();
 

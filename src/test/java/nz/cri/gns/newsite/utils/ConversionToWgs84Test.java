@@ -8,7 +8,7 @@ package nz.cri.gns.newsite.utils;
 import java.awt.geom.Point2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.data.Offset;
@@ -32,8 +32,8 @@ public class ConversionToWgs84Test {
         ConversionToWgs84 llToWgs84 = new ConversionToWgs84(lat, lon);
         System.out.println("Latitude = " + llToWgs84.getConvertedLat());
         System.out.println("Longitude = " + llToWgs84.getConvertedLon());
-        Assert.assertEquals((Double)174.7301531230962, (Double)llToWgs84.getConvertedLat()); 
-//        Assert.assertEquals((Double)-43.69834663393171, (Double)llToWgs84.getConvertedLon()); 
+        Assertions.assertEquals((Double)174.7301531230962, (Double)llToWgs84.getConvertedLat());
+//        Assertions.assertEquals((Double)-43.69834663393171, (Double)llToWgs84.getConvertedLon());
     }
   @Test
     public void testConversionToWgs84() {
@@ -49,8 +49,8 @@ public class ConversionToWgs84Test {
         } catch (TransformException | FactoryException | MismatchedDimensionException ex) {
             Logger.getLogger(ConversionToWgs84Test.class.getName()).log(Level.SEVERE, null, ex);
         }
-//        Assert.assertEquals((Double)-43.69834663393171, (Double)llToWgs84.getConvertedLon());
+//        Assertions.assertEquals((Double)-43.69834663393171, (Double)llToWgs84.getConvertedLon());
         
-//        Assert.assertEquals((Double)-43.69834663393171, (Double)llToWgs84.getConvertedLon()); 
+//        Assertions.assertEquals((Double)-43.69834663393171, (Double)llToWgs84.getConvertedLon());
     }  
 }

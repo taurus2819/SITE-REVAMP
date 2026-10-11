@@ -9,7 +9,7 @@ import java.awt.geom.Point2D;
 
 import nz.cri.gns.newsite.exception.InvalidOrigCoordinate;
 import org.junit.jupiter.api.Test;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.springframework.boot.test.context.SpringBootTest;
