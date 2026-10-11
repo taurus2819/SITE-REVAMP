@@ -17,7 +17,7 @@
         <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <geotools.version>26.1.01</geotools.version>
-        <jts.version>1.19.0</jts.version>
+        <jts.version>1.20.0</jts.version>
         <application.name>New_Site_Api</application.name>
         <image.name>artifactory.gns.cri.nz/gns/${project.artifactId}:${project.version}</image.name>
     </properties>
@@ -110,7 +110,7 @@
         <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
-            <version>${jts.version}</version>
+            <version>1.20.0</version>
         </dependency>
         <dependency>
             <groupId>org.locationtech.jts.io</groupId>
